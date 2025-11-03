@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>AB AGRIWEB - Dashboard</title>
+<style>
+:root{--bg:#0f172a;--panel:#0b1220;--text:#e2e8f0;--accent:#22c55e;--border:#243046;--tile:#0c1526;--tileIcon:#0f1a2e;--warn:#fde68a1a}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:linear-gradient(180deg,var(--bg),#1e293b);color:#e2e8f0;min-height:100vh;overflow-x:hidden}
+.hidden{display:none!important}
+header{position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;background:var(--panel);padding:12px 18px;border-bottom:1px solid var(--border);box-shadow:0 2px 12px rgba(0,0,0,.25)}
+.menu-btn{background:none;border:none;color:var(--text);font-size:24px;cursor:pointer}
+.brand{display:flex;align-items:center;gap:10px}
+.title{font-weight:800;color:var(--accent);letter-spacing:.5px;display:flex;align-items:center;gap:10px}
+.badge-img{height:22px;border-radius:6px;border:1px solid #1f2937}
+.sidebar{position:fixed;top:0;left:-260px;width:260px;height:100%;background:#0b1220;border-right:1px solid var(--border);transition:left .35s ease;display:flex;flex-direction:column;padding-top:56px;box-shadow:4px 0 20px rgba(0,0,0,.4);z-index:15}
+.sidebar.active{left:0}
+.side-header{position:absolute;top:0;left:0;right:0;height:56px;display:flex;align-items:center;gap:10px;padding:0 14px;border-bottom:1px solid #1e293b;background:#0b1220}
+.close-btn{width:36px;height:36px;border:none;border-radius:8px;cursor:pointer;background:#111827;color:#e2e8f0;font-size:22px}
+.sidebar a{display:flex;align-items:center;gap:10px;padding:14px 24px;color:var(--text)!important;text-decoration:none;border-bottom:1px solid #1e293b}
+.sidebar a:hover{background:var(--accent);color:#0b1220!important;font-weight:600}
+.sidebar a.active{background:var(--accent);color:#0b1220!important;font-weight:700}
+.sidebar-brand{padding:12px 18px;border-bottom:1px solid #1e293b}
+.sidebar-brand img{width:100%;border-radius:10px;border:1px solid #1f2937}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);opacity:0;pointer-events:none;transition:opacity .3s ease;z-index:10}
+.overlay.active{opacity:1;pointer-events:all}
+.content{padding:24px}
+.card{max-width:1000px;margin:16px auto;background:#0b1220;border:1px solid var(--border);border-radius:16px;padding:20px;box-shadow:0 10px 24px rgba(0,0,0,.25);position:relative}
+.muted{opacity:.8}
+.hint{background:var(--warn);border:1px dashed #fbbf24;color:#fcd34d;padding:8px 10px;border-radius:8px;font-size:13px}
+.stack{display:grid;gap:12px}
+.tile{display:flex;align-items:center;gap:12px;background:var(--tile);border:1px solid var(--border);border-radius:12px;padding:14px 16px;cursor:pointer}
+.tile:hover{border-color:var(--accent);box-shadow:0 0 0 2px rgba(34,197,94,.25) inset}
+.tile .icon{width:36px;height:36px;display:grid;place-items:center;background:var(--tileIcon);border:1px solid #1f2a44;border-radius:10px}
+.tile h4{margin:0;font-size:16px}.tile p{margin:2px 0 0;font-size:12px;color:#94a3b8}
+.actions-top{position:absolute;top:16px;right:16px;display:flex;gap:8px}
+.btn{padding:10px 12px;border-radius:10px;border:1px solid #22c55e;color:#22c55e;background:transparent;cursor:pointer}
+.btn:hover{background:#22c55e;color:#0b1220}.btn.icon{width:40px;height:40px;display:grid;place-items:center;padding:0}
+.btn.danger{border-color:#3b1f1f;color:#fca5a5}.btn.danger:hover{background:#ef4444;color:#0b1220;border-color:#ef4444}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.input,select,textarea{width:100%;max-width:360px;padding:12px;border-radius:10px;border:1px solid #334155;background:#091227;color:#e2e8f0}
+.list{display:grid;gap:10px;margin-top:14px}
+.item{display:grid;grid-template-columns:1fr auto;align-items:center;gap:10px;background:#0c1526;border:1px solid #243046;border-radius:10px;padding:12px 14px}
+.meta{display:flex;gap:12px;flex-wrap:wrap;font-size:14px;color:#cbd5e1}.meta b{color:#e2e8f0}
+.actions{display:flex;gap:8px}.actions .btn{min-width:42px}
+.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.label{font-size:13px;color:#9fb2cc;margin-bottom:6px;display:block}.sectionTitle{margin:16px 0 8px;font-weight:700;color:#cde4d5}
+.accordion{border:1px solid var(--border);border-radius:12px;margin:12px 0;background:#0b1220}
+.acc-hd{width:100%;text-align:left;padding:12px 14px;background:#0c1526;border-bottom:1px solid #1e293b;border-radius:12px 12px 0 0;cursor:pointer;font-weight:700;display:flex;justify-content:space-between;align-items:center}
+.acc-bd{padding:14px;display:none}
+.acc.open .acc-bd{display:block}
+.acc-hd span{opacity:.8}
+.combo{position:relative}
+.combo-list{position:absolute;left:0;right:0;top:100%;background:#0b1220;border:1px solid #334155;border-radius:10px;max-height:220px;overflow:auto;z-index:30;margin-top:6px}
+.combo-item{padding:10px 12px;border-bottom:1px solid #1e293b;cursor:pointer}.combo-item:hover{background:#0f172a}
+.modal-wrap{position:fixed;inset:0;display:grid;place-items:center;z-index:60}
+.modal-wrap:not(.show){display:none}
+.modal-bg{position:absolute;inset:0;background:rgba(0,0,0,.45);backdrop-filter:blur(2px)}
+.modal{position:relative;width:min(520px,92vw);background:#0b1220;border:1px solid var(--border);border-radius:14px;padding:16px;box-shadow:0 18px 40px rgba(0,0,0,.45)}
+.right{display:flex;gap:8px;justify-content:flex-end}
+</style>
+</head>
+<body>
+<header>
+  <button class="menu-btn" onclick="toggleMenu()">☰</button>
+  <div class="brand">
+    <div class="title" id="appTitleTop">AB AGRIWEB</div>
+    <img id="appBadgeImg" class="badge-img hidden" alt="">
+  </div>
+</header>
+
+<aside class="sidebar" id="sidebar">
+  <div class="side-header"><button class="close-btn" onclick="closeMenu()">×</button><span>Menu</span></div>
+  <div class="sidebar-brand hidden" id="sidebarBrand"><img id="sidebarBrandImg" alt=""></div>
+  <a href="#" id="nav-home" class="active"><span id="lbl-nav-home">🏠 Accueil</span></a>
+  <a href="#" id="nav-irrig"><span id="lbl-nav-irrig">🌿 Irrigation</span></a>
+  <a href="#" id="nav-trait"><span id="lbl-nav-trait">💧 Traitement</span></a>
+  <a href="#" id="nav-settings"><span id="lbl-nav-settings">⚙️ Paramètres</span></a>
+  <a href="#" id="logout"><span id="lbl-nav-logout">🚪 Logout</span></a>
+</aside>
+<div class="overlay" id="overlay"></div>
+
+<main class="content">
+  <section id="setupBanner" class="card hidden" style="border-color:#fbbf24">
+    <div class="hint">⚠️ Setup Mode مفعل: الدخول بدون كلمة السر مؤقّتًا لإنهاء الإعدادات.</div>
+    <div class="row" style="margin-top:8px">
+      <button class="btn danger" onclick="disableSetup()">إيقاف Setup Mode</button>
+      <button class="btn" onclick="setActiveLink(document.getElementById('nav-settings'));showPage('settings')">اذهب إلى Paramètres</button>
+    </div>
+  </section>
+
+  <section id="page-home" class="card">
+    <h2>Bienvenue 👋</h2>
+    <p class="muted">Page d’accueil temporaire.</p>
+    <div id="firstRunHint" class="hint hidden" style="margin-top:10px">🔐 لم يتم العثور على أي مستخدم. اذهب إلى <b>Paramètres → Opérateurs</b> وأضف أول مستخدم.</div>
+  </section>
+
+  <section id="page-irrig" class="card hidden">
+    <h2>🌿 Irrigation</h2>
+    <p class="muted">واجهة قيد الإنشاء.</p>
+  </section>
+
+  <section id="page-trait" class="card hidden">
+    <h2>💧 Traitement</h2>
+    <p class="muted">واجهة قيد الإنشاء.</p>
+  </section>
+
+  <section id="page-settings" class="card hidden">
+    <h2 id="title-settings">Paramètres</h2>
+    <p class="muted">Choisissez un module.</p>
+    <div class="stack">
+      <div class="tile" onclick="showPage('operators');setActiveTile()"><div class="icon">👥</div><div><h4 id="lbl-tile-operators">OPÉRATEUR</h4><p>Gestion des utilisateurs</p></div></div>
+      <div class="tile" onclick="showPage('profiles');setActiveTile()"><div class="icon">🧩</div><div><h4 id="lbl-tile-profiles">PROFILE</h4><p>Gestion des profils</p></div></div>
+      <div class="tile" onclick="showPage('refs');setActiveTile()"><div class="icon">🗂️</div><div><h4 id="lbl-tile-refs">RÉFÉRENTIELS</h4><p>Listes maîtres</p></div></div>
+      <div class="tile" onclick="alert('DROITS ACCÈS (à compléter)')"><div class="icon">🛡️</div><div><h4 id="lbl-tile-rights">DROITS ACCÈS</h4><p>Permissions</p></div></div>
+      <div class="tile" onclick="alert('MOT DE PASSE (à compléter)')"><div class="icon">🔑</div><div><h4 id="lbl-tile-pass">MOT DE PASSE</h4><p>Changer le mot de passe</p></div></div>
+      <div class="tile" onclick="showPage('appcfg');setActiveTile()"><div class="icon">⚙️</div><div><h4 id="lbl-tile-appcfg">RÉGLAGES APP</h4><p>Logo, labels & sécurité</p></div></div>
+    </div>
+  </section>
+
+  <section id="page-profiles" class="card hidden">
+    <div class="actions-top"><button class="btn icon" title="Ajouter" onclick="toggleAddForm(true)">➕</button><button class="btn icon" title="Aide" onclick="showProfilesHint()">✏️</button></div>
+    <h2>Profiles</h2>
+    <div id="profilesHint" class="hint hidden">استعمل ✏️ للتعديل.</div>
+    <div id="addForm" class="row hidden" style="margin-top:12px">
+      <input id="profileName" class="input" placeholder="Ex: Admin, Magasinier, Pointeur, Directeur">
+      <button class="btn" onclick="addProfile()">Confirmer</button>
+      <button class="btn danger" onclick="toggleAddForm(false)">Annuler</button>
+    </div>
+    <div id="profilesList" class="list" style="margin-top:14px"></div>
+  </section>
+
+  <section id="page-operators" class="card hidden">
+    <div class="actions-top"><button class="btn icon" onclick="opToggleForm(true)">➕</button><button class="btn icon" onclick="showOpsHint()">✏️</button></div>
+    <h2>Opérateurs</h2>
+    <div id="opsHint" class="hint hidden">لتعديل مستخدم، استعمل ✏️.</div>
+    <div id="opAddForm" class="row hidden" style="margin-top:12px">
+      <input id="op_username" class="input" placeholder="Nom d’utilisateur">
+      <input id="op_password" type="password" class="input" placeholder="Mot de passe">
+      <select id="op_profile" class="input"></select>
+      <div class="combo" id="combo-op-ferme" style="max-width:360px;width:100%">
+        <input id="op_ferme_input" class="input" placeholder="Chercher/choisir une ferme...">
+        <div id="op_ferme_list" class="combo-list hidden"></div>
+        <input type="hidden" id="op_ferme"/>
+      </div>
+      <button class="btn" onclick="opAdd()">Confirmer</button>
+      <button class="btn danger" onclick="opToggleForm(false)">Annuler</button>
+    </div>
+    <div id="operatorsList" class="list" style="margin-top:14px"></div>
+  </section>
+
+  <section id="page-farms" class="card hidden">
+    <div class="actions-top"><button class="btn icon" onclick="farmToggleForm(true)">➕</button><button class="btn icon" onclick="showFarmsHint()">✏️</button></div>
+    <h2>Fermes</h2>
+    <div id="farmsHint" class="hint hidden">استعمل ✏️ للتعديل.</div>
+    <div id="farmAddForm" class="row hidden" style="margin-top:12px">
+      <input id="farm_name" class="input" placeholder="Nom de la ferme (ex: Karam 16)">
+      <input id="farm_area" class="input" placeholder="Surface (ex: 12 ha)">
+      <input id="farm_company" class="input" placeholder="Société">
+      <input id="farm_location" class="input" placeholder="Emplacement">
+      <input id="farm_manager" class="input" placeholder="Responsable">
+      <input id="farm_phone" class="input" placeholder="Téléphone du responsable">
+      <button class="btn" onclick="farmAdd()">Confirmer</button>
+      <button class="btn danger" onclick="farmToggleForm(false)">Annuler</button>
+    </div>
+    <div id="farmsList" class="list" style="margin-top:14px"></div>
+  </section>
+
+  <section id="page-refs" class="card hidden">
+    <h2>Référentiels</h2><p class="muted">لوائح مرجعية.</p>
+    <div id="refsHome" class="stack">
+      <div class="tile" onclick="showPage('farms');setActiveTile()"><div class="icon">🏞️</div><div><h4 id="lbl-ref-ferme">Ferme</h4></div></div>
+      <div class="tile" onclick="refsOpen('companies')"><div class="icon">🏢</div><div><h4 id="lbl-ref-companies">Société</h4></div></div>
+      <div class="tile" onclick="refsOpen('responsables')"><div class="icon">👤</div><div><h4 id="lbl-ref-responsables">Responsable</h4></div></div>
+      <div class="tile" onclick="refsOpen('stations')"><div class="icon">🚏</div><div><h4 id="lbl-ref-stations">Station</h4></div></div>
+      <div class="tile" onclick="refsOpen('secteurs')"><div class="icon">🧭</div><div><h4 id="lbl-ref-secteurs">Secteur</h4></div></div>
+      <div class="tile" onclick="refsOpen('parcelles')"><div class="icon">🧱</div><div><h4 id="lbl-ref-parcelles">Parcelle</h4></div></div>
+      <div class="tile" onclick="refsOpen('transports')"><div class="icon">🚚</div><div><h4 id="lbl-ref-transports">Transport</h4></div></div>
+      <div class="tile" onclick="refsOpen('varietes')"><div class="icon">🌱</div><div><h4 id="lbl-ref-varietes">Variété</h4></div></div>
+      <div class="tile" onclick="refsOpen('varietes_champ')"><div class="icon">🌿</div><div><h4 id="lbl-ref-varietes_champ">Variété champ</h4></div></div>
+      <div class="tile" onclick="refsOpen('gestions')"><div class="icon">📦</div><div><h4 id="lbl-ref-gestions">Gestion stock</h4></div></div>
+      <div class="tile" onclick="refsOpen('achats')"><div class="icon">🧾</div><div><h4 id="lbl-ref-achats">Achat</h4></div></div>
+    </div>
+
+    <div id="refsCat" class="hidden">
+      <div class="actions-top"><button class="btn icon" onclick="refsToggleForm(true)">➕</button><button class="btn icon" onclick="toggleRefsHint()">✏️</button></div>
+      <h3 id="refsCatTitle" style="margin-top:0">Catégorie</h3>
+      <div id="refsHint" class="hint hidden">استعمل ✏️ للتعديل و 🗑️ للحذف.</div>
+      <div id="refsAddForm" class="row hidden" style="margin-top:12px">
+        <input id="refsInput" class="input" placeholder="Nom à ajouter">
+        <button class="btn" onclick="refsAdd()">Confirmer</button>
+        <button class="btn danger" onclick="refsToggleForm(false)">Annuler</button>
+      </div>
+      <div id="refsList" class="list" style="margin-top:14px"></div>
+    </div>
+  </section>
+
+  <section id="page-appcfg" class="card hidden">
+    <h2>Réglages de l’application</h2>
+    <p class="muted">كل إعدادات التطبيق مجمّعة حسب النوع.</p>
+
+    <div class="accordion acc open" id="acc-general">
+      <button class="acc-hd" onclick="toggleAcc('acc-general')">1) Général <span>Nom/Logo de l’app</span></button>
+      <div class="acc-bd">
+        <div class="grid">
+          <div>
+            <label class="label">Logo de l’application (PNG/GIF)</label>
+            <input id="cfg-logo-url" class="input" placeholder="URL (png/gif)">
+            <input id="cfg-logo-file" type="file" accept="image/png,image/gif" class="input">
+            <div class="row" style="margin-top:6px">
+              <button class="btn link" onclick="previewUrl('logo')">Prévisualiser URL</button>
+              <button class="btn danger" onclick="clearImg('logo')">Supprimer</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion acc" id="acc-nav">
+      <button class="acc-hd" onclick="toggleAcc('acc-nav')">2) Libellés Navigation <span>Accueil • Irrigation • Traitement • Paramètres • Logout</span></button>
+      <div class="acc-bd">
+        <div class="grid">
+          <div><label class="label">Accueil</label><input id="cfg-nav-home" class="input" placeholder="Accueil"></div>
+          <div><label class="label">Irrigation</label><input id="cfg-nav-irrig" class="input" placeholder="Irrigation"></div>
+          <div><label class="label">Traitement</label><input id="cfg-nav-trait" class="input" placeholder="Traitement"></div>
+          <div><label class="label">Paramètres</label><input id="cfg-nav-settings" class="input" placeholder="Paramètres"></div>
+          <div><label class="label">Logout</label><input id="cfg-nav-logout" class="input" placeholder="Logout"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion acc" id="acc-tiles">
+      <button class="acc-hd" onclick="toggleAcc('acc-tiles')">3) Tuiles Paramètres <span>Opérateur • Profile • Référentiel • Droits • Mot de passe</span></button>
+      <div class="acc-bd">
+        <div class="grid">
+          <div><label class="label">Opérateur</label><input id="cfg-tile-operators" class="input" placeholder="OPÉRATEUR"></div>
+          <div><label class="label">Profile</label><input id="cfg-tile-profiles" class="input" placeholder="PROFILE"></div>
+          <div><label class="label">Référentiels</label><input id="cfg-tile-refs" class="input" placeholder="RÉFÉRENTIELS"></div>
+          <div><label class="label">Droits accès</label><input id="cfg-tile-rights" class="input" placeholder="DROITS ACCÈS"></div>
+          <div><label class="label">Mot de passe</label><input id="cfg-tile-pass" class="input" placeholder="MOT DE PASSE"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion acc" id="acc-sec">
+      <button class="acc-hd" onclick="toggleAcc('acc-sec')">4) Sécurité <span>Email • Téléphone • Question • Code</span></button>
+      <div class="acc-bd">
+        <div class="grid">
+          <div><label class="label">Email de récupération</label><input id="sec-email" class="input" placeholder="ex: admin@example.com"></div>
+          <div><label class="label">Téléphone</label><input id="sec-phone" class="input" placeholder="+2126..."></div>
+          <div><label class="label">Question secrète</label><input id="sec-question" class="input" placeholder="Ex: Ville de naissance ?"></div>
+          <div><label class="label">Réponse</label><input id="sec-answer" class="input" placeholder="Votre réponse"></div>
+          <div>
+            <label class="label">Code de récupération</label>
+            <div class="row">
+              <input id="sec-code" class="input" placeholder="Générer pour créer un code" disabled>
+              <button class="btn" onclick="secGenCode()">Générer</button>
+            </div>
+            <div class="muted" style="margin-top:6px">يحفظ محليًا. يُستخدم عبر “Forgot password”.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion acc" id="acc-brand">
+      <button class="acc-hd" onclick="toggleAcc('acc-brand')">5) Branding <span>Badge • Sidebar • Login banner • Login background</span></button>
+      <div class="acc-bd">
+        <div class="grid">
+          <div><label class="label">Badge header</label><input id="cfg-badge-url" class="input" placeholder="URL (png/gif)"><input id="cfg-badge-file" type="file" accept="image/png,image/gif" class="input"><div class="row" style="margin-top:6px"><button class="btn link" onclick="previewUrl('badge')">Prévisualiser URL</button><button class="btn danger" onclick="clearImg('badge')">Supprimer</button></div></div>
+          <div><label class="label">Sidebar banner</label><input id="cfg-side-url" class="input" placeholder="URL (png/gif)"><input id="cfg-side-file" type="file" accept="image/png,image/gif" class="input"><div class="row" style="margin-top:6px"><button class="btn link" onclick="previewUrl('sidebar')">Prévisualiser URL</button><button class="btn danger" onclick="clearImg('sidebar')">Supprimer</button></div></div>
+          <div><label class="label">Login banner</label><input id="cfg-login-url" class="input" placeholder="URL (png/gif)"><input id="cfg-login-file" type="file" accept="image/png,image/gif" class="input"><div class="row" style="margin-top:6px"><button class="btn link" onclick="previewUrl('login')">Prévisualiser URL</button><button class="btn danger" onclick="clearImg('login')">Supprimer</button></div></div>
+          <div><label class="label">Login background</label><input id="cfg-loginbg-url" class="input" placeholder="URL (png/gif)"><input id="cfg-loginbg-file" type="file" accept="image/png,image/gif" class="input"><div class="row" style="margin-top:6px"><button class="btn link" onclick="previewUrl('loginBg')">Prévisualiser URL</button><button class="btn danger" onclick="clearImg('loginBg')">Supprimer</button></div><div class="muted" style="margin-top:6px">ملاحظة: حقول تسجيل الدخول تبقى وسط الخلفية تلقائياً.</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row" style="margin-top:14px">
+      <button class="btn" onclick="appcfgSave()">Enregistrer</button>
+      <button class="btn danger" onclick="appcfgReset()">Reset (défaut)</button>
+    </div>
+  </section>
+</main>
+
+<div id="opModal" class="modal-wrap"><div class="modal-bg" onclick="opCloseModal()"></div>
+  <div class="modal"><h3>Modifier l’opérateur</h3>
+    <div class="row"><input id="edit_username" class="input" placeholder="Nom d’utilisateur"><input id="edit_password" type="password" class="input" placeholder="Mot de passe"></div>
+    <div class="row">
+      <select id="edit_profile" class="input"></select>
+      <div class="combo" id="combo-edit-ferme" style="max-width:360px;width:100%"><input id="edit_ferme_input" class="input" placeholder="Chercher/choisir une ferme..."><div id="edit_ferme_list" class="combo-list hidden"></div><input type="hidden" id="edit_ferme"/></div>
+    </div>
+    <div class="right" style="margin-top:8px"><button class="btn danger" onclick="opCloseModal()">Annuler</button><button class="btn" onclick="opSaveEdit()">Enregistrer</button></div>
+  </div>
+</div>
+
+<div id="farmModal" class="modal-wrap"><div class="modal-bg" onclick="farmCloseModal()"></div>
+  <div class="modal"><h3>Modifier la ferme</h3>
+    <div class="row"><input id="edit_farm_name" class="input" placeholder="Nom de la ferme"><input id="edit_farm_area" class="input" placeholder="Surface"></div>
+    <div class="row"><input id="edit_farm_company" class="input" placeholder="Société"><input id="edit_farm_location" class="input" placeholder="Emplacement"></div>
+    <div class="row"><input id="edit_farm_manager" class="input" placeholder="Responsable"><input id="edit_farm_phone" class="input" placeholder="Téléphone"></div>
+    <div class="right" style="margin-top:8px"><button class="btn danger" onclick="farmCloseModal()">Annuler</button><button class="btn" onclick="farmSaveEdit()">Enregistrer</button></div>
+  </div>
+</div>
+
+<script>
+const SETUP_ON = localStorage.getItem('ab_setup') === '1';
+(function guard(){
+  const LS_OPERATORS='ab_operators';
+  let ops=[];
+  try{ ops = JSON.parse(localStorage.getItem(LS_OPERATORS)||'[]'); }catch{}
+  if(!SETUP_ON && ops.length===0){
+    alert('لا يمكن فتح التطبيق بدون مستخدم. رجوع الى صفحة الدخول.');
+    location='index.html';
+  }
+})();
+
+const sidebar=document.getElementById('sidebar'),overlay=document.getElementById('overlay');
+function openMenu(){sidebar.classList.add('active');overlay.classList.add('active')}
+function closeMenu(){sidebar.classList.remove('active');overlay.classList.remove('active')}
+function toggleMenu(){sidebar.classList.contains('active')?closeMenu():openMenu()}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMenu()});overlay.addEventListener('click',closeMenu);
+
+const navHome=g('nav-home'),navSet=g('nav-settings'),navIrrig=g('nav-irrig'),navTrait=g('nav-trait');
+const pageHome=g('page-home'),pageIrrig=g('page-irrig'),pageTrait=g('page-trait'),
+      pageSet=g('page-settings'),pageProf=g('page-profiles'),pageOps=g('page-operators'),
+      pageFarms=g('page-farms'),pageRefs=g('page-refs'),pageAppCfg=g('page-appcfg');
+function setActiveLink(l){document.querySelectorAll('.sidebar a').forEach(a=>a.classList.remove('active'));l.classList.add('active')}
+function showPage(n){
+  [pageHome,pageIrrig,pageTrait,pageSet,pageProf,pageOps,pageFarms,pageRefs,pageAppCfg].forEach(p=>p.classList.add('hidden'));
+  if(n==='home')pageHome.classList.remove('hidden');
+  if(n==='irrig')pageIrrig.classList.remove('hidden');
+  if(n==='trait')pageTrait.classList.remove('hidden');
+  if(n==='settings')pageSet.classList.remove('hidden');
+  if(n==='profiles')pageProf.classList.remove('hidden');
+  if(n==='operators')pageOps.classList.remove('hidden');
+  if(n==='farms')pageFarms.classList.remove('hidden');
+  if(n==='refs')pageRefs.classList.remove('hidden');
+  if(n==='appcfg')pageAppCfg.classList.remove('hidden');
+  closeMenu();
+}
+navHome.onclick=(e)=>{e.preventDefault();setActiveLink(navHome);showPage('home')}
+navIrrig.onclick=(e)=>{e.preventDefault();setActiveLink(navIrrig);showPage('irrig')}
+navTrait.onclick=(e)=>{e.preventDefault();setActiveLink(navTrait);showPage('trait')}
+navSet.onclick=(e)=>{e.preventDefault();setActiveLink(navSet);showPage('settings')}
+g('logout').onclick=(e)=>{e.preventDefault();location='index.html'}
+function setActiveTile(){setActiveLink(navSet)}
+
+const LS_PROFILES='ab_profiles',LS_FARMS='ab_farms',LS_OPERATORS='ab_operators',LS_REFS='ab_refs',LS_APP='ab_appcfg',LS_IMG='ab_appimg',LS_SEC='ab_security';
+const DEFAULT_PROFILES=["Admin","Magasinier","Pointeur","Directeur"];
+function g(id){return document.getElementById(id)}function v(id){return g(id).value.trim()}function s(id,val){g(id).value=val}
+function escapeHtml(s){return s.replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+
+const APP_DEFAULT={appTitle:"AB AGRIWEB",
+  nav:{home:"Accueil",irrig:"Irrigation",trait:"Traitement",settings:"Paramètres",logout:"Logout"},
+  tiles:{operators:"OPÉRATEUR",profiles:"PROFILE",refs:"RÉFÉRENTIELS",rights:"DROITS ACCÈS",pass:"MOT DE PASSE",appcfg:"RÉGLAGES APP"},
+  refLabels:{ferme:"Ferme",companies:"Société",responsables:"Responsable",stations:"Station",secteurs:"Secteur",parcelles:"Parcelle",transports:"Transport",varietes:"Variété",varietes_champ:"Variété champ",gestions:"Gestion stock",achats:"Achat"}
+};
+function appcfgLoad(){try{return Object.assign({},APP_DEFAULT,JSON.parse(localStorage.getItem(LS_APP)||'{}'))}catch{return {...APP_DEFAULT}}}
+function appcfgSaveToLS(o){localStorage.setItem(LS_APP,JSON.stringify(o))}
+function appcfgReset(){appcfgSaveToLS(APP_DEFAULT);localStorage.removeItem(LS_IMG);localStorage.removeItem(LS_SEC);appcfgApply();appcfgFillForm();secFillForm();alert('رجعنا للإعدادات الافتراضية')}
+
+function loadImgs(){try{return Object.assign({},{badge:null,sidebar:null,login:null,loginBg:null,logo:null},JSON.parse(localStorage.getItem(LS_IMG)||'{}'))}catch{return {badge:null,sidebar:null,login:null,loginBg:null,logo:null}}}
+function saveImgs(obj){localStorage.setItem(LS_IMG,JSON.stringify(obj))}
+function fileToDataURL(file,cb){const r=new FileReader();r.onload=()=>cb(r.result);r.readAsDataURL(file)}
+function acceptPngGif(file){return file && (file.type==='image/png' || file.type==='image/gif')}
+;['cfg-badge-file','cfg-side-file','cfg-login-file','cfg-loginbg-file','cfg-logo-file'].forEach(id=>{
+  const el=g(id); if(!el) return;
+  el.addEventListener('change',e=>{
+    const f=e.target.files&&e.target.files[0]; if(!f) return;
+    if(!acceptPngGif(f)){alert('PNG أو GIF فقط'); e.target.value=''; return;}
+    fileToDataURL(f,(data)=>{const imgs=loadImgs();
+      if(id==='cfg-badge-file') imgs.badge=data;
+      if(id==='cfg-side-file') imgs.sidebar=data;
+      if(id==='cfg-login-file') imgs.login=data;
+      if(id==='cfg-loginbg-file') imgs.loginBg=data;
+      if(id==='cfg-logo-file') imgs.logo=data;
+      saveImgs(imgs); appcfgApply();
+    });
+  });
+});
+function clearImg(which){
+  const imgs=loadImgs();
+  if(!(which in imgs)) return;
+  imgs[which]=null; saveImgs(imgs);
+  const map={logo:['cfg-logo-url','cfg-logo-file'],badge:['cfg-badge-url','cfg-badge-file'],sidebar:['cfg-side-url','cfg-side-file'],login:['cfg-login-url','cfg-login-file'],loginBg:['cfg-loginbg-url','cfg-loginbg-file']};
+  const pair=map[which]||[];
+  if(pair[0]) s(pair[0],'');
+  if(pair[1]){ const f=g(pair[1]); if(f) f.value=''; }
+  appcfgApply();
+  alert('تم حذف الصورة من الإعدادات.');
+}
+function previewUrl(which){
+  const urlId={logo:'cfg-logo-url',badge:'cfg-badge-url',sidebar:'cfg-side-url',login:'cfg-login-url',loginBg:'cfg-loginbg-url'}[which];
+  if(!urlId) return;
+  const u=v(urlId); if(!u){alert('أدخل URL أولاً');return}
+  window.open(u,'_blank');
+}
+function toggleAcc(id){ const acc=g(id); acc.classList.toggle('open'); }
+function appcfgApply(){
+  const c=appcfgLoad(); const imgs=loadImgs();
+  document.title=c.appTitle+' - Dashboard';
+  const titleTop=g('appTitleTop');
+  if(imgs.logo){ titleTop.innerHTML=`<img src="${imgs.logo}" style="height:28px;border-radius:6px;vertical-align:middle">`; }
+  else { titleTop.textContent=c.appTitle; }
+  g('lbl-nav-home').textContent='🏠 '+(c.nav.home||APP_DEFAULT.nav.home);
+  g('lbl-nav-irrig').textContent='🌿 '+(c.nav.irrig||APP_DEFAULT.nav.irrig);
+  g('lbl-nav-trait').textContent='💧 '+(c.nav.trait||APP_DEFAULT.nav.trait);
+  g('lbl-nav-settings').textContent='⚙️ '+(c.nav.settings||APP_DEFAULT.nav.settings);
+  g('lbl-nav-logout').textContent='🚪 '+(c.nav.logout||APP_DEFAULT.nav.logout);
+  g('lbl-tile-operators').textContent=c.tiles.operators||APP_DEFAULT.tiles.operators;
+  g('lbl-tile-profiles').textContent=c.tiles.profiles||APP_DEFAULT.tiles.profiles;
+  g('lbl-tile-refs').textContent=c.tiles.refs||APP_DEFAULT.tiles.refs;
+  g('lbl-tile-rights').textContent=c.tiles.rights||APP_DEFAULT.tiles.rights;
+  g('lbl-tile-pass').textContent=c.tiles.pass||APP_DEFAULT.tiles.pass;
+  g('lbl-tile-appcfg').textContent=c.tiles.appcfg||APP_DEFAULT.tiles.appcfg;
+  g('lbl-ref-ferme').textContent=c.refLabels.ferme;
+  g('lbl-ref-companies').textContent=c.refLabels.companies;
+  g('lbl-ref-responsables').textContent=c.refLabels.responsables;
+  g('lbl-ref-stations').textContent=c.refLabels.stations;
+  g('lbl-ref-secteurs').textContent=c.refLabels.secteurs;
+  g('lbl-ref-parcelles').textContent=c.refLabels.parcelles;
+  g('lbl-ref-transports').textContent=c.refLabels.transports;
+  g('lbl-ref-varietes').textContent=c.refLabels.varietes;
+  g('lbl-ref-varietes_champ').textContent=c.refLabels.varietes_champ;
+  g('lbl-ref-gestions').textContent=c.refLabels.gestions;
+  g('lbl-ref-achats').textContent=c.refLabels.achats;
+  const badge=g('appBadgeImg'); if(imgs.badge){badge.src=imgs.badge;badge.classList.remove('hidden')} else badge.classList.add('hidden');
+  const sbWrap=g('sidebarBrand'), sbImg=g('sidebarBrandImg'); if(imgs.sidebar){sbImg.src=imgs.sidebar;sbWrap.classList.remove('hidden')} else sbWrap.classList.add('hidden');
+  const ops = loadOps(); if(ops.length===0){ g('firstRunHint').classList.remove('hidden'); } else { g('firstRunHint').classList.add('hidden'); }
+}
+function appcfgFillForm(){
+  const c=appcfgLoad();
+  s('cfg-nav-home',c.nav.home); s('cfg-nav-irrig',c.nav.irrig); s('cfg-nav-trait',c.nav.trait); s('cfg-nav-settings',c.nav.settings); s('cfg-nav-logout',c.nav.logout);
+  s('cfg-tile-operators',c.tiles.operators); s('cfg-tile-profiles',c.tiles.profiles); s('cfg-tile-refs',c.tiles.refs); s('cfg-tile-rights',c.tiles.rights); s('cfg-tile-pass',c.tiles.pass);
+}
+function loadSec(){try{return JSON.parse(localStorage.getItem(LS_SEC)||'{}')}catch{return{}}}
+function saveSec(o){localStorage.setItem(LS_SEC,JSON.stringify(o))}
+function hashLite(s){let h=0;for(let i=0;i<s.length;i++){h=((h<<5)-h)+s.charCodeAt(i);h|=0}return String(h)}
+function secFillForm(){
+  const sec=loadSec();
+  s('sec-email',sec.email||''); s('sec-phone',sec.phone||'');
+  s('sec-question',sec.question||''); s('sec-answer','');
+  s('sec-code', sec.recoveryCode? String(sec.recoveryCode):'');
+}
+function secGenCode(){
+  const code = Math.floor(100000 + Math.random()*900000);
+  const sec = loadSec(); sec.recoveryCode = code; saveSec(sec);
+  s('sec-code', String(code));
+  alert('Code généré: '+code);
+}
+function appcfgSave(){
+  const o=appcfgLoad();
+  const imgs=loadImgs();
+  const urlOk = u => !u || /\.(png|gif)(\?|#|$)/i.test(u);
+  const logoUrl=v('cfg-logo-url'); if(logoUrl && !urlOk(logoUrl)) return alert('Logo URL doit être PNG/GIF'); if(logoUrl) imgs.logo=logoUrl;
+  o.nav.home=v('cfg-nav-home')||APP_DEFAULT.nav.home;
+  o.nav.irrig=v('cfg-nav-irrig')||APP_DEFAULT.nav.irrig;
+  o.nav.trait=v('cfg-nav-trait')||APP_DEFAULT.nav.trait;
+  o.nav.settings=v('cfg-nav-settings')||APP_DEFAULT.nav.settings;
+  o.nav.logout=v('cfg-nav-logout')||APP_DEFAULT.nav.logout;
+  o.tiles.operators=v('cfg-tile-operators')||APP_DEFAULT.tiles.operators;
+  o.tiles.profiles=v('cfg-tile-profiles')||APP_DEFAULT.tiles.profiles;
+  o.tiles.refs=v('cfg-tile-refs')||APP_DEFAULT.tiles.refs;
+  o.tiles.rights=v('cfg-tile-rights')||APP_DEFAULT.tiles.rights;
+  o.tiles.pass=v('cfg-tile-pass')||APP_DEFAULT.tiles.pass;
+  const sec = loadSec();
+  sec.email = v('sec-email'); sec.phone = v('sec-phone'); sec.question = v('sec-question');
+  const ans = v('sec-answer'); if(ans) sec.answerHash = hashLite(ans.toLowerCase());
+  saveSec(sec);
+  const badgeUrl=v('cfg-badge-url'); if(badgeUrl && !urlOk(badgeUrl)) return alert('Badge URL: PNG/GIF'); if(badgeUrl) imgs.badge=badgeUrl;
+  const sideUrl=v('cfg-side-url'); if(sideUrl && !urlOk(sideUrl)) return alert('Sidebar URL: PNG/GIF'); if(sideUrl) imgs.sidebar=sideUrl;
+  const loginUrl=v('cfg-login-url'); if(loginUrl && !urlOk(loginUrl)) return alert('Login banner URL: PNG/GIF'); if(loginUrl) imgs.login=loginUrl;
+  const loginBgUrl=v('cfg-loginbg-url'); if(loginBgUrl && !urlOk(loginBgUrl)) return alert('Login background URL: PNG/GIF'); if(loginBgUrl) imgs.loginBg=loginBgUrl;
+  saveImgs(imgs); appcfgSaveToLS(o); appcfgApply(); appcfgFillForm(); secFillForm();
+  alert('تم الحفظ ✅');
+}
+function loadProfiles(){try{return JSON.parse(localStorage.getItem(LS_PROFILES))||[]}catch{return []}}
+function saveProfiles(a){localStorage.setItem(LS_PROFILES,JSON.stringify(a))}
+function renderProfiles(){const list=g('profilesList'),d=loadProfiles();if(d.length===0){list.innerHTML='<div class="item"><span class="muted">لا توجد بروفايلات بعد.</span></div>';return}
+  list.innerHTML=d.map((n,i)=>`<div class="item"><div class="meta"><b>${escapeHtml(n)}</b></div><div class="actions"><button class="btn icon" onclick="profileEdit(${i})">✏️</button><button class="btn danger icon" onclick="removeProfile(${i})">🗑️</button></div></div>`).join('')}
+function profileEdit(i){const d=loadProfiles(),old=d[i],nv=prompt('Modifier le profil:',old);if(nv===null)return;const val=nv.trim();if(!val){alert('Nom vide.');return}
+  if(val.toLowerCase()!==old.toLowerCase()&&d.some(x=>x.toLowerCase()===val.toLowerCase())){alert('Existe déjà.');return}d[i]=val;saveProfiles(d);renderProfiles();opRefreshProfileSelects()}
+function addProfile(){const name=v('profileName');if(!name){alert('Entrer un nom de profil.');return}const d=loadProfiles();if(d.some(x=>x.toLowerCase()===name.toLowerCase())){alert('Ce profil existe déjà.');return}
+  d.push(name);saveProfiles(d);s('profileName','');toggleAddForm(false);renderProfiles();opRefreshProfileSelects()}
+function removeProfile(i){const d=loadProfiles();if(!confirm('Supprimer le profil : '+d[i]+' ?'))return;d.splice(i,1);saveProfiles(d);renderProfiles()}
+function toggleAddForm(sh){const f=g('addForm');sh?f.classList.remove('hidden'):f.classList.add('hidden')}
+function showProfilesHint(){alert('أضف/عدّل البروفايلات واستعملها مع المستخدمين.')}
+function loadFarms(){try{return JSON.parse(localStorage.getItem(LS_FARMS))||[]}catch{return []}}
+function saveFarms(a){localStorage.setItem(LS_FARMS,JSON.stringify(a))}
+function farmToggleForm(sh){const f=g('farmAddForm');sh?(f.classList.remove('hidden'),g('farm_name').focus()):f.classList.add('hidden')}
+function farmAdd(){const o={name:v('farm_name'),area:v('farm_area'),company:v('farm_company'),location:v('farm_location'),manager:v('farm_manager'),phone:v('farm_phone')};
+  if(!o.name){alert('Nom de la ferme requis.');return}const d=loadFarms();if(d.some(x=>x.name.toLowerCase()===o.name.toLowerCase())){alert('Cette ferme existe déjà.');return}
+  d.push(o);saveFarms(d);farmToggleForm(false);renderFarms();opRefreshFarmCombos()}
+function renderFarms(){const w=g('farmsList'),d=loadFarms();if(d.length===0){w.innerHTML='<div class="item"><span class="muted">لا توجد ضيعات بعد.</span></div>';return}
+  w.innerHTML=d.map((f,i)=>`<div class="item"><div class="meta"><span><b>Ferme:</b> ${escapeHtml(f.name)}</span><span><b>Surface:</b> ${escapeHtml(f.area||'')}</span><span><b>Société:</b> ${escapeHtml(f.company||'')}</span><span><b>Lieu:</b> ${escapeHtml(f.location||'')}</span><span><b>Resp.:</b> ${escapeHtml(f.manager||'')}</span><span><b>Tél:</b> ${escapeHtml(f.phone||'')}</span></div><div class="actions"><button class="btn icon" onclick="farmEdit(${i})">✏️</button><button class="btn danger icon" onclick="farmDelete(${i})">🗑️</button></div></div>`).join('')}
+let farmEditIndex=null;
+function farmEdit(i){const f=loadFarms()[i];farmEditIndex=i;s('edit_farm_name',f.name||'');s('edit_farm_area',f.area||'');s('edit_farm_company',f.company||'');s('edit_farm_location',f.location||'');s('edit_farm_manager',f.manager||'');s('edit_farm_phone',f.phone||'');farmOpenModal()}
+function farmOpenModal(){g('farmModal').classList.add('show')}function farmCloseModal(){g('farmModal').classList.remove('show');farmEditIndex=null}
+function farmSaveEdit(){if(farmEditIndex===null)return;const d=loadFarms(),vobj={name:v('edit_farm_name'),area:v('edit_farm_area'),company:v('edit_farm_company'),location:v('edit_farm_location'),manager:v('edit_farm_manager'),phone:v('edit_farm_phone')};
+  if(!vobj.name){alert('Nom de la ferme requis.');return}
+  if(vobj.name.toLowerCase()!==d[farmEditIndex].name.toLowerCase()&&d.some(x=>x.name.toLowerCase()===vobj.name.toLowerCase())){alert('Nom de ferme déjà utilisé.');return}
+  d[farmEditIndex]=vobj;saveFarms(d);farmCloseModal();renderFarms();opRefreshFarmCombos()}
+function farmDelete(i){const d=loadFarms();if(!confirm('Supprimer la ferme: '+d[i].name+' ?'))return;d.splice(i,1);saveFarms(d);renderFarms();opRefreshFarmCombos()}
+function showFarmsHint(){alert('أضف ضيعاتك هنا واستعملها عند إنشاء المستخدمين.')}
+function loadOps(){try{return JSON.parse(localStorage.getItem(LS_OPERATORS))||[]}catch{return []}}
+function saveOps(a){localStorage.setItem(LS_OPERATORS,JSON.stringify(a))}
+function opToggleForm(sh){const f=g('opAddForm');if(sh){f.classList.remove('hidden');g('op_username').focus();opRefreshProfileSelects();opRefreshFarmCombos()}else f.classList.add('hidden')}
+function opBuildProfileOptions(id){const sel=g(id);if(!sel)return;const p=loadProfiles();sel.innerHTML=p.length?p.map(x=>`<option value="${escapeHtml(x)}">${escapeHtml(x)}</option>`).join(''):`<option value="">(Aucun profil)</option>`}
+function opRefreshProfileSelects(){opBuildProfileOptions('op_profile');opBuildProfileOptions('edit_profile')}
+function comboFill(idBase,items){const input=g(idBase+'_input'),list=g(idBase+'_list'),hidden=g(idBase);
+  function render(q=''){const m=items.filter(x=>x.toLowerCase().includes(q.toLowerCase()));list.innerHTML=m.length?m.map(v=>`<div class="combo-item" data-v="${escapeHtml(v)}">${escapeHtml(v)}</div>`).join(''):`<div class="combo-item muted">(aucun résultat)</div>`}
+  render();input.oninput=()=>render(input.value);input.onfocus=()=>{list.classList.remove('hidden');render(input.value)};
+  document.addEventListener('click',e=>{if(!list.contains(e.target)&&e.target!==input)list.classList.add('hidden')});
+  list.onclick=e=>{const el=e.target.closest('.combo-item');if(!el)return;const val=el.getAttribute('data-v');input.value=val;hidden.value=val;list.classList.add('hidden')}
+}
+function opRefreshFarmCombos(){const farms=loadFarms().map(f=>f.name);comboFill('op_ferme',farms);comboFill('edit_ferme',farms)}
+function renderOps(){const w=g('operatorsList'),d=loadOps();if(d.length===0){w.innerHTML='<div class="item"><span class="muted">لا يوجد أي مستخدم بعد.</span></div>';return}
+  w.innerHTML=d.map((u,i)=>`<div class="item"><div class="meta"><span><b>Utilisateur:</b> ${escapeHtml(u.username)}</span><span><b>Profil:</b> ${escapeHtml(u.profile||'')}</span><span><b>Ferme:</b> ${escapeHtml(u.ferme||'')}</span></div><div class="actions"><button class="btn icon" onclick="opEdit(${i})">✏️</button><button class="btn danger icon" onclick="opDelete(${i})">🗑️</button></div></div>`).join('')}
+let editIndex=null;
+function opOpenModal(){g('opModal').classList.add('show')}function opCloseModal(){g('opModal').classList.remove('show');editIndex=null}
+function opEdit(i){const d=loadOps(),u=d[i];editIndex=i;s('edit_username',u.username);s('edit_password',u.password);opRefreshProfileSelects();g('edit_profile').value=u.profile||'';const farms=loadFarms().map(f=>f.name);comboFill('edit_ferme',farms);s('edit_ferme_input',u.ferme||'');s('edit_ferme',u.ferme||'');opOpenModal()}
+function opSaveEdit(){if(editIndex===null)return;const d=loadOps(),u=d[editIndex];const nu=v('edit_username'),np=v('edit_password'),npr=g('edit_profile').value.trim(),nfe=v('edit_ferme');
+  if(!nu||!np||!npr||!nfe){alert('Remplir tous les champs.');return}
+  if(nu.toLowerCase()!==u.username.toLowerCase()&&d.some(x=>x.username.toLowerCase()===nu.toLowerCase())){alert('Nom d’utilisateur déjà utilisé.');return}
+  d[editIndex]={username:nu,password:np,profile:npr,ferme:nfe};saveOps(d);opCloseModal();renderOps()}
+function opAdd(){const username=v('op_username'),password=v('op_password'),profile=g('op_profile').value.trim(),ferme=v('op_ferme');if(!username||!password||!profile||!ferme){alert('Remplir tous les champs.');return}
+  const d=loadOps();if(d.some(x=>x.username.toLowerCase()===username.toLowerCase())){alert('Cet utilisateur existe déjà.');return}
+  d.push({username,password,profile,ferme});saveOps(d);s('op_username','');s('op_password','');s('op_ferme_input','');s('op_ferme','');opToggleForm(false);renderOps()}
+function opDelete(i){const d=loadOps();if(!confirm('Supprimer: '+d[i].username+' ?'))return;d.splice(i,1);saveOps(d);renderOps()}
+const LS_REFS_KEYS_DEFAULT={companies:[],responsables:[],stations:[],secteurs:[],parcelles:[],transports:[],varietes:[],varietes_champ:[],gestions:[],achats:[]};
+const REF_LABELS={companies:"Société",responsables:"Responsable",stations:"Station",secteurs:"Secteur",parcelles:"Parcelle",transports:"Transport",varietes:"Variété",varietes_champ:"Variété champ",gestions:"Gestion stock",achats:"Achat"};
+let currentRefKey=null;
+function loadRefs(){try{return Object.assign({},LS_REFS_KEYS_DEFAULT,JSON.parse(localStorage.getItem(LS_REFS)||'{}'))}catch{return {...LS_REFS_KEYS_DEFAULT}}}
+function saveRefs(o){localStorage.setItem(LS_REFS,JSON.stringify(o))}
+function refsOpen(k){currentRefKey=k;g('refsHome').classList.add('hidden');g('refsCat').classList.remove('hidden');g('refsCatTitle').textContent=REF_LABELS[k]||'Catégorie';g('refsHint').classList.add('hidden');refsToggleForm(false);refsRender()}
+function refsToggleForm(sh){const f=g('refsAddForm');if(sh){f.classList.remove('hidden');g('refsInput').focus()}else{f.classList.add('hidden');s('refsInput','')}}
+function toggleRefsHint(){g('refsHint').classList.toggle('hidden')}
+function refsRender(){const wrap=g('refsList'),arr=(loadRefs()[currentRefKey]||[]);if(arr.length===0){wrap.innerHTML='<div class="item"><span class="muted">لا توجد عناصر بعد.</span></div>';return}
+  wrap.innerHTML=arr.map((name,idx)=>`<div class="item"><div class="meta"><span><b>${escapeHtml(name)}</b></span></div><div class="actions"><button class="btn icon" onclick="refsEdit(${idx})">✏️</button><button class="btn danger icon" onclick="refsDelete(${idx})">🗑️</button></div></div>`).join('')}
+function refsAdd(){const name=v('refsInput');if(!name){alert('Nom requis.');return}const refs=loadRefs(),arr=refs[currentRefKey]||[];if(arr.some(x=>x.toLowerCase()===name.toLowerCase())){alert('Existe déjà.');return}
+  arr.push(name);refs[currentRefKey]=arr;saveRefs(refs);refsToggleForm(false);refsRender()}
+function refsEdit(i){const refs=loadRefs(),arr=refs[currentRefKey]||[],old=arr[i],nv=prompt('Modifier:',old);if(nv===null)return;const val=nv.trim();if(!val){alert('Nom vide.');return}
+  if(val.toLowerCase()!==old.toLowerCase()&&arr.some(x=>x.toLowerCase()===val.toLowerCase())){alert('Existe déjà.');return}arr[i]=val;refs[currentRefKey]=arr;saveRefs(refs);refsRender()}
+function refsDelete(i){const refs=loadRefs(),arr=refs[currentRefKey]||[];if(!confirm('Supprimer: '+arr[i]+' ?'))return;arr.splice(i,1);refs[currentRefKey]=arr;saveRefs(refs);refsRender()}
+function showSetupBanner(){
+  const el = document.getElementById('setupBanner');
+  if(!el) return;
+  if(SETUP_ON){ el.classList.remove('hidden'); }
+  else { el.classList.add('hidden'); }
+}
+function disableSetup(){
+  localStorage.removeItem('ab_setup');
+  alert('تم إيقاف Setup Mode. من فضلك أضف مستخدمًا في Opérateurs قبل تسجيل الخروج.');
+  location.reload();
+}
+(function init(){
+  if(!localStorage.getItem(LS_PROFILES)) saveProfiles(DEFAULT_PROFILES.slice());
+  saveRefs(loadRefs()); appcfgApply(); appcfgFillForm(); secFillForm();
+  renderProfiles(); renderFarms(); renderOps();
+  showSetupBanner();
+})();
+</script>
+</body>
+</html>
