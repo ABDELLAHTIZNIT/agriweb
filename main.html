@@ -1,13 +1,21 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AB AGRIWEB - Tableau de bord</title>
+<script>
+/* Fix: hamburger + overlay */
+window.addEventListener('DOMContentLoaded', ()=>{
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('overlay');
+  const btn = document.querySelector('.menu-btn');
 
-  <!-- CSS -->
-  <link rel="stylesheet" href="assets/css/base.css">
-</head>
+  function openMenu(){ sidebar.classList.add('active'); overlay.classList.add('active'); }
+  function closeMenu(){ sidebar.classList.remove('active'); overlay.classList.remove('active'); }
+
+  btn?.addEventListener('click', ()=> {
+    if (sidebar.classList.contains('active')) closeMenu(); else openMenu();
+  });
+  overlay?.addEventListener('click', closeMenu);
+  document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeMenu(); });
+});
+</script>
+
 <body>
 
   <!-- شريط علوي -->
