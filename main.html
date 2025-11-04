@@ -4,71 +4,50 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AB AGRIWEB</title>
+  <link rel="stylesheet" href="assets/css/main.css">
   <style>
-    :root {
-      --bg: #0f172a;
-      --panel: #1e293b;
-      --text: #e6f6e6;
-      --accent: #22c55e;
-    }
-    * { box-sizing: border-box; }
     body {
-      margin: 0;
-      background: var(--bg);
-      color: var(--text);
+      background: linear-gradient(180deg, #0f172a, #1e293b);
+      color: #e2e8f0;
       font-family: system-ui, sans-serif;
+      margin: 0;
       min-height: 100vh;
     }
 
-    /* الشريط العلوي */
     .topbar {
-      position: relative;
-      height: 56px;
       display: flex;
       align-items: center;
-      padding: 0 12px;
-      background: linear-gradient(90deg, #0b1220, #10243f);
-      border-bottom: 1px solid #1e293b;
+      justify-content: space-between;
+      background: #0b1220;
+      padding: 10px 16px;
+      border-bottom: 1px solid #243046;
+      position: relative;
       z-index: 10;
     }
 
     .hamb {
       font-size: 24px;
       cursor: pointer;
-      user-select: none;
-      color: var(--accent);
+      color: #22c55e;
     }
 
     .title {
-      margin-left: 10px;
+      color: #22c55e;
       font-weight: bold;
-      color: var(--accent);
       font-size: 18px;
     }
 
-    /* اللوغو */
-    #logoAzura {
-      position: absolute;
-      right: 12px;
-      top: 50%;
-      transform: translateY(-50%);
-      height: 28px;
-      object-fit: contain;
-      pointer-events: none;
-    }
-
-    /* القائمة الجانبية */
     .sidebar {
       position: fixed;
-      top: 56px;
+      top: 0;
       left: -240px;
       width: 220px;
       height: 100%;
       background: rgba(15, 23, 42, 0.98);
-      box-shadow: 2px 0 5px rgba(0, 0, 0, 0.3);
       transition: left 0.3s ease;
-      padding-top: 15px;
+      box-shadow: 2px 0 8px rgba(0,0,0,0.4);
       z-index: 9;
+      padding-top: 60px;
     }
 
     .sidebar.active {
@@ -77,27 +56,80 @@
 
     .sidebar a {
       display: block;
-      color: var(--text);
+      padding: 14px 20px;
+      color: #e2e8f0;
       text-decoration: none;
-      padding: 12px 20px;
       border-bottom: 1px solid #1e293b;
       transition: background 0.2s;
     }
 
     .sidebar a:hover {
-      background: var(--accent);
-      color: #000;
+      background: #22c55e;
+      color: #0b1220;
     }
 
-    /* المحتوى */
     .content {
       padding: 20px;
-      text-align: center;
+      margin-top: 50px;
     }
 
-    h2 {
+    .section {
+      background: #0b1220;
+      border: 1px solid #243046;
+      border-radius: 10px;
+      padding: 16px;
       margin-top: 10px;
-      color: var(--accent);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+    }
+
+    .section h2 {
+      color: #22c55e;
+      font-size: 18px;
+      margin-bottom: 12px;
+    }
+
+    .form-row {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+
+    label {
+      color: #cbd5e1;
+    }
+
+    input, select {
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #334155;
+      background: #091227;
+      color: #e2e8f0;
+    }
+
+    button {
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      background: #22c55e;
+      color: #0b1220;
+      font-weight: bold;
+      transition: background 0.2s;
+    }
+
+    button:hover {
+      background: #16a34a;
+    }
+
+    #logoAzura {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      height: 26px;
+      object-fit: contain;
+      pointer-events: none;
     }
   </style>
 </head>
@@ -110,22 +142,62 @@
   </div>
 
   <div class="sidebar" id="sidebar">
-    <a href="#">🏠 Accueil</a>
-    <a href="#">💧 Irrigation</a>
-    <a href="#">🧪 Traitement</a>
-    <a href="#">⚙️ Paramètres</a>
-    <a href="#">🚪 Logout</a>
+    <a href="#" onclick="showPage('home')">🏠 Accueil</a>
+    <a href="#" onclick="showPage('irrigation')">💧 Irrigation</a>
+    <a href="#" onclick="showPage('traitement')">🧪 Traitement</a>
+    <a href="#" onclick="showPage('param')">⚙️ Paramètres</a>
+    <a href="#" onclick="logout()">🚪 Logout</a>
   </div>
 
-  <div class="content">
-    <h2>Bienvenue 👋</h2>
-    <p>Page d'accueil.</p>
+  <div class="content" id="content">
+    <div id="home" class="section">
+      <h2>Bienvenue 👋</h2>
+      <p>Page d'accueil.</p>
+    </div>
+
+    <div id="param" class="section" style="display:none">
+      <h2>Réglages de l’application</h2>
+      <p>كل إعدادات التطبيق مجمعة حسب النوع.</p>
+
+      <div class="form-row">
+        <label>Logo de l’application (PNG/GIF)</label>
+        <input type="text" placeholder="URL du logo">
+        <button>Choisir un fichier</button>
+      </div>
+
+      <div class="form-row">
+        <label>Nom / Titre de l’application</label>
+        <input type="text" placeholder="AB AGRIWEB">
+      </div>
+
+      <div class="form-row">
+        <label>Couleur principale</label>
+        <input type="color" value="#22c55e">
+      </div>
+
+      <button>Enregistrer</button>
+      <button style="background:#dc2626;color:#fff;">Réinitialiser</button>
+    </div>
   </div>
 
   <script>
     function toggleSidebar() {
-      const sidebar = document.getElementById("sidebar");
-      sidebar.classList.toggle("active");
+      const s = document.getElementById("sidebar");
+      s.classList.toggle("active");
+    }
+
+    function showPage(id) {
+      const pages = document.querySelectorAll(".section");
+      pages.forEach(p => p.style.display = "none");
+      document.getElementById(id).style.display = "block";
+
+      // غلق القائمة بعد اختيار الصفحة
+      document.getElementById("sidebar").classList.remove("active");
+    }
+
+    function logout() {
+      alert("Déconnexion réussie !");
+      window.location.href = "index.html";
     }
   </script>
 </body>
