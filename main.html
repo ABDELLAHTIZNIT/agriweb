@@ -1,42 +1,59 @@
 <!doctype html>
-<html lang="ar">
+<html lang="fr">
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>AB AGRIWEB — Main</title>
-  <link rel="stylesheet" href="assets/css/base.css">
+  <title>AB AGRIWEB - Dashboard</title>
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="assets/css/pages/main.css">
 </head>
 <body>
-  <header class="topbar">
-    <button id="hambBtn" class="menu-btn">☰</button>
-    <div class="title">AB AGRIWEB</div>
-    <div class="right"></div>
-  </header>
+  <!-- Topbar -->
+  <div class="topbar">
+    <button class="hamb" aria-label="menu">☰</button>
+    <div style="font-weight:800;letter-spacing:.5px">AB AGRIWEB</div>
+    <button class="btn icon" title="action">🧩</button>
+  </div>
 
-  <div id="overlay" class="overlay"></div>
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <a href="#" class="active" id="nav-home">🏠 Accueil</a>
+    <a href="#" id="nav-irrig">🌿 Irrigation</a>
+    <a href="#" id="nav-trait">💧 Traitement</a>
+    <a href="#" id="nav-settings">⚙️ Paramètres</a>
+  </nav>
+  <div class="overlay"></div>
 
-
-  <aside id="sidebar" class="sidebar">
-  <!-- هنا الروابط ديال Accueil / Irrigation / Traitement ... -->
-</aside>
-
-    <nav>
-      <ul>
-        <li><a href="#">Accueil</a></li>
-        <li><a href="#">Irrigation</a></li>
-        <li><a href="#">Traitement</a></li>
-        <li><a href="#">Paramètres</a></li>
-      </ul>
-    </nav>
-  </aside>
-
-  <main class="mainContent">
-    <section class="welcome">
+  <!-- CONTENT -->
+  <main class="content">
+    <section class="card">
       <h2>Bienvenue 👋</h2>
-      <p>مرحبا! استعمل القائمة من الأعلى للتنقّل.</p>
+      <p class="hint">مرحبا بك. استعمل القائمة لبدء التنقل.</p>
+    </section>
+
+    <section class="card" id="page-settings" style="display:none">
+      <h2>Paramètres</h2>
+      <div class="stack">
+        <div class="tile"><div class="icon">👥</div><div><h4>OPÉRATEUR</h4><p>Gestion des utilisateurs</p></div></div>
+        <div class="tile"><div class="icon">🧩</div><div><h4>PROFILE</h4><p>Gestion des profils</p></div></div>
+        <div class="tile"><div class="icon">🗂️</div><div><h4>RÉFÉRENTIELS</h4><p>Listes maîtres</p></div></div>
+        <div class="tile"><div class="icon">🔑</div><div><h4>MOT DE PASSE</h4><p>Changer le mot de passe</p></div></div>
+      </div>
     </section>
   </main>
 
+  <!-- Scripts (order matters) -->
   <script src="assets/js/ui/sidebar.js"></script>
+  <script>
+    // mini router to show/hide settings
+    const pageSettings = document.getElementById('page-settings');
+    document.getElementById('nav-settings').addEventListener('click', (e)=>{
+      e.preventDefault(); pageSettings.style.display='block';
+    });
+    document.getElementById('nav-home').addEventListener('click', (e)=>{
+      e.preventDefault(); pageSettings.style.display='none';
+    });
+  </script>
 </body>
 </html>
