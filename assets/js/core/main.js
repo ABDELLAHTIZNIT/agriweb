@@ -1,32 +1,23 @@
-// ==== main.js ====
-// ربط كل الموديولات (config, storage, security, utils)
-// وإدارة التشغيل العام للتطبيق
+// main page behaviors (sidebar toggle + keyboard)
+(function(){
+  function $(sel){ return document.querySelector(sel); }
+  function addClass(el, c){ if(!el) return; el.classList.remove('hidden'); el.classList.add('active'); }
+  function removeClass(el, c){ if(!el) return; el.classList.remove('active'); el.classList.add('hidden'); }
 
-import AppConfig from "./core/config.js";
-import StorageManager from "./core/storage.js";
-import Security from "./core/security.js";
-import Utils from "./core/utils.js";
+  document.addEventListener('DOMContentLoaded', ()=>{
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('overlay');
+    const btn = document.querySelector('.menu-btn');
 
-document.addEventListener("DOMContentLoaded", () => {
-  console.log(`🚀 ${AppConfig.appName} - version ${AppConfig.version}`);
+    function openMenu(){ sidebar.classList.remove('hidden'); overlay.classList.remove('hidden'); }
+    function closeMenu(){ sidebar.classList.add('hidden'); overlay.classList.add('hidden'); }
 
-  // إعداد الواجهة العلوية
-  const topbarTitle = Utils.$("topbarTitle");
-  if (topbarTitle) {
-    topbarTitle.textContent = AppConfig.appName;
-  }
-
-  // تجربة تحميل إعدادات
-  const savedTheme = StorageManager.load("theme", null);
-  if (savedTheme) {
-    document.body.style.background = savedTheme.background;
-    console.log("🎨 Thème chargé depuis LocalStorage");
-  }
-
-  // مثال لتوليد كود أمان
-  const code = Security.generateRecoveryCode();
-  console.log("🔐 Exemple de code recovery:", code);
-
-  // مثال لإشعار عند بدء التشغيل
-  Utils.notify(`${AppConfig.appName} prêt à être utilisé`, "info");
-});
+    btn?.addEventListener('click', ()=> {
+      if(!sidebar) return;
+      const isHidden = sidebar.classList.contains('hidden');
+      if(isHidden) openMenu(); else closeMenu();
+    });
+    overlay?.addEventListener('click', closeMenu);
+    document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape') closeMenu(); });
+  });
+})();
