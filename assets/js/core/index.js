@@ -1,63 +1,51 @@
-// ==== index.js ====
-// منطق صفحة تسجيل الدخول في تطبيق AB AGRIWEB
+// login page logic
+(function(){
+  // seed admin if empty (for first-time testing)
+  try {
+    const ops = AbStorage.get('ab_operators') || [];
+    if(!ops || ops.length === 0){
+      AbStorage.set('ab_operators', [AppConfig.seedAdmin]);
+      console.log('Seeded admin user (username: admin / password: 20202020)');
+    }
+  } catch(e){}
 
-import AppConfig from "./core/config.js";
-import StorageManager from "./core/storage.js";
-import Security from "./core/security.js";
-import Utils from "./core/utils.js";
+  // DOM helpers
+  function el(id){ return document.getElementById(id); }
+  window.togglePass = function(){
+    const i = el('p'); if(!i) return; i.type = i.type === 'password' ? 'text' : 'password';
+  };
 
-document.addEventListener("DOMContentLoaded", () => {
-  console.log(`🔐 Page de connexion - ${AppConfig.appName}`);
+  function openRecovery(){ el('recoveryModal').classList.remove('hidden'); }
+  window.openRecovery = openRecovery;
+  window.closeRecovery = function(){ el('recoveryModal').classList.add('hidden'); };
 
-  const form = Utils.$("loginForm");
-  const userInput = Utils.$("u");
-  const passInput = Utils.$("p");
-  const loginBtn = Utils.$("loginBtn");
+  function loadOps(){ return AbStorage.get('ab_operators') || []; }
 
-  if (!form || !loginBtn) {
-    console.warn("Formulaire de login non trouvé");
-    return;
-  }
+  // login flow
+  window.loginFlow = function(){
+    const ops = loadOps();
+    const u = (el('u').value || '').trim();
+    const p = (el('p').value || '').trim();
 
-  loginBtn.addEventListener("click", (e) => {
-    e.preventDefault();
-
-    const username = userInput.value.trim();
-    const password = passInput.value.trim();
-
-    if (!username || !password) {
-      Utils.notify("Veuillez remplir les deux champs.", "error");
+    const setupOn = AbStorage.getRaw('ab_setup') === '1';
+    if(ops.length === 0 && !setupOn){
+      alert('لا يمكن الدخول لأن لا يوجد مستخدم. افتح Paramètres أو استعمل Setup (no login).');
       return;
     }
+    if(!u || !p){ alert('أدخل اسم المستخدم وكلمة المرور.'); return; }
 
-    const users = StorageManager.load("ab_operators", []);
-    const found = users.find(
-      (u) =>
-        u.username.toLowerCase() === username.toLowerCase() &&
-        u.password === password
-    );
+    const found = ops.find(x => (String(x.username||'').trim().toLowerCase() === u.toLowerCase() && String(x.password||'') === p));
+    if(!found){ alert('اسم المستخدم أو كلمة المرور غير صحيحة.'); return; }
 
-    if (found) {
-      Utils.notify(`Bienvenue ${found.username} 👋`, "info");
-      setTimeout(() => {
-        window.location.href = "main.html";
-      }, 800);
-    } else {
-      Utils.notify("Nom d’utilisateur ou mot de passe incorrect ❌", "error");
-    }
+    // success => go to main
+    window.location.href = 'main.html';
+  };
+
+  document.addEventListener('DOMContentLoaded', ()=>{
+    const loginBtn = el('loginBtn'), setupBtn = el('setupBtn'), forgot = el('forgotLink');
+    loginBtn?.addEventListener('click', (e)=>{ e.preventDefault(); loginFlow(); });
+    setupBtn?.addEventListener('click', (e)=>{ e.preventDefault(); AbStorage.setRaw('ab_setup','1'); window.location.href = 'main.html'; });
+    forgot?.addEventListener('click', (e)=>{ e.preventDefault(); openRecovery(); });
   });
 
-  // زر تفعيل setup mode
-  const setupBtn = Utils.$("setupBtn");
-  if (setupBtn) {
-    setupBtn.addEventListener("click", (e) => {
-      e.preventDefault();
-      localStorage.setItem("ab_setup", "1");
-      Utils.notify("Mode setup activé ⚙️", "info");
-      window.location.href = "main.html";
-    });
-  }
-
-  // رسالة ترحيب صغيرة
-  Utils.notify(`${AppConfig.appName} prêt à l’utilisation`, "info");
-});
+})();
