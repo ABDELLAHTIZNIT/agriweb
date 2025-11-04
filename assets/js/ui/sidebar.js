@@ -1,22 +1,22 @@
-// ===== Sidebar / Hamburger controller =====
+// ===== Sidebar / Hamburger controller (ui/sidebar.js) =====
 (function () {
   function $(id) { return document.getElementById(id); }
 
   const sidebar = $('sidebar');
   const overlay = $('overlay');
 
-  // اجعل الدوال متاحة عالمياً في حال استُخدمت في HTML (onclick="toggleMenu()")
-  window.openMenu = function openMenu() {
+  // نوفر الدوال عالمياً في حالة مستعملة في HTML
+  window.openMenu = function () {
     if (!sidebar) return;
-    sidebar.classList.add('active');   // يدعم تصميمك الحالي
-    sidebar.classList.add('open');     // ولو كنت كاتستعمل "open"
+    sidebar.classList.add('active');
+    sidebar.classList.add('open');
     if (overlay) {
       overlay.classList.add('active');
       overlay.style.pointerEvents = 'auto';
     }
   };
 
-  window.closeMenu = function closeMenu() {
+  window.closeMenu = function () {
     if (!sidebar) return;
     sidebar.classList.remove('active');
     sidebar.classList.remove('open');
@@ -26,15 +26,14 @@
     }
   };
 
-  window.toggleMenu = function toggleMenu() {
+  window.toggleMenu = function () {
     if (!sidebar) return;
     const isOpen = sidebar.classList.contains('active') || sidebar.classList.contains('open');
     isOpen ? window.closeMenu() : window.openMenu();
   };
 
-  // ربط الزر والأحداث
   document.addEventListener('DOMContentLoaded', () => {
-    // جرّب نلقط أي زر ممكن: id أو class
+    // نلقط أي زر محتمل للهامبورغر
     const hambBtn =
       $('hambBtn') ||
       document.querySelector('.menu-btn') ||
@@ -48,9 +47,7 @@
       });
     }
 
-    if (overlay) {
-      overlay.addEventListener('click', window.closeMenu);
-    }
+    if (overlay) overlay.addEventListener('click', window.closeMenu);
 
     // إغلاق بـ ESC
     document.addEventListener('keydown', (e) => {
