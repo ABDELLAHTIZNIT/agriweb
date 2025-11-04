@@ -1,69 +1,38 @@
-<script>
-/* Fix: hamburger + overlay */
-window.addEventListener('DOMContentLoaded', ()=>{
-  const sidebar = document.getElementById('sidebar');
-  const overlay = document.getElementById('overlay');
-  const btn = document.querySelector('.menu-btn');
-
-  function openMenu(){ sidebar.classList.add('active'); overlay.classList.add('active'); }
-  function closeMenu(){ sidebar.classList.remove('active'); overlay.classList.remove('active'); }
-
-  btn?.addEventListener('click', ()=> {
-    if (sidebar.classList.contains('active')) closeMenu(); else openMenu();
-  });
-  overlay?.addEventListener('click', closeMenu);
-  document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeMenu(); });
-});
-</script>
-
+<!doctype html>
+<html lang="ar">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>AB AGRIWEB — Main</title>
+  <link rel="stylesheet" href="assets/css/base.css">
+</head>
 <body>
+  <header class="topbar">
+    <button class="menu-btn" aria-label="menu">☰</button>
+    <div class="title">AB AGRIWEB</div>
+    <div class="right"></div>
+  </header>
 
-  <!-- شريط علوي -->
-  <div class="topbar">
-    <button id="menuBtn" class="btn" style="padding:6px 10px;">☰</button>
-    <h1 id="topbarTitle">AB AGRIWEB</h1>
-    <button id="logoutBtn" class="btn" style="padding:6px 10px;">🚪</button>
-  </div>
+  <div id="overlay" class="overlay hidden"></div>
 
-  <!-- محتوى الصفحة -->
-  <main class="content">
-    <section id="dashboard" class="card">
+  <aside id="sidebar" class="sidebar hidden">
+    <nav>
+      <ul>
+        <li><a href="#">Accueil</a></li>
+        <li><a href="#">Irrigation</a></li>
+        <li><a href="#">Traitement</a></li>
+        <li><a href="#">Paramètres</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <main class="mainContent">
+    <section class="welcome">
       <h2>Bienvenue 👋</h2>
-      <p>Tableau de bord principal de <b>AB AGRIWEB</b>.</p>
-      <p>Choisissez une option dans le menu pour commencer.</p>
+      <p>مرحبا! استعمل القائمة من الأعلى للتنقّل.</p>
     </section>
   </main>
 
-  <!-- قائمة جانبية -->
-  <aside id="sidebar" class="card hidden" style="position:fixed;left:10px;top:70px;width:200px;padding:10px;background:#0b1220;">
-    <button class="btn" onclick="navigate('home')">🏠 Accueil</button>
-    <button class="btn" onclick="navigate('irrigation')">💧 Irrigation</button>
-    <button class="btn" onclick="navigate('traitement')">🌿 Traitement</button>
-    <button class="btn" onclick="navigate('settings')">⚙️ Paramètres</button>
-  </aside>
-
-  <!-- JS -->
-  <script type="module" src="assets/js/main.js"></script>
-
-  <script>
-    // فتح / غلق القائمة الجانبية
-    const menuBtn = document.getElementById("menuBtn");
-    const sidebar = document.getElementById("sidebar");
-    const logoutBtn = document.getElementById("logoutBtn");
-
-    menuBtn.addEventListener("click", () => {
-      sidebar.classList.toggle("hidden");
-    });
-
-    logoutBtn.addEventListener("click", () => {
-      localStorage.removeItem("ab_setup");
-      alert("Déconnexion réussie !");
-      window.location.href = "index.html";
-    });
-
-    function navigate(page) {
-      alert("Fonctionnalité en cours : " + page);
-    }
-  </script>
+  <script src="assets/js/pages/main.js"></script>
 </body>
 </html>
