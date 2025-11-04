@@ -1,204 +1,42 @@
-<!DOCTYPE html>
-<html lang="fr">
+<!doctype html>
+<html lang="ar">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AB AGRIWEB</title>
-  <link rel="stylesheet" href="assets/css/main.css">
-  <style>
-    body {
-      background: linear-gradient(180deg, #0f172a, #1e293b);
-      color: #e2e8f0;
-      font-family: system-ui, sans-serif;
-      margin: 0;
-      min-height: 100vh;
-    }
-
-    .topbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: #0b1220;
-      padding: 10px 16px;
-      border-bottom: 1px solid #243046;
-      position: relative;
-      z-index: 10;
-    }
-
-    .hamb {
-      font-size: 24px;
-      cursor: pointer;
-      color: #22c55e;
-    }
-
-    .title {
-      color: #22c55e;
-      font-weight: bold;
-      font-size: 18px;
-    }
-
-    .sidebar {
-      position: fixed;
-      top: 0;
-      left: -240px;
-      width: 220px;
-      height: 100%;
-      background: rgba(15, 23, 42, 0.98);
-      transition: left 0.3s ease;
-      box-shadow: 2px 0 8px rgba(0,0,0,0.4);
-      z-index: 9;
-      padding-top: 60px;
-    }
-
-    .sidebar.active {
-      left: 0;
-    }
-
-    .sidebar a {
-      display: block;
-      padding: 14px 20px;
-      color: #e2e8f0;
-      text-decoration: none;
-      border-bottom: 1px solid #1e293b;
-      transition: background 0.2s;
-    }
-
-    .sidebar a:hover {
-      background: #22c55e;
-      color: #0b1220;
-    }
-
-    .content {
-      padding: 20px;
-      margin-top: 50px;
-    }
-
-    .section {
-      background: #0b1220;
-      border: 1px solid #243046;
-      border-radius: 10px;
-      padding: 16px;
-      margin-top: 10px;
-      box-shadow: 0 6px 12px rgba(0,0,0,0.3);
-    }
-
-    .section h2 {
-      color: #22c55e;
-      font-size: 18px;
-      margin-bottom: 12px;
-    }
-
-    .form-row {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      margin-bottom: 10px;
-    }
-
-    label {
-      color: #cbd5e1;
-    }
-
-    input, select {
-      padding: 10px;
-      border-radius: 8px;
-      border: 1px solid #334155;
-      background: #091227;
-      color: #e2e8f0;
-    }
-
-    button {
-      padding: 10px 14px;
-      border-radius: 8px;
-      border: none;
-      cursor: pointer;
-      background: #22c55e;
-      color: #0b1220;
-      font-weight: bold;
-      transition: background 0.2s;
-    }
-
-    button:hover {
-      background: #16a34a;
-    }
-
-    #logoAzura {
-      position: absolute;
-      right: 12px;
-      top: 50%;
-      transform: translateY(-50%);
-      height: 26px;
-      object-fit: contain;
-      pointer-events: none;
-    }
-  </style>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>AB AGRIWEB — Main</title>
+  <link rel="stylesheet" href="assets/css/base.css">
 </head>
-
 <body>
-  <div class="topbar">
-    <div class="hamb" onclick="toggleSidebar()">☰</div>
+  <header class="topbar">
+    <button id="hambBtn" class="menu-btn">☰</button>
     <div class="title">AB AGRIWEB</div>
-    <img id="logoAzura" src="assets/image/azura_logo.png" alt="Azura">
-  </div>
+    <div class="right"></div>
+  </header>
 
-  <div class="sidebar" id="sidebar">
-    <a href="#" onclick="showPage('home')">🏠 Accueil</a>
-    <a href="#" onclick="showPage('irrigation')">💧 Irrigation</a>
-    <a href="#" onclick="showPage('traitement')">🧪 Traitement</a>
-    <a href="#" onclick="showPage('param')">⚙️ Paramètres</a>
-    <a href="#" onclick="logout()">🚪 Logout</a>
-  </div>
+  <div id="overlay" class="overlay"></div>
 
-  <div class="content" id="content">
-    <div id="home" class="section">
+
+  <aside id="sidebar" class="sidebar">
+  <!-- هنا الروابط ديال Accueil / Irrigation / Traitement ... -->
+</aside>
+
+    <nav>
+      <ul>
+        <li><a href="#">Accueil</a></li>
+        <li><a href="#">Irrigation</a></li>
+        <li><a href="#">Traitement</a></li>
+        <li><a href="#">Paramètres</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <main class="mainContent">
+    <section class="welcome">
       <h2>Bienvenue 👋</h2>
-      <p>Page d'accueil.</p>
-    </div>
+      <p>مرحبا! استعمل القائمة من الأعلى للتنقّل.</p>
+    </section>
+  </main>
 
-    <div id="param" class="section" style="display:none">
-      <h2>Réglages de l’application</h2>
-      <p>كل إعدادات التطبيق مجمعة حسب النوع.</p>
-
-      <div class="form-row">
-        <label>Logo de l’application (PNG/GIF)</label>
-        <input type="text" placeholder="URL du logo">
-        <button>Choisir un fichier</button>
-      </div>
-
-      <div class="form-row">
-        <label>Nom / Titre de l’application</label>
-        <input type="text" placeholder="AB AGRIWEB">
-      </div>
-
-      <div class="form-row">
-        <label>Couleur principale</label>
-        <input type="color" value="#22c55e">
-      </div>
-
-      <button>Enregistrer</button>
-      <button style="background:#dc2626;color:#fff;">Réinitialiser</button>
-    </div>
-  </div>
-
-  <script>
-    function toggleSidebar() {
-      const s = document.getElementById("sidebar");
-      s.classList.toggle("active");
-    }
-
-    function showPage(id) {
-      const pages = document.querySelectorAll(".section");
-      pages.forEach(p => p.style.display = "none");
-      document.getElementById(id).style.display = "block";
-
-      // غلق القائمة بعد اختيار الصفحة
-      document.getElementById("sidebar").classList.remove("active");
-    }
-
-    function logout() {
-      alert("Déconnexion réussie !");
-      window.location.href = "index.html";
-    }
-  </script>
+  <script src="assets/js/pages/main.js"></script>
 </body>
 </html>
