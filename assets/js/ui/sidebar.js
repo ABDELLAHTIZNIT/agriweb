@@ -1,65 +1,38 @@
-// ===== Sidebar / Hamburger controller (ui/sidebar.js) =====
-(function () {
-  function $(id) { return document.getElementById(id); }
+/* ========== Sidebar toggle + nav wiring ========== */
+(function(){
+  const $ = sel => document.querySelector(sel);
+  const sidebar = $('.sidebar');
+  const overlay = $('.overlay');
+  const btnHamb = $('.hamb');
 
-  const sidebar = $('sidebar');
-  const overlay = $('overlay');
-
-  // نوفر الدوال عالمياً في حالة مستعملة في HTML
-  window.openMenu = function () {
-    if (!sidebar) return;
-    sidebar.classList.add('active');
+  function openSide(){
+    if(!sidebar) return;
     sidebar.classList.add('open');
-    if (overlay) {
-      overlay.classList.add('active');
-      overlay.style.pointerEvents = 'auto';
-    }
-  };
-
-  window.closeMenu = function () {
-    if (!sidebar) return;
-    sidebar.classList.remove('active');
+    if(overlay){ overlay.classList.add('show'); }
+  }
+  function closeSide(){
+    if(!sidebar) return;
     sidebar.classList.remove('open');
-    if (overlay) {
-      overlay.classList.remove('active');
-      overlay.style.pointerEvents = 'none';
-    }
-  };
+    if(overlay){ overlay.classList.remove('show'); }
+  }
+  function toggleSide(){
+    if(!sidebar) return;
+    sidebar.classList.contains('open') ? closeSide() : openSide();
+  }
 
-  window.toggleMenu = function () {
-    if (!sidebar) return;
-    const isOpen = sidebar.classList.contains('active') || sidebar.classList.contains('open');
-    isOpen ? window.closeMenu() : window.openMenu();
-  };
+  // Bind
+  if(btnHamb){ btnHamb.addEventListener('click', toggleSide); }
+  if(overlay){ overlay.addEventListener('click', closeSide); }
+  document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeSide(); });
 
-  document.addEventListener('DOMContentLoaded', () => {
-    // نلقط أي زر محتمل للهامبورغر
-    const hambBtn =
-      $('hambBtn') ||
-      document.querySelector('.menu-btn') ||
-      document.querySelector('.hamb') ||
-      document.querySelector('[data-action="menu"]');
-
-    if (hambBtn) {
-      hambBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        window.toggleMenu();
-      });
-    }
-
-    if (overlay) overlay.addEventListener('click', window.closeMenu);
-
-    // إغلاق بـ ESC
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') window.closeMenu();
+  // Close when clicking any nav link
+  document.querySelectorAll('.sidebar a').forEach(a=>{
+    a.addEventListener('click', e=>{
+      // allow your router to handle later; we just close UI
+      closeSide();
     });
-
-    // إغلاق عند الضغط على أي رابط داخل السايدبار
-    if (sidebar) {
-      sidebar.addEventListener('click', (e) => {
-        const a = e.target.closest('a');
-        if (a) window.closeMenu();
-      });
-    }
   });
+
+  // Expose for other scripts if needed
+  window.ABUI = Object.assign(window.ABUI||{}, { openSide, closeSide, toggleSide });
 })();
