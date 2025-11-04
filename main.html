@@ -5,18 +5,44 @@
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>AB AGRIWEB - Dashboard</title>
 
-  <!-- Styles -->
-  <link rel="stylesheet" href="assets/css/pages/main.css">
+  <!-- style العام ديالك -->
+  <link rel="stylesheet" href="assets/css/pages/main.css"/>
+
+  <style>
+    /* أيقونات أعلى اليمين: عمودية (واحد تحت الآخر) */
+    .top-icons{
+      display:flex; flex-direction:column; gap:8px; align-items:flex-end;
+    }
+    .top-icons button{
+      width:40px;height:40px;border-radius:12px;border:1px solid #2a4132;
+      background:#122d19;color:#b8f5c7;cursor:pointer;font-size:20px;
+      display:grid;place-items:center;transition:.25s;
+    }
+    .top-icons button:hover{ background:#1a3f26;color:#eafff0; }
+
+    /* صفحات */
+    .hidden{display:none!important}
+    .stack{display:grid;gap:12px}
+    .tile{display:flex;align-items:center;gap:12px;background:var(--tile,#0c1526);
+      border:1px solid var(--border,#243046);border-radius:12px;padding:14px 16px;cursor:pointer}
+    .tile:hover{border-color:#22c55e;box-shadow:0 0 0 2px rgba(34,197,94,.25) inset}
+    .tile .icon{width:36px;height:36px;display:grid;place-items:center;background:#0f1a2e;border:1px solid #1f2a44;border-radius:10px}
+    .tile h4{margin:0}
+    .hint{background:#fde68a1a;border:1px dashed #fbbf24;color:#fcd34d;padding:8px 10px;border-radius:8px;font-size:13px}
+  </style>
 </head>
 <body>
   <!-- Topbar -->
   <div class="topbar">
     <button class="hamb" aria-label="menu">☰</button>
     <div style="font-weight:800;letter-spacing:.5px">AB AGRIWEB</div>
-    <button class="btn icon" title="action">🧩</button>
+    <div class="top-icons">
+      <button id="btnSettings" title="Réglages de l'application">⚙️</button>
+      <button id="btnLogout"   title="Déconnexion">🚪</button>
+    </div>
   </div>
 
-  <!-- Sidebar -->
+  <!-- Sidebar (يتحكم فيه assets/js/ui/sidebar.js) -->
   <nav class="sidebar">
     <a href="#" class="active" id="nav-home">🏠 Accueil</a>
     <a href="#" id="nav-irrig">🌿 Irrigation</a>
@@ -25,35 +51,87 @@
   </nav>
   <div class="overlay"></div>
 
-  <!-- CONTENT -->
+  <!-- المحتوى -->
   <main class="content">
-    <section class="card">
+    <!-- Accueil -->
+    <section class="card" id="page-home">
       <h2>Bienvenue 👋</h2>
-      <p class="hint">مرحبا بك. استعمل القائمة لبدء التنقل.</p>
+      <p class="hint">مرحبا بك. استعمل القائمة الجانبية للتنقل، أو زر ⚙️ في الأعلى لفتح إعدادات التطبيق.</p>
     </section>
 
-    <section class="card" id="page-settings" style="display:none">
+    <!-- Paramètres (قائمة البلاطات) -->
+    <section class="card hidden" id="page-settings">
       <h2>Paramètres</h2>
+      <p class="muted">اختر الوحدة التي تريد إدارتها.</p>
       <div class="stack">
-        <div class="tile"><div class="icon">👥</div><div><h4>OPÉRATEUR</h4><p>Gestion des utilisateurs</p></div></div>
-        <div class="tile"><div class="icon">🧩</div><div><h4>PROFILE</h4><p>Gestion des profils</p></div></div>
-        <div class="tile"><div class="icon">🗂️</div><div><h4>RÉFÉRENTIELS</h4><p>Listes maîtres</p></div></div>
-        <div class="tile"><div class="icon">🔑</div><div><h4>MOT DE PASSE</h4><p>Changer le mot de passe</p></div></div>
+        <div class="tile" onclick="alert('Opérateurs (لاحقًا)')">
+          <div class="icon">👥</div><div><h4>OPÉRATEUR</h4><p>Gestion des utilisateurs</p></div>
+        </div>
+        <div class="tile" onclick="alert('Profiles (لاحقًا)')">
+          <div class="icon">🧩</div><div><h4>PROFILE</h4><p>Gestion des profils</p></div>
+        </div>
+        <div class="tile" onclick="alert('Référentiels (لاحقًا)')">
+          <div class="icon">🗂️</div><div><h4>RÉFÉRENTIELS</h4><p>Listes maîtres</p></div>
+        </div>
+        <div class="tile" onclick="showPage('appcfg')">
+          <div class="icon">⚙️</div><div><h4>RÉGLAGES APP</h4><p>Branding • Libellés • Sécurité</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Réglages de l'application -->
+    <section class="card hidden" id="page-appcfg">
+      <h2>Réglages de l’application</h2>
+      <p class="muted">هنا سترجع الواجهة الكاملة لإعدادات التطبيق (Branding, Libellés, Sécurité…). حالياً نموذج بسيط للتأكد أنها ظهرت.</p>
+
+      <div class="stack">
+        <div class="tile" onclick="alert('Logo / Badge / Sidebar…')">
+          <div class="icon">🖼️</div><div><h4>Branding</h4><p>الشعار وصور الواجهة</p></div>
+        </div>
+        <div class="tile" onclick="alert('Labels nav & tiles…')">
+          <div class="icon">🏷️</div><div><h4>Libellés</h4><p>أسماء القوائم والأزرار</p></div>
+        </div>
+        <div class="tile" onclick="alert('Email / Phone / Recovery…')">
+          <div class="icon">🔐</div><div><h4>Sécurité</h4><p>الأمان واسترجاع الحساب</p></div>
+        </div>
+      </div>
+
+      <div style="margin-top:14px">
+        <button class="btn" onclick="showPage('settings')">⬅️ رجوع إلى Paramètres</button>
       </div>
     </section>
   </main>
 
-  <!-- Scripts (order matters) -->
+  <!-- Scripts -->
   <script src="assets/js/ui/sidebar.js"></script>
   <script>
-    // mini router to show/hide settings
-    const pageSettings = document.getElementById('page-settings');
-    document.getElementById('nav-settings').addEventListener('click', (e)=>{
-      e.preventDefault(); pageSettings.style.display='block';
-    });
-    document.getElementById('nav-home').addEventListener('click', (e)=>{
-      e.preventDefault(); pageSettings.style.display='none';
-    });
+    // مسك الصفحات ببساطة
+    const pages = {
+      home     : document.getElementById('page-home'),
+      settings : document.getElementById('page-settings'),
+      appcfg   : document.getElementById('page-appcfg'),
+    };
+    function hideAll(){
+      Object.values(pages).forEach(p => p.classList.add('hidden'));
+      document.querySelectorAll('.sidebar a').forEach(a=>a.classList.remove('active'));
+    }
+    function showPage(name){
+      hideAll();
+      pages[name].classList.remove('hidden');
+      if(name==='home') document.getElementById('nav-home').classList.add('active');
+      if(name==='settings') document.getElementById('nav-settings').classList.add('active');
+    }
+
+    // ربط روابط الـ sidebar
+    document.getElementById('nav-home').onclick     = e => { e.preventDefault(); showPage('home'); };
+    document.getElementById('nav-settings').onclick = e => { e.preventDefault(); showPage('settings'); };
+
+    // الأزرار العليا
+    document.getElementById('btnSettings').onclick = () => showPage('appcfg');
+    document.getElementById('btnLogout').onclick   = () => { location.href = 'index.html'; };
+
+    // بداية على Accueil
+    showPage('home');
   </script>
 </body>
 </html>
