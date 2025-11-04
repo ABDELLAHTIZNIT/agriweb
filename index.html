@@ -1,66 +1,51 @@
-<!DOCTYPE html>
-<html lang="fr">
+<!doctype html>
+<html lang="ar">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AB AGRIWEB - Connexion</title>
-
-  <!-- CSS -->
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>AB AGRIWEB — Login</title>
   <link rel="stylesheet" href="assets/css/base.css">
   <link rel="stylesheet" href="assets/css/login.css">
 </head>
 <body>
+  <main class="card">
+    <div id="loginLogoWrap" class="banner"><img id="loginLogoImg" alt="Logo" src=""></div>
+    <h1 id="appTitle">AB AGRIWEB</h1>
 
-  <div class="login-page" id="loginPage">
-    <div class="login-card">
-      <!-- شعار أو صورة -->
-      <div id="loginLogoWrap" class="banner hidden">
-        <img id="loginLogoImg" alt="Logo" style="max-width:150px;">
+    <div id="noOpsHint" class="hint">لا يوجد مستخدم مُسجل — استخدم <b>Setup (no login)</b> أو افتح Paramètres لإضافة مستخدم.</div>
+
+    <label>Username</label>
+    <input id="u" class="input" placeholder="Enter your username"/>
+
+    <label>Password</label>
+    <div class="field">
+      <input id="p" type="password" class="input" placeholder="Enter your password"/>
+      <span class="eye" onclick="togglePass()" title="Show/Hide">👁️</span>
+    </div>
+
+    <button class="btn" id="loginBtn">Se connecter</button>
+    <button class="btn secondary" id="setupBtn" title="دخول مؤقت بدون كلمة السر">Setup (no login)</button>
+    <a href="#" id="forgotLink">Forgot password?</a>
+  </main>
+
+  <!-- Recovery modal (خفيف) -->
+  <div id="recoveryModal" class="modal-wrap hidden">
+    <div class="modal-bg" onclick="closeRecovery()"></div>
+    <div class="modal">
+      <h3>Account recovery</h3>
+      <div class="small" id="recoveryHints"></div>
+      <div style="text-align:right;margin-top:10px">
+        <button class="btn inline" onclick="closeRecovery()">Fermer</button>
       </div>
-
-      <!-- عنوان -->
-      <h1>AB AGRIWEB</h1>
-
-      <!-- نموذج تسجيل الدخول -->
-      <form id="loginForm">
-        <input id="u" class="login-input" placeholder="Nom d'utilisateur">
-        <div class="field">
-          <input id="p" type="password" class="login-input" placeholder="Mot de passe">
-          <span class="eye" onclick="this.previousElementSibling.type=this.previousElementSibling.type==='password'?'text':'password'">👁️</span>
-        </div>
-
-        <button class="login-btn" id="loginBtn">Se connecter</button>
-        <button class="btn secondary" id="setupBtn">Mode setup (sans mot de passe)</button>
-        <a href="#" id="forgotLink">Mot de passe oublié ?</a>
-      </form>
     </div>
   </div>
 
-  <!-- JS -->
-  <script type="module" src="assets/js/index.js"></script>
-<!-- Rattacher les images automatiquement -->
-<script type="module">
-  import Images from "./assets/js/core/images.js";
+  <!-- core scripts -->
+  <script src="assets/js/core/storage.js"></script>
+  <script src="assets/js/core/config.js"></script>
+  <script src="assets/js/core/security.js"></script>
 
-  // تفعيل تحميل الصور في localStorage إذا ماكانوش
-  Images.init();
-
-  // تطبيق الصور على واجهة تسجيل الدخول
-  const logoEl = document.getElementById("loginLogoImg");
-  const logoWrap = document.getElementById("loginLogoWrap");
-  const bgEl = document.getElementById("loginPage");
-
-  if (logoEl && logoWrap && Images.logo) {
-    logoEl.src = Images.logo;
-    logoWrap.classList.remove("hidden");
-  }
-
-  if (bgEl && Images.loginBg) {
-    bgEl.style.backgroundImage = `url('${Images.loginBg}')`;
-  }
-
-  console.log("🎨 Images appliquées avec succès !");
-</script>
-
+  <!-- page -->
+  <script src="assets/js/pages/index.js"></script>
 </body>
 </html>
