@@ -1,42 +1,12 @@
-// ==== storage.js ====
-// نظام تخزين محلي لإعدادات المستخدم و صور الواجهة
-
-const StorageManager = {
-  save(key, value) {
-    try {
-      localStorage.setItem(key, JSON.stringify(value));
-    } catch (e) {
-      console.error("خطأ في الحفظ:", e);
-    }
+// helper simple localStorage wrapper
+const AbStorage = {
+  get(key, fallback = null){
+    try { return JSON.parse(localStorage.getItem(key)); } catch { return fallback; }
   },
-
-  load(key, defaultValue = null) {
-    try {
-      const data = localStorage.getItem(key);
-      return data ? JSON.parse(data) : defaultValue;
-    } catch (e) {
-      console.error("خطأ في القراءة:", e);
-      return defaultValue;
-    }
+  set(key, value){
+    try { localStorage.setItem(key, JSON.stringify(value)); } catch {}
   },
-
-  remove(key) {
-    try {
-      localStorage.removeItem(key);
-    } catch (e) {
-      console.error("خطأ في الحذف:", e);
-    }
-  },
-
-  clearAll() {
-    try {
-      localStorage.clear();
-      console.log("تم حذف جميع البيانات المحلية");
-    } catch (e) {
-      console.error("خطأ أثناء مسح البيانات:", e);
-    }
-  },
+  setRaw(key, value){ localStorage.setItem(key, String(value)); },
+  getRaw(key){ return localStorage.getItem(key); },
+  remove(key){ localStorage.removeItem(key); }
 };
-
-// تصدير الوحدة لاستعمالها في باقي الصفحات
-export default StorageManager;

@@ -1,1 +1,211 @@
-/* main page styles placeholder */
+/* ========= AB AGRIWEB – Main Page Styles (rev: reglages-polish) ========= */
+
+:root{
+  --bg:#0b1220;
+  --panel:#0c1526;
+  --panel-2:#0f1a2e;
+  --line:#243046;
+  --line-2:#334155;
+  --text:#e2e8f0;
+  --muted:#94a3b8;
+  --accent:#22c55e;
+  --accent-2:#16a34a;
+  --warning:#fbbf24;
+  --danger:#ef4444;
+  --shadow:0 10px 30px rgba(0,0,0,.35);
+}
+
+*{box-sizing:border-box}
+html,body{background:linear-gradient(180deg,#0f172a,#1e293b);color:var(--text)}
+a{color:#c7e2ff;text-decoration:none}
+
+/* ---- Layout basics ---- */
+.topbar{
+  height:56px;display:flex;align-items:center;gap:12px;
+  padding:0 14px;border-bottom:1px solid var(--line);background:rgba(11,18,32,.85);
+  position:sticky;top:0;z-index:20;backdrop-filter:blur(4px)
+}
+.hamb{width:40px;height:40px;border-radius:10px;border:1px solid var(--line);background:var(--panel-2);color:var(--text);cursor:pointer}
+.hamb:hover{border-color:var(--accent)}
+.content{padding:16px;max-width:1100px;margin:0 auto}
+.card{
+  position:relative;margin:14px 0;padding:16px;border:1px solid var(--line);
+  background:linear-gradient(180deg,rgba(12,21,38,.92),rgba(9,18,39,.92));
+  border-radius:14px;box-shadow:var(--shadow)
+}
+.card h2{margin:0 0 8px}
+
+/* ---- Tiles (Paramètres) ---- */
+.stack{display:grid;gap:12px}
+.tile{display:flex;align-items:center;gap:12px;background:var(--panel);border:1px solid var(--line);
+  border-radius:14px;padding:14px 16px;cursor:pointer;transition:.15s}
+.tile:hover{border-color:var(--accent);box-shadow:0 0 0 2px rgba(34,197,94,.25) inset}
+.tile .icon{width:42px;height:42px;display:grid;place-items:center;background:var(--panel-2);border:1px solid var(--line-2);border-radius:12px}
+.tile h4{margin:0;font-size:16px}
+.tile p{margin:2px 0 0;font-size:12px;color:var(--muted)}
+
+/* ---- Inputs / Buttons ---- */
+.label{font-size:13px;color:#9fb2cc;margin-bottom:6px;display:block}
+.input,select,textarea{
+  width:100%;padding:12px;border-radius:12px;border:1px solid var(--line-2);
+  background:#091227;color:var(--text);transition:border-color .15s, box-shadow .15s
+}
+.input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 2px rgba(34,197,94,.18)}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.btn{
+  padding:10px 12px;border-radius:12px;border:1px solid var(--accent);
+  color:var(--bg);background:var(--accent);cursor:pointer;font-weight:700
+}
+.btn:hover{background:var(--accent-2);border-color:var(--accent-2)}
+.btn.secondary{background:transparent;color:var(--accent);border-color:var(--accent)}
+.btn.icon{width:40px;height:40px;display:grid;place-items:center;padding:0}
+.btn.danger{background:transparent;border-color:#7f1d1d;color:#fca5a5}
+.btn.danger:hover{background:var(--danger);color:#160c0c;border-color:var(--danger)}
+
+/* ---- Lists / items ---- */
+.list{display:grid;gap:10px;margin-top:14px}
+.item{display:grid;grid-template-columns:1fr auto;align-items:center;gap:10px;background:var(--panel);
+  border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.meta{display:flex;gap:12px;flex-wrap:wrap;font-size:14px;color:#cbd5e1}
+.meta b{color:var(--text)}
+.actions{display:flex;gap:8px}
+
+/* ---- Accordion – Reglages ----- */
+.accordion{border:1px solid var(--line);border-radius:16px;margin:14px 0;background:var(--panel)}
+.acc-hd{
+  width:100%;text-align:left;padding:14px 16px;border-bottom:1px solid var(--line);
+  border-radius:16px;cursor:pointer;font-weight:800;letter-spacing:.2px;display:flex;justify-content:space-between;align-items:center
+}
+.acc-hd span{font-weight:600;color:#a6b8d4;font-size:12px}
+.acc-bd{padding:16px}
+.acc{overflow:hidden}
+.acc:not(.open) .acc-bd{display:none}
+
+/* ---- Beautiful form grid (Reglages) ---- */
+.form-grid,.grid{display:grid;gap:14px}
+@media (min-width:520px){
+  .form-grid,.grid{grid-template-columns:repeat(2,minmax(220px,1fr))}
+}
+@media (min-width:920px){
+  .form-grid,.grid{grid-template-columns:repeat(3,minmax(240px,1fr))}
+}
+.field{display:flex;flex-direction:column}
+.help{font-size:12px;color:#9aa9c5;margin-top:6px}
+
+/* ---- Pretty file inputs ---- */
+input[type="file"].input{
+  padding:10px;background:#0a1326;overflow:hidden;text-overflow:ellipsis
+}
+input[type="file"].input::-webkit-file-upload-button{
+  border:1px solid var(--line-2);background:#0f1a2e;color:#cfe8ff;border-radius:10px;padding:8px 10px;margin-right:10px;cursor:pointer
+}
+input[type="file"].input:hover{border-color:var(--accent)}
+
+/* ---- Sticky action bar for Reglages ---- */
+#page-appcfg .actions-bar{
+  position:sticky;bottom:0;left:0;right:0;padding:12px 0;margin-top:8px;
+  background:linear-gradient(180deg,rgba(15,23,42,0),rgba(15,23,42,.65) 40%,rgba(15,23,42,.9));
+  display:flex;gap:10px;justify-content:flex-end;backdrop-filter:blur(2px)
+}
+
+/* ---- Hints/notes ---- */
+.hint{
+  font-size:13px;opacity:.95;background:#0b1220cc;border:1px dashed #7dd3fc;color:#93c5fd;
+  padding:10px;border-radius:10px;margin:10px 0
+}
+.muted{opacity:.85}
+
+/* ---- Sidebar (kept minimal to avoid conflicts) ---- */
+.sidebar{position:fixed;inset:56px auto 0 0;width:280px;max-width:86vw;background:#0b1220;border-right:1px solid var(--line);transform:translateX(-100%);transition:transform .18s ease;z-index:25}
+.sidebar.open{transform:none}
+.sidebar a{display:block;padding:12px 16px;border-bottom:1px solid #152033;color:#d3e0f3}
+.sidebar a.active,.sidebar a:hover{background:#0f172a;color:#fff}
+.overlay{position:fixed;inset:56px 0 0 0;background:rgba(0,0,0,.35);backdrop-filter:blur(1px);display:none;z-index:24}
+.overlay.show{display:block}
+
+/* ---- Page-specific tweaks ---- */
+#page-home .card{border-color:#1f2a44}
+#page-settings .stack .tile h4{text-transform:uppercase;letter-spacing:.4px}
+
+/* ---- Save banner (setup) ---- */
+#setupBanner{border-color:var(--warning)!important}
+/* ==== Polish: Setup banner + Accordion headers (non-breaking) ==== */
+
+/* بانر Setup Mode */
+#setupBanner{
+  background: linear-gradient(180deg, rgba(255,200,0,.08), rgba(255,200,0,.02));
+  border:1px dashed #fbbf24 !important;
+  border-radius: 14px;
+  box-shadow: 0 8px 24px rgba(0,0,0,.25), inset 0 0 0 1px rgba(251,191,36,.15);
+  padding: 14px 16px;
+  margin: 10px 0 16px;
+}
+#setupBanner .hint{
+  background: transparent;
+  border: none;
+  color: #fde68a;
+  font-weight: 600;
+  margin: 0 0 10px;
+}
+#setupBanner .row{
+  gap: 10px;
+  flex-wrap: wrap;
+}
+#setupBanner .btn{
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-weight: 800;
+  letter-spacing: .2px;
+  box-shadow: 0 6px 14px rgba(0,0,0,.25);
+}
+#setupBanner .btn.danger{
+  border-color:#7f1d1d;
+  color:#fecaca;
+}
+#setupBanner .btn.danger:hover{
+  background:#ef4444;
+  color:#160c0c;
+  border-color:#ef4444;
+}
+#setupBanner .btn:not(.danger){
+  background:#22c55e;
+  border-color:#22c55e;
+  color:#0b1220;
+}
+#setupBanner .btn:not(.danger):hover{
+  background:#16a34a;
+  border-color:#16a34a;
+}
+
+/* رؤوس الـAccordion – لمسة خفيفة فقط */
+#page-appcfg .acc-hd{
+  background: rgba(15,23,42,.55);
+  border: 1px solid rgba(36,48,70,.9);
+  border-radius: 12px;
+  transition: border-color .15s, box-shadow .15s, background .15s;
+}
+#page-appcfg .acc-hd:hover{
+  border-color:#22c55e;
+  box-shadow: inset 0 0 0 2px rgba(34,197,94,.18);
+}
+#page-appcfg .acc-hd span{
+  color:#a6b8d4;
+  font-weight:600;
+  opacity:.95;
+}
+
+/* حقول داخل réglages فقط: حواف وظلال خفيفة */
+#page-appcfg .input, 
+#page-appcfg select, 
+#page-appcfg textarea{
+  border-radius:12px;
+  border:1px solid #334155;
+  background:#091227;
+}
+#page-appcfg .input:focus,
+#page-appcfg select:focus,
+#page-appcfg textarea:focus{
+  outline:none;
+  border-color:#22c55e;
+  box-shadow:0 0 0 2px rgba(34,197,94,.18);
+}

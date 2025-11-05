@@ -1,18 +1,5 @@
-// ==== config.js ====
-// إعدادات عامة للتطبيق AB AGRIWEB
-
+// basic config - you can expand later
 const AppConfig = {
-  appName: "AB AGRIWEB",
-  version: "1.0.0",
-  theme: {
-    colorAccent: "#22c55e",
-    colorBackground: "#0f172a",
-    colorText: "#e2e8f0",
-  },
-  adminCode: "12345678", // كود المسؤول للدخول للإعدادات
-  supportEmail: "abdellahtiznit36@gmail.com", // الإيميل الرئيسي
+  appTitle: "AB AGRIWEB",
+  seedAdmin: { username: 'admin', password: '20202020', profile:'Admin' } // only used as seed
 };
-
-// تصدير الإعدادات لاستعمالها في باقي الصفحات
-export default AppConfig;
-
