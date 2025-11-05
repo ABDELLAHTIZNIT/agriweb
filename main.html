@@ -1,439 +1,233 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>AB AGRIWEB - Dashboard</title>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>AB AGRIWEB</title>
+<link rel="stylesheet" href="assets/css/base.css">
+<style>
+body {
+  margin:0;
+  font-family: system-ui, sans-serif;
+  background:#0f172a;
+  color:#e2e8f0;
+}
+header {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  background:#1e293b;
+  padding:10px 14px;
+  border-bottom:1px solid #334155;
+  position:relative;
+}
+header h1 {
+  margin:0;
+  font-size:1.1rem;
+  color:#22c55e;
+}
+.menu-btn {
+  background:none;
+  border:none;
+  color:#e2e8f0;
+  font-size:1.6rem;
+  cursor:pointer;
+}
+.sidebar {
+  position:fixed;
+  left:-260px;
+  top:0;
+  width:250px;
+  height:100%;
+  background:#0b1220;
+  border-right:1px solid #1e293b;
+  transition:left 0.3s ease;
+  padding:10px;
+  overflow-y:auto;
+}
+.sidebar.open { left:0; }
+.sidebar h2 {
+  font-size:1rem;
+  color:#22c55e;
+  border-bottom:1px solid #1e293b;
+  padding-bottom:6px;
+  margin:10px 0;
+}
+.sidebar a {
+  display:block;
+  color:#cbd5e1;
+  text-decoration:none;
+  padding:8px 6px;
+  border-radius:8px;
+}
+.sidebar a:hover {
+  background:#1e293b;
+  color:#fff;
+}
+.card {
+  padding:20px;
+}
+button.btn {
+  background:#22c55e;
+  color:#0b1220;
+  border:none;
+  border-radius:8px;
+  padding:10px 14px;
+  cursor:pointer;
+}
+button.btn:hover { background:#16a34a; }
+button.danger { background:#ef4444; color:#fff; }
+.hidden { display:none; }
 
-  <!-- CSS العام (من المشروع ديالك) -->
-  <link rel="stylesheet" href="assets/css/index.css">
-  <link rel="stylesheet" href="assets/css/main.css">
-  <style>
-    /* لمسات بسيطة فقط لضمان الاستقرار بدون لمس تصميمك */
-    :root{
-      --bg:#0f172a;--panel:#0b1220;--text:#e2e8f0;--accent:#22c55e;--border:#243046;
-      --tile:#0c1526;--tileIcon:#0f1a2e;--warn:#fde68a1a
-    }
-    *{box-sizing:border-box}
-    body{margin:0;background:linear-gradient(180deg,var(--bg),#1e293b);color:var(--text);min-height:100vh}
-    .hidden{display:none!important}
+.accordion { border:1px solid #1e293b; border-radius:8px; margin:10px 0; }
+.acc-hd {
+  background:#1e293b;
+  color:#e2e8f0;
+  padding:10px;
+  border:none;
+  text-align:left;
+  width:100%;
+  font-weight:bold;
+  cursor:pointer;
+}
+.acc-bd { display:none; padding:10px; background:#0f172a; }
+.accordion.open .acc-bd { display:block; }
 
-    /* شريط علوي */
-    header{position:sticky;top:0;z-index:30;display:flex;align-items:center;justify-content:space-between;
-      background:var(--panel);padding:12px 16px;border-bottom:1px solid var(--border)}
-    .menu-btn{width:40px;height:40px;border:1px solid #1f2937;border-radius:10px;background:#0f172a;color:#e2e8f0;
-      font-size:20px;display:grid;place-items:center;cursor:pointer}
-    .brand{display:flex;align-items:center;gap:10px}
-    #appTitleTop{font-weight:800;letter-spacing:.4px;color:var(--accent)}
-    #appBadgeImg{height:22px;border-radius:6px;border:1px solid #1f2937}
-
-    /* سايدبار كلاسيكي */
-    .sidebar{position:fixed;top:0;left:-270px;width:270px;height:100%;background:#0b1220;border-right:1px solid var(--border);
-      transition:left .3s ease;z-index:25;display:flex;flex-direction:column;padding-top:56px;box-shadow:4px 0 18px rgba(0,0,0,.45)}
-    .sidebar.active{left:0}
-    .side-header{position:absolute;top:0;left:0;right:0;height:56px;display:flex;gap:10px;align-items:center;
-      padding:0 14px;border-bottom:1px solid #1e293b;background:#0b1220}
-    .close-btn{width:36px;height:36px;border:none;border-radius:8px;background:#111827;color:#e2e8f0;font-size:22px;cursor:pointer}
-    .sidebar a{display:flex;align-items:center;gap:10px;padding:14px 20px;color:var(--text);text-decoration:none;border-bottom:1px solid #132033}
-    .sidebar a:hover,.sidebar a.active{background:var(--accent);color:#0b1220;font-weight:700}
-    .sidebar-brand{padding:12px 16px;border-bottom:1px solid #132033}
-    .sidebar-brand img{width:100%;border-radius:10px;border:1px solid #1f2937}
-    .overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);opacity:0;pointer-events:none;transition:opacity .25s;z-index:20}
-    .overlay.active{opacity:1;pointer-events:auto}
-
-    main.content{padding:18px}
-    .card{max-width:1000px;margin:16px auto;background:#0b1220;border:1px solid var(--border);border-radius:16px;padding:18px}
-    .muted{opacity:.85}
-
-    .stack{display:grid;gap:12px}
-    .tile{display:flex;align-items:center;gap:12px;background:var(--tile);border:1px solid var(--border);
-      border-radius:12px;padding:14px 16px;cursor:pointer}
-    .tile .icon{width:36px;height:36px;display:grid;place-items:center;background:var(--tileIcon);border:1px solid #1f2a44;border-radius:10px}
-    .tile:hover{border-color:var(--accent);box-shadow:0 0 0 2px rgba(34,197,94,.2) inset}
-
-    /* أزرار صغيرة */
-    .actions-top{position:absolute;top:16px;right:16px;display:flex;gap:8px}
-    .btn{padding:10px 12px;border-radius:10px;border:1px solid var(--accent);background:transparent;color:var(--accent);cursor:pointer}
-    .btn.icon{width:40px;height:40px;display:grid;place-items:center;padding:0}
-    .btn:hover{background:var(--accent);color:#0b1220}
-    .btn.danger{border-color:#ef4444;color:#fda4a4}
-    .btn.danger:hover{background:#ef4444;color:#0b1220}
-
-    .row{display:flex;gap:10px;flex-wrap:wrap}
-    .input,select,textarea{width:100%;max-width:360px;padding:12px;border-radius:10px;border:1px solid #334155;background:#091227;color:#e2e8f0}
-
-    .list{display:grid;gap:10px;margin-top:14px}
-    .item{display:grid;grid-template-columns:1fr auto;align-items:center;gap:10px;background:#0c1526;border:1px solid #243046;border-radius:10px;padding:12px 14px}
-    .meta{display:flex;gap:12px;flex-wrap:wrap;font-size:14px;color:#cbd5e1}.meta b{color:#e2e8f0}
-    .actions{display:flex;gap:8px}
-
-    /* Accordion */
-    .accordion{border:1px solid var(--border);border-radius:12px;margin:12px 0;background:#0b1220}
-    .acc-hd{width:100%;text-align:left;padding:12px 14px;background:#0c1526;border-bottom:1px solid #1e293b;border-radius:12px 12px 0 0;cursor:pointer;font-weight:700;display:flex;justify-content:space-between;align-items:center}
-    .acc-bd{padding:14px;display:none}
-    .acc.open .acc-bd{display:block}
-    .grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
-    .label{font-size:13px;color:#9fb2cc;margin-bottom:6px;display:block}
-
-    /* Modals */
-    .modal-wrap{position:fixed;inset:0;display:grid;place-items:center;z-index:60}
-    .modal-wrap:not(.show){display:none}
-    .modal-bg{position:absolute;inset:0;background:rgba(0,0,0,.45)}
-    .modal{position:relative;width:min(520px,92vw);background:#0b1220;border:1px solid var(--border);border-radius:14px;padding:16px}
-    .right{display:flex;gap:8px;justify-content:flex-end}
-    .hint{background:var(--warn);border:1px dashed #fbbf24;color:#fcd34d;padding:8px;border-radius:8px;font-size:13px}
-  </style>
+.input {
+  width:100%;
+  padding:8px;
+  background:#0b1220;
+  border:1px solid #1e293b;
+  color:#e2e8f0;
+  border-radius:6px;
+  margin-bottom:8px;
+}
+.label { font-weight:bold; display:block; margin-bottom:4px; }
+.row { display:flex; gap:8px; flex-wrap:wrap; }
+.grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.muted { font-size:0.85rem; opacity:0.8; }
+</style>
 </head>
 <body>
 
-  <!-- Topbar -->
-  <header>
-    <button id="menuBtn" class="menu-btn" aria-label="Menu">☰</button>
-    <div class="brand">
-      <div id="appTitleTop">AB AGRIWEB</div>
-      <img id="appBadgeImg" class="hidden" alt="">
-    </div>
-  </header>
+<header>
+  <button class="menu-btn" id="menuBtn">☰</button>
+  <h1 id="appTitleTop">AB AGRIWEB</h1>
+  <img id="appBadgeImg" src="" alt="" style="height:26px;object-fit:contain;" class="hidden">
+</header>
 
-  <!-- Sidebar -->
-  <aside class="sidebar" id="sidebar">
-    <div class="side-header">
-      <button class="close-btn" id="closeSidebar">×</button>
-      <span>Menu</span>
-    </div>
+<aside class="sidebar" id="sidebar">
+  <h2>Navigation</h2>
+  <a href="#" onclick="showPage('accueil')">🏠 Accueil</a>
+  <a href="#" onclick="showPage('irrig')">💧 Irrigation</a>
+  <a href="#" onclick="showPage('traitement')">🧪 Traitement</a>
+  <a href="#" onclick="showPage('param')">⚙️ Paramètres</a>
+  <a href="#" onclick="logout()">🚪 Déconnecter</a>
 
-    <div class="sidebar-brand hidden" id="sidebarBrand">
-      <img id="sidebarBrandImg" alt="">
-    </div>
-
-    <a href="#" id="nav-home" class="active">🏠 <span id="lbl-nav-home">Accueil</span></a>
-    <a href="#" id="nav-irrig">🌿 <span id="lbl-nav-irrig">Irrigation</span></a>
-    <a href="#" id="nav-trait">💧 <span id="lbl-nav-trait">Traitement</span></a>
-    <a href="#" id="nav-settings">⚙️ <span id="lbl-nav-settings">Paramètres</span></a>
-    <a href="#" id="logout">🚪 <span id="lbl-nav-logout">Logout</span></a>
-  </aside>
-  <div class="overlay" id="overlay"></div>
-
-  <main class="content">
-
-    <!-- Setup banner -->
-    <section id="setupBanner" class="card hidden" style="border-color:#fbbf24">
-      <div class="hint">⚠️ Setup Mode مفعل: الدخول بدون كلمة السر مؤقّتًا لإتمام الإعدادات.</div>
-      <div class="row" style="margin-top:8px">
-        <button class="btn danger" id="btnDisableSetup">إيقاف Setup Mode</button>
-        <button class="btn" id="btnGoSettings">اذهب إلى Paramètres</button>
-      </div>
-    </section>
-
-    <!-- Accueil -->
-    <section id="page-home" class="card">
-      <h2>Bienvenue 👋</h2>
-      <p class="muted">Page d’accueil.</p>
-      <div id="firstRunHint" class="hint hidden" style="margin-top:10px">🔐 لم يتم العثور على أي مستخدم. اذهب إلى <b>Paramètres → Opérateurs</b> وأضف مستخدم.</div>
-    </section>
-
-    <!-- Paramètres (menu tuiles) -->
-    <section id="page-settings" class="card hidden">
-      <h2 id="title-settings">Paramètres</h2>
-      <p class="muted">Choisissez un module.</p>
-      <div class="stack">
-        <div class="tile" id="open-operators"><div class="icon">👥</div><div><h4 id="lbl-tile-operators">OPÉRATEUR</h4><p>Gestion des utilisateurs</p></div></div>
-        <div class="tile" id="open-profiles"><div class="icon">🧩</div><div><h4 id="lbl-tile-profiles">PROFILE</h4><p>Gestion des profils</p></div></div>
-        <div class="tile" id="open-refs"><div class="icon">🗂️</div><div><h4 id="lbl-tile-refs">RÉFÉRENTIELS</h4><p>Listes maîtres</p></div></div>
-        <div class="tile" id="open-rights"><div class="icon">🛡️</div><div><h4 id="lbl-tile-rights">DROITS ACCÈS</h4><p>Permissions</p></div></div>
-        <div class="tile" id="open-pass"><div class="icon">🔑</div><div><h4 id="lbl-tile-pass">MOT DE PASSE</h4><p>Changer le mot de passe</p></div></div>
-        <div class="tile" id="open-appcfg"><div class="icon">⚙️</div><div><h4 id="lbl-tile-appcfg">RÉGLAGES APP</h4><p>Logo, labels &amp; sécurité</p></div></div>
-      </div>
-    </section>
-
-    <!-- Profiles -->
-    <section id="page-profiles" class="card hidden">
-      <div class="actions-top">
-        <button class="btn icon" id="btnProfileAdd">➕</button>
-        <button class="btn icon" id="btnProfileHint">✏️</button>
-      </div>
-      <h2>Profiles</h2>
-      <div id="profilesHint" class="hint hidden">استعمل ✏️ للتعديل.</div>
-      <div id="addForm" class="row hidden" style="margin-top:12px">
-        <input id="profileName" class="input" placeholder="Ex: Admin, Magasinier, Pointeur, Directeur">
-        <button class="btn" id="profileConfirm">Confirmer</button>
-        <button class="btn danger" id="profileCancel">Annuler</button>
-      </div>
-      <div id="profilesList" class="list" style="margin-top:14px"></div>
-    </section>
-
-    <!-- Operators -->
-    <section id="page-operators" class="card hidden">
-      <div class="actions-top">
-        <button class="btn icon" id="btnOpAdd">➕</button>
-        <button class="btn icon" id="btnOpsHint">✏️</button>
-      </div>
-      <h2>Opérateurs</h2>
-      <div id="opsHint" class="hint hidden">لتعديل مستخدم، استعمل ✏️.</div>
-      <div id="opAddForm" class="row hidden" style="margin-top:12px">
-        <input id="op_username" class="input" placeholder="Nom d’utilisateur">
-        <input id="op_password" type="password" class="input" placeholder="Mot de passe">
-        <select id="op_profile" class="input"></select>
-        <div class="combo" id="combo-op-ferme" style="max-width:360px;width:100%">
-          <input id="op_ferme_input" class="input" placeholder="Chercher/choisir une ferme...">
-          <div id="op_ferme_list" class="combo-list hidden"></div>
-          <input type="hidden" id="op_ferme"/>
-        </div>
-        <button class="btn" id="opConfirm">Confirmer</button>
-        <button class="btn danger" id="opCancel">Annuler</button>
-      </div>
-      <div id="operatorsList" class="list" style="margin-top:14px"></div>
-    </section>
-
-    <!-- Fermes -->
-    <section id="page-farms" class="card hidden">
-      <div class="actions-top">
-        <button class="btn icon" id="btnFarmAdd">➕</button>
-        <button class="btn icon" id="btnFarmsHint">✏️</button>
-      </div>
-      <h2>Fermes</h2>
-      <div id="farmsHint" class="hint hidden">استعمل ✏️ للتعديل.</div>
-      <div id="farmAddForm" class="row hidden" style="margin-top:12px">
-        <input id="farm_name" class="input" placeholder="Nom de la ferme (ex: Karam 16)">
-        <input id="farm_area" class="input" placeholder="Surface (ex: 12 ha)">
-        <input id="farm_company" class="input" placeholder="Société">
-        <input id="farm_location" class="input" placeholder="Emplacement">
-        <input id="farm_manager" class="input" placeholder="Responsable">
-        <input id="farm_phone" class="input" placeholder="Téléphone du responsable">
-        <button class="btn" id="farmConfirm">Confirmer</button>
-        <button class="btn danger" id="farmCancel">Annuler</button>
-      </div>
-      <div id="farmsList" class="list" style="margin-top:14px"></div>
-    </section>
-
-    <!-- Référentiels -->
-    <section id="page-refs" class="card hidden">
-      <h2>Référentiels</h2>
-      <p class="muted">لوائح مرجعية.</p>
-
-      <div id="refsHome" class="stack">
-        <div class="tile" data-ref="farms"><div class="icon">🏞️</div><div><h4 id="lbl-ref-ferme">Ferme</h4></div></div>
-        <div class="tile" data-ref="companies"><div class="icon">🏢</div><div><h4 id="lbl-ref-companies">Société</h4></div></div>
-        <div class="tile" data-ref="responsables"><div class="icon">👤</div><div><h4 id="lbl-ref-responsables">Responsable</h4></div></div>
-        <div class="tile" data-ref="stations"><div class="icon">🚏</div><div><h4 id="lbl-ref-stations">Station</h4></div></div>
-        <div class="tile" data-ref="secteurs"><div class="icon">🧭</div><div><h4 id="lbl-ref-secteurs">Secteur</h4></div></div>
-        <div class="tile" data-ref="parcelles"><div class="icon">🧱</div><div><h4 id="lbl-ref-parcelles">Parcelle</h4></div></div>
-        <div class="tile" data-ref="transports"><div class="icon">🚚</div><div><h4 id="lbl-ref-transports">Transport</h4></div></div>
-        <div class="tile" data-ref="varietes"><div class="icon">🌱</div><div><h4 id="lbl-ref-varietes">Variété</h4></div></div>
-        <div class="tile" data-ref="varietes_champ"><div class="icon">🌿</div><div><h4 id="lbl-ref-varietes_champ">Variété champ</h4></div></div>
-        <div class="tile" data-ref="gestions"><div class="icon">📦</div><div><h4 id="lbl-ref-gestions">Gestion stock</h4></div></div>
-        <div class="tile" data-ref="achats"><div class="icon">🧾</div><div><h4 id="lbl-ref-achats">Achat</h4></div></div>
-      </div>
-
-      <div id="refsCat" class="hidden">
-        <div class="actions-top">
-          <button class="btn icon" id="refsAddBtn">➕</button>
-          <button class="btn icon" id="refsHintBtn">✏️</button>
-        </div>
-        <h3 id="refsCatTitle" style="margin-top:0">Catégorie</h3>
-        <div id="refsHint" class="hint hidden">استعمل ✏️ للتعديل و 🗑️ للحذف.</div>
-        <div id="refsAddForm" class="row hidden" style="margin-top:12px">
-          <input id="refsInput" class="input" placeholder="Nom à ajouter">
-          <button class="btn" id="refsConfirm">Confirmer</button>
-          <button class="btn danger" id="refsCancel">Annuler</button>
-        </div>
-        <div id="refsList" class="list" style="margin-top:14px"></div>
-      </div>
-    </section>
-
-    <!-- Réglages app -->
-    <section id="page-appcfg" class="card hidden">
-      <h2>Réglages de l’application</h2>
-      <p class="muted">كل إعدادات التطبيق مجمّعة حسب النوع.</p>
-
-      <!-- Général -->
-      <div class="accordion acc open" id="acc-general">
-        <button class="acc-hd">1) Général <span>Nom/Logo de l’app</span></button>
-        <div class="acc-bd">
-          <div class="grid">
-            <div>
-              <label class="label">Logo de l’application (PNG/GIF)</label>
-              <input id="cfg-logo-url" class="input" placeholder="URL (png/gif)">
-              <input id="cfg-logo-file" type="file" accept="image/png,image/gif" class="input">
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Libellés -->
-      <div class="accordion acc" id="acc-nav">
-        <button class="acc-hd">2) Libellés Navigation <span>Accueil • Irrigation • Traitement • Paramètres • Logout</span></button>
-        <div class="acc-bd">
-          <div class="grid">
-            <div><label class="label">Accueil</label><input id="cfg-nav-home" class="input" placeholder="Accueil"></div>
-            <div><label class="label">Irrigation</label><input id="cfg-nav-irrig" class="input" placeholder="Irrigation"></div>
-            <div><label class="label">Traitement</label><input id="cfg-nav-trait" class="input" placeholder="Traitement"></div>
-            <div><label class="label">Paramètres</label><input id="cfg-nav-settings" class="input" placeholder="Paramètres"></div>
-            <div><label class="label">Logout</label><input id="cfg-nav-logout" class="input" placeholder="Logout"></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Tuiles -->
-      <div class="accordion acc" id="acc-tiles">
-        <button class="acc-hd">3) Tuiles Paramètres <span>Opérateur • Profile • Référentiel • Droits • Mot de passe</span></button>
-        <div class="acc-bd">
-          <div class="grid">
-            <div><label class="label">Opérateur</label><input id="cfg-tile-operators" class="input" placeholder="OPÉRATEUR"></div>
-            <div><label class="label">Profile</label><input id="cfg-tile-profiles" class="input" placeholder="PROFILE"></div>
-            <div><label class="label">Référentiels</label><input id="cfg-tile-refs" class="input" placeholder="RÉFÉRENTIELS"></div>
-            <div><label class="label">Droits accès</label><input id="cfg-tile-rights" class="input" placeholder="DROITS ACCÈS"></div>
-            <div><label class="label">Mot de passe</label><input id="cfg-tile-pass" class="input" placeholder="MOT DE PASSE"></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Sécurité -->
-      <div class="accordion acc" id="acc-sec">
-        <button class="acc-hd">4) Sécurité <span>Email • Téléphone • Question • Code</span></button>
-        <div class="acc-bd">
-          <div class="grid">
-            <div><label class="label">Email de récupération</label><input id="sec-email" class="input" placeholder="ex: admin@example.com"></div>
-            <div><label class="label">Téléphone</label><input id="sec-phone" class="input" placeholder="+2126..."></div>
-            <div><label class="label">Question secrète</label><input id="sec-question" class="input" placeholder="Ex: Ville de naissance ?"></div>
-            <div><label class="label">Réponse</label><input id="sec-answer" class="input" placeholder="Votre réponse"></div>
-            <div>
-              <label class="label">Code de récupération</label>
-              <div class="row">
-                <input id="sec-code" class="input" placeholder="Générer pour créer un code" disabled>
-                <button class="btn" id="secGen">Générer</button>
-              </div>
-              <div class="muted" style="margin-top:6px">يحفظ محليًا ويستعمل عبر “Mot de passe oublié”.</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Branding -->
-      <div class="accordion acc" id="acc-brand">
-        <button class="acc-hd">5) Branding <span>Badge • Sidebar • Login banner • Login background</span></button>
-        <div class="acc-bd">
-          <div class="grid">
-            <div><label class="label">Badge header</label><input id="cfg-badge-url" class="input" placeholder="URL (png/gif)"><input id="cfg-badge-file" type="file" accept="image/png,image/gif" class="input"></div>
-            <div><label class="label">Sidebar banner</label><input id="cfg-side-url" class="input" placeholder="URL (png/gif)"><input id="cfg-side-file" type="file" accept="image/png,image/gif" class="input"></div>
-            <div><label class="label">Login banner</label><input id="cfg-login-url" class="input" placeholder="URL (png/gif)"><input id="cfg-login-file" type="file" accept="image/png,image/gif" class="input"></div>
-            <div><label class="label">Login background</label><input id="cfg-loginbg-url" class="input" placeholder="URL (png/gif)"><input id="cfg-loginbg-file" type="file" accept="image/png,image/gif" class="input"></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="row" style="margin-top:14px">
-        <button class="btn" id="appcfgSaveBtn">Enregistrer</button>
-        <button class="btn danger" id="appcfgResetBtn">Reset (défaut)</button>
-      </div>
-    </section>
-  </main>
-
-  <!-- Modals -->
-  <div id="opModal" class="modal-wrap">
-    <div class="modal-bg"></div>
-    <div class="modal">
-      <h3>Modifier l’opérateur</h3>
-      <div class="row">
-        <input id="edit_username" class="input" placeholder="Nom d’utilisateur">
-        <input id="edit_password" type="password" class="input" placeholder="Mot de passe">
-      </div>
-      <div class="row">
-        <select id="edit_profile" class="input"></select>
-        <div class="combo" id="combo-edit-ferme" style="max-width:360px;width:100%">
-          <input id="edit_ferme_input" class="input" placeholder="Chercher/choisir une ferme...">
-          <div id="edit_ferme_list" class="combo-list hidden"></div>
-          <input type="hidden" id="edit_ferme"/>
-        </div>
-      </div>
-      <div class="right" style="margin-top:8px">
-        <button class="btn danger" id="opEditCancel">Annuler</button>
-        <button class="btn" id="opEditSave">Enregistrer</button>
-      </div>
-    </div>
+  <div id="sidebarBrand" class="hidden" style="margin-top:12px;">
+    <img id="sidebarBrandImg" src="" alt="" style="width:100%;border-radius:6px;">
   </div>
+</aside>
 
-  <div id="farmModal" class="modal-wrap">
-    <div class="modal-bg"></div>
-    <div class="modal">
-      <h3>Modifier la ferme</h3>
-      <div class="row">
-        <input id="edit_farm_name" class="input" placeholder="Nom de la ferme">
-        <input id="edit_farm_area" class="input" placeholder="Surface">
-      </div>
-      <div class="row">
-        <input id="edit_farm_company" class="input" placeholder="Société">
-        <input id="edit_farm_location" class="input" placeholder="Emplacement">
-      </div>
-      <div class="row">
-        <input id="edit_farm_manager" class="input" placeholder="Responsable">
-        <input id="edit_farm_phone" class="input" placeholder="Téléphone">
-      </div>
-      <div class="right" style="margin-top:8px">
-        <button class="btn danger" id="farmEditCancel">Annuler</button>
-        <button class="btn" id="farmEditSave">Enregistrer</button>
+<main style="margin-top:10px; padding:20px;">
+  <section id="page-accueil" class="card">Bienvenue dans AB AGRIWEB 👋</section>
+
+  <section id="page-param" class="card hidden">
+    <h2>Paramètres</h2>
+    <div class="grid">
+      <button class="btn" onclick="showPage('page-operators')">Opérateur</button>
+      <button class="btn" onclick="showPage('page-profiles')">Profil</button>
+      <button class="btn" onclick="showPage('page-refs')">Référentiels</button>
+      <button class="btn" onclick="showPage('page-rights')">Droits accès</button>
+      <button class="btn" onclick="showPage('page-pass')">Mot de passe</button>
+      <button class="btn" onclick="showPage('page-appcfg')">Réglages de l’application</button>
+    </div>
+  </section>
+
+  <!-- باقي الصفحات الأخرى ممكن تكمّلها هنا -->
+
+  <!-- ====================================== -->
+  <!-- RÉGLAGES DE L’APPLICATION (BRANDING) -->
+  <!-- ====================================== -->
+
+  <section id="page-appcfg" class="card hidden">
+    <h2>Réglages de l’application</h2>
+    <p class="muted">كل إعدادات التطبيق مجمّعة حسب النوع.</p>
+
+    <!-- 1) Général -->
+    <div class="accordion acc open" id="acc-general">
+      <button class="acc-hd" onclick="toggleAcc('acc-general')">1) Général <span>Nom/Logo de l’app</span></button>
+      <div class="acc-bd">
+        <label class="label">Titre de l’application</label>
+        <input id="cfg-app-title" class="input" placeholder="Nom de l’app (laisser vide لإخفاء)">
+        <label><input id="cfg-title-hide" type="checkbox"> إخفاء العنوان النصي</label>
+        <div class="muted">يمكنك إخفاء النص إذا لديك Logo.</div>
       </div>
     </div>
-  </div>
 
-  <!-- JS: ترتيب التحميل مهم باش كل حاجة تخدم -->
-  <script src="assets/js/core/config.js"></script>
-  <script src="assets/js/core/storage.js"></script>
-  <script src="assets/js/core/security.js"></script>
+    <!-- 5) Branding -->
+    <div class="accordion acc" id="acc-brand">
+      <button class="acc-hd" onclick="toggleAcc('acc-brand')">2) Branding <span>Logo, Badge, Sidebar, Login</span></button>
+      <div class="acc-bd">
+        <div class="grid">
+          <div>
+            <label class="label">Logo de l’application</label>
+            <input id="cfg-logo-url" class="input" placeholder="URL (png/gif)">
+            <input id="cfg-logo-file" type="file" accept="image/png,image/gif" class="input">
+            <button class="btn danger img-clear" data-key="logo">Supprimer logo</button>
+          </div>
+          <div>
+            <label class="label">Badge header</label>
+            <input id="cfg-badge-url" class="input" placeholder="URL (png/gif)">
+            <input id="cfg-badge-file" type="file" accept="image/png,image/gif" class="input">
+            <button class="btn danger img-clear" data-key="badge">Supprimer badge</button>
+          </div>
+          <div>
+            <label class="label">Sidebar banner</label>
+            <input id="cfg-side-url" class="input" placeholder="URL (png/gif)">
+            <input id="cfg-side-file" type="file" accept="image/png,image/gif" class="input">
+            <button class="btn danger img-clear" data-key="sidebar">Supprimer sidebar</button>
+          </div>
+          <div>
+            <label class="label">Login banner</label>
+            <input id="cfg-login-url" class="input" placeholder="URL (png/gif)">
+            <input id="cfg-login-file" type="file" accept="image/png,image/gif" class="input">
+            <button class="btn danger img-clear" data-key="login">Supprimer login banner</button>
+          </div>
+          <div>
+            <label class="label">Login background</label>
+            <input id="cfg-loginbg-url" class="input" placeholder="URL (png/gif)">
+            <input id="cfg-loginbg-file" type="file" accept="image/png,image/gif" class="input">
+            <button class="btn danger img-clear" data-key="loginBg">Supprimer background</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
-  <script src="assets/js/ui/sidebar.js"></script>
+    <div class="row" style="margin-top:14px">
+      <button id="appcfgSaveBtn" class="btn">Enregistrer</button>
+      <button id="appcfgResetBtn" class="btn danger">Reset</button>
+    </div>
+  </section>
+</main>
 
-  <script src="assets/js/pages/profiles.js"></script>
-  <script src="assets/js/pages/operators.js"></script>
-  <script src="assets/js/pages/farms.js"></script>
-  <script src="assets/js/pages/refs.js"></script>
-  <script src="assets/js/pages/appcfg.js"></script>
-  <script src="assets/js/pages/index.js"></script>
+<script src="assets/js/ui/sidebar.js"></script>
+<script src="assets/js/pages/appcfg.js"></script>
+<script>
+const sidebar=document.getElementById('sidebar');
+document.getElementById('menuBtn').onclick=()=>sidebar.classList.toggle('open');
 
-  <script>
-    // ربط أزرار السايدبار والصفحات العامة بسرعة
-    (function wireup(){
-      const $ = id => document.getElementById(id);
-
-      // سايدبار
-      const sidebar = $('sidebar'), overlay=$('overlay');
-      $('menuBtn').onclick = ()=>{ sidebar.classList.add('active'); overlay.classList.add('active'); };
-      $('closeSidebar').onclick = closeMenu;
-      overlay.onclick = closeMenu;
-      function closeMenu(){ sidebar.classList.remove('active'); overlay.classList.remove('active'); }
-
-      // تنقل بين الصفحات الأساسية
-      const pages = ['home','settings','profiles','operators','farms','refs','appcfg'];
-      function show(p){
-        pages.forEach(n=>{ const el=$('page-'+n); if(el) el.classList.add('hidden'); });
-        const t=$('page-'+p); if(t) t.classList.remove('hidden');
-        closeMenu();
-      }
-      $('nav-home').onclick = e=>{e.preventDefault(); setActive('nav-home'); show('home');};
-      $('nav-settings').onclick = e=>{e.preventDefault(); setActive('nav-settings'); show('settings');};
-      $('logout').onclick = e=>{e.preventDefault(); location='index.html';};
-
-      function setActive(id){
-        document.querySelectorAll('.sidebar a').forEach(a=>a.classList.remove('active'));
-        const el=$(id); if(el) el.classList.add('active');
-      }
-
-      // فتح تابات الإعدادات
-      $('open-operators').onclick = ()=>{ setActive('nav-settings'); show('operators'); };
-      $('open-profiles').onclick  = ()=>{ setActive('nav-settings'); show('profiles'); };
-      $('open-refs').onclick      = ()=>{ setActive('nav-settings'); show('refs'); };
-      $('open-appcfg').onclick    = ()=>{ setActive('nav-settings'); show('appcfg'); };
-
-      // أزرار Setup banner
-      const setupOn = localStorage.getItem('ab_setup')==='1';
-      if(setupOn) $('setupBanner').classList.remove('hidden');
-      $('btnDisableSetup').onclick = ()=>{
-        localStorage.removeItem('ab_setup');
-        alert('تم إيقاف Setup Mode. أضف مستخدمًا ثم سجّل الخروج.');
-        location.reload();
-      };
-      $('btnGoSettings').onclick = ()=>{ setActive('nav-settings'); show('settings'); };
-    })();
-  </script>
+function showPage(id){
+  document.querySelectorAll('main > section').forEach(s=>s.classList.add('hidden'));
+  const page=document.getElementById(id);
+  if(page) page.classList.remove('hidden');
+  sidebar.classList.remove('open');
+}
+function logout(){ alert('Déconnecté. (Simulation)'); }
+function toggleAcc(id){
+  const el=document.getElementById(id);
+  if(el) el.classList.toggle('open');
+}
+</script>
 </body>
 </html>
