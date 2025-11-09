@@ -15,52 +15,199 @@
   --border:#243046;
   --tile:#0c1526;
   --tileIcon:#0f1a2e;
+  --warn-bg:#fde68a1a;
+  --warn-border:#fbbf24;
+  --warn-text:#fcd34d;
 }
+*{box-sizing:border-box;margin:0;padding:0}
 body{
-  margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-  background:var(--bg);color:var(--text);
-  transition:background .25s ease,color .25s ease;
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
 }
+.hidden{display:none!important}
+
+/* HEADER */
 header{
+  position:sticky;top:0;z-index:40;
   display:flex;align-items:center;justify-content:space-between;
-  background:var(--panel);padding:8px 12px;border-bottom:1px solid var(--border);
+  padding:8px 14px;
+  background:var(--panel);
+  border-bottom:1px solid var(--border);
 }
-.left-head{display:flex;align-items:center;gap:8px}
-.menu-btn{width:36px;height:36px;border-radius:10px;border:1px solid #111827;background:#020817;color:var(--text);font-size:20px;display:grid;place-items:center;cursor:pointer;}
+.left-head{display:flex;align-items:center;gap:10px}
+.menu-btn{
+  width:36px;height:36px;border-radius:10px;
+  border:1px solid #111827;background:#020817;
+  color:var(--text);display:flex;align-items:center;justify-content:center;
+  font-size:20px;cursor:pointer;
+}
 .brand{display:flex;align-items:center;gap:8px}
-#appTitleTop{font-weight:800;letter-spacing:.4px;color:var(--accent);font-size:15px;}
-#appBadgeImg{height:22px;border-radius:6px;border:1px solid #1f2937;}
+#appTitleTop{
+  font-weight:800;font-size:15px;letter-spacing:.4px;
+  color:var(--accent);
+}
+#appBadgeImg{
+  height:22px;border-radius:6px;border:1px solid #1f2937;
+}
+
+/* SIDEBAR */
 .sidebar{
-  position:fixed;top:0;left:-260px;width:260px;height:100%;background:#020817;
-  border-right:1px solid var(--border);transition:left .25s ease;
-  padding-top:50px;display:flex;flex-direction:column;z-index:30;
+  position:fixed;top:0;left:-260px;width:260px;height:100%;
+  background:#020817;border-right:1px solid var(--border);
+  padding-top:52px;display:flex;flex-direction:column;
+  transition:left .25s ease;z-index:35;
 }
 .sidebar.open{left:0}
-.sidebar a{display:flex;align-items:center;gap:8px;padding:8px 12px;margin:2px 8px;color:#cbd5e1;text-decoration:none;border-radius:9px;font-size:13px;}
+.sidebar a{
+  display:flex;align-items:center;gap:8px;
+  padding:9px 14px;margin:2px 8px;
+  border-radius:9px;font-size:13px;
+  color:#cbd5e1;text-decoration:none;
+}
+.sidebar a span.emoji{width:18px;text-align:center}
 .sidebar a:hover{background:#111827;color:#fff;}
 .sidebar a.active{background:var(--accent);color:#020817;font-weight:700;}
-.overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:opacity .25s;z-index:25;}
+.overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.5);
+  opacity:0;pointer-events:none;transition:opacity .25s;z-index:30;
+}
 .overlay.active{opacity:1;pointer-events:auto;}
+
+/* MAIN */
 main.content{padding:16px}
-.card{background:var(--bg-soft);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:16px;}
-.tile{display:flex;align-items:center;gap:10px;background:var(--tile);border-radius:12px;padding:10px 12px;border:1px solid #111827;cursor:pointer;}
-.tile:hover{border-color:var(--accent);}
-.tile .icon{width:32px;height:32px;display:grid;place-items:center;background:var(--tileIcon);border-radius:10px;border:1px solid #1f2a44;font-size:17px;}
-.input,select{width:100%;max-width:320px;padding:8px 9px;border-radius:9px;border:1px solid #111827;background:#020817;color:#e5e7eb;font-size:12px;}
-.btn{padding:7px 9px;border-radius:8px;border:1px solid var(--accent);background:transparent;color:var(--accent);cursor:pointer;font-size:12px;}
+.card{
+  background:var(--bg-soft);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:16px;
+  margin-bottom:16px;
+  box-shadow:0 10px 25px rgba(0,0,0,.35);
+}
+.card h2{margin-bottom:6px;font-size:18px}
+.card p{font-size:13px;color:var(--muted)}
+
+/* Setup banner */
+.setup-banner{
+  border-radius:14px;
+  border:1px dashed var(--warn-border);
+  background:var(--warn-bg);
+  padding:10px 10px 8px;
+  margin-bottom:14px;
+  font-size:12px;
+  color:var(--warn-text);
+}
+.setup-actions{display:flex;gap:8px;margin-top:6px;flex-wrap:wrap}
+
+/* Buttons & inputs */
+.btn{
+  padding:7px 10px;border-radius:8px;
+  border:1px solid var(--accent);background:transparent;
+  color:var(--accent);cursor:pointer;font-size:12px;
+}
 .btn:hover{background:var(--accent);color:#020817}
-.btn.danger{border-color:#ef4444;color:#fca5a5;}
-.btn.danger:hover{background:#ef4444;color:#020817;}
-.label{display:block;margin-bottom:3px;font-size:10px;color:#9ca3af;}
-.hint{font-size:11px;color:#9ca3af;margin-top:6px;}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;}
+.btn.icon{width:32px;height:32px;display:flex;align-items:center;justify-content:center;padding:0}
+.btn.danger{border-color:#ef4444;color:#fca5a5}
+.btn.danger:hover{background:#ef4444;color:#020817}
+.input,select,textarea{
+  width:100%;max-width:340px;
+  padding:9px 10px;
+  border-radius:9px;
+  border:1px solid #111827;
+  background:#020817;color:#e5e7eb;
+  font-size:12px;
+}
+.row{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.label{
+  display:block;font-size:10px;color:#9ca3af;margin-bottom:3px;
+}
+
+/* Tiles */
+.stack{display:grid;gap:8px;margin-top:8px}
+.tile{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 12px;
+  background:var(--tile);
+  border-radius:12px;
+  border:1px solid #111827;
+  cursor:pointer;
+}
+.tile .icon{
+  width:30px;height:30px;
+  display:grid;place-items:center;
+  background:var(--tileIcon);
+  border-radius:9px;
+  border:1px solid #1f2a44;
+  font-size:16px;
+}
+.tile h4{margin:0;font-size:13px}
+.tile p{margin:0;font-size:11px;color:var(--muted)}
+.tile:hover{border-color:var(--accent);box-shadow:0 0 0 1px rgba(34,197,94,.15) inset}
+
+/* Lists */
+.list{display:grid;gap:8px;margin-top:10px}
+.item{
+  display:grid;grid-template-columns:1fr auto;gap:8px;
+  align-items:center;
+  padding:9px 10px;
+  background:#020817;
+  border-radius:10px;
+  border:1px solid #111827;
+  font-size:11px;
+}
+.meta{display:flex;flex-wrap:wrap;gap:8px;color:#9ca3af}
+.meta b{color:#e5e7eb}
+
+/* Accordion in app settings */
+.accordion{margin-top:10px;border-radius:12px;border:1px solid var(--border);background:#020817;}
+.acc-hd{
+  width:100%;padding:9px 10px;
+  border:none;outline:none;
+  background:#0c1526;
+  color:var(--text);font-size:12px;
+  display:flex;align-items:center;justify-content:space-between;
+  border-radius:12px 12px 0 0;
+  cursor:pointer;
+}
+.acc-bd{padding:10px;display:none;font-size:11px}
+.acc.open .acc-bd{display:block}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:8px}
+
+/* Combo list */
+.combo{position:relative;max-width:340px}
+.combo-list{
+  position:absolute;left:0;right:0;top:100%;
+  background:#020817;border:1px solid #111827;
+  max-height:200px;overflow-y:auto;
+  border-radius:9px;margin-top:3px;z-index:50;
+}
+.combo-item{padding:6px 8px;font-size:11px;cursor:pointer;border-bottom:1px solid #111827}
+.combo-item:hover{background:#111827}
+.combo-item.muted{color:#6b7280;cursor:default}
+
+/* Modals */
+.modal-wrap{position:fixed;inset:0;display:none;place-items:center;z-index:60}
+.modal-wrap.show{display:grid}
+.modal-bg{position:absolute;inset:0;background:rgba(0,0,0,.45);}
+.modal{
+  position:relative;z-index:61;
+  width:min(480px,94vw);
+  background:#020817;border-radius:14px;
+  border:1px solid var(--border);
+  padding:12px;
+  box-shadow:0 20px 40px rgba(0,0,0,.6);
+  font-size:12px;
+}
+.modal h3{margin-bottom:6px;font-size:14px}
+.right{display:flex;justify-content:flex-end;gap:6px;margin-top:6px}
 </style>
 </head>
 <body>
 
 <header>
   <div class="left-head">
-    <button class="menu-btn" id="menuBtn">☰</button>
+    <button id="menuBtn" class="menu-btn">☰</button>
     <div class="brand">
       <div id="appTitleTop">AB AGRIWEB</div>
       <img id="appBadgeImg" class="hidden" alt="">
@@ -69,110 +216,903 @@ main.content{padding:16px}
 </header>
 
 <!-- SIDEBAR -->
-<aside class="sidebar" id="sidebar">
-  <a href="#" id="nav-home" class="active">🏠 Accueil</a>
-  <a href="#" id="nav-settings">⚙️ Paramètres</a>
-  <a href="#" id="nav-theme">🎨 Fond</a>
-  <a href="#" id="nav-logout">🚪 Déconnecter</a>
+<aside id="sidebar" class="sidebar">
+  <a href="#" id="nav-home" class="active"><span class="emoji">🏠</span><span id="lbl-nav-home">Accueil</span></a>
+  <a href="#" id="nav-irrig"><span class="emoji">🌿</span><span id="lbl-nav-irrig">Irrigation</span></a>
+  <a href="#" id="nav-trait"><span class="emoji">💧</span><span id="lbl-nav-trait">Traitement</span></a>
+  <a href="#" id="nav-settings"><span class="emoji">⚙️</span><span id="lbl-nav-settings">Paramètres</span></a>
+  <a href="#" id="nav-logout"><span class="emoji">🚪</span><span id="lbl-nav-logout">Logout</span></a>
 </aside>
-<div class="overlay" id="overlay"></div>
+<div id="overlay" class="overlay"></div>
 
 <main class="content">
+
+  <!-- Setup banner -->
+  <section id="setupBanner" class="setup-banner hidden">
+    ⚠️ Setup Mode مفعل: يمكنك الدخول بدون كلمة سر لإعداد التطبيق (إضافة مستخدم، ضبط اللوغو، الخلفية...).
+    <div class="setup-actions">
+      <button class="btn danger" onclick="disableSetup()">إيقاف Setup Mode</button>
+      <button class="btn" onclick="goSettings()">اذهب إلى Paramètres</button>
+    </div>
+  </section>
+
   <!-- Accueil -->
   <section id="page-home" class="card">
     <h2>Bienvenue 👋</h2>
-    <p>لوحة التحكم الخاصة بـ <b>AB AGRIWEB</b>.</p>
+    <p id="homeText">لوحة التحكم الخاصة بـ AB AGRIWEB. استعمل القائمة الجانبية للبدء.</p>
+    <div id="firstRunHint" class="hint hidden" style="margin-top:8px">
+      🔐 لا يوجد أي مستخدم بعد. اذهب إلى <b>Paramètres → Opérateurs</b> وأضف أول مستخدم.
+    </div>
   </section>
 
-  <!-- PARAMÈTRES -->
+  <!-- Paramètres (menu tuiles) -->
   <section id="page-settings" class="card hidden">
     <h2>Paramètres</h2>
-    <div class="tile" id="tile-op">👥 Gestion des utilisateurs</div>
-    <div class="tile" id="tile-prof">🧩 Profils</div>
-    <div class="tile" id="tile-ref">🗂️ Référentiels</div>
-  </section>
-
-  <!-- THEME / BACKGROUND -->
-  <section id="page-theme" class="card hidden">
-    <h2>Changer le fond de l’application</h2>
-    <div class="grid">
-      <div>
-        <label class="label">Choisir une image depuis l’appareil</label>
-        <input type="file" id="bgFile" accept="image/png,image/jpg,image/jpeg,image/gif" class="input">
+    <p class="hint">اختر القسم الذي تريد إدارته.</p>
+    <div class="stack">
+      <div class="tile" onclick="openPage('operators')">
+        <div class="icon">👥</div>
+        <div><h4 id="lbl-tile-operators">OPÉRATEUR</h4><p>Gestion des utilisateurs</p></div>
       </div>
-      <div>
-        <label class="label">Ou via lien (URL)</label>
-        <input id="bgUrl" class="input" placeholder="https://exemple.com/fond.jpg">
+      <div class="tile" onclick="openPage('profiles')">
+        <div class="icon">🧩</div>
+        <div><h4 id="lbl-tile-profiles">PROFILE</h4><p>Profils et rôles</p></div>
+      </div>
+      <div class="tile" onclick="openPage('refs')">
+        <div class="icon">🗂️</div>
+        <div><h4 id="lbl-tile-refs">RÉFÉRENTIELS</h4><p>Listes maîtres</p></div>
+      </div>
+      <div class="tile" onclick="openPage('appcfg')">
+        <div class="icon">🎨</div>
+        <div><h4 id="lbl-tile-appcfg">RÉGLAGES APP</h4><p>Nom, logos, خلفيات, sécurité</p></div>
       </div>
     </div>
-    <div class="hint">التغييرات تحفظ محلياً في هذا الجهاز فقط.</div>
-    <div style="margin-top:10px;">
-      <button class="btn" id="applyBg">Appliquer</button>
-      <button class="btn danger" id="clearBg">Supprimer fond</button>
+  </section>
+
+  <!-- Profiles -->
+  <section id="page-profiles" class="card hidden">
+    <div class="right">
+      <button class="btn icon" onclick="toggleProfileForm(true)">➕</button>
+    </div>
+    <h2>Profils</h2>
+    <p class="hint">أضف الأدوار (Admin, Magasinier, ...).</p>
+    <div id="profileForm" class="row hidden">
+      <input id="profileName" class="input" placeholder="Ex: Admin, Magasinier">
+      <button class="btn" onclick="addProfile()">Confirmer</button>
+      <button class="btn danger" onclick="toggleProfileForm(false)">Annuler</button>
+    </div>
+    <div id="profilesList" class="list"></div>
+  </section>
+
+  <!-- Operators -->
+  <section id="page-operators" class="card hidden">
+    <div class="right">
+      <button class="btn icon" onclick="opToggleForm(true)">➕</button>
+    </div>
+    <h2>Opérateurs</h2>
+    <p class="hint">مستخدمو التطبيق المرتبطون ببروفايل وضيعة.</p>
+    <div id="opAddForm" class="row hidden">
+      <input id="op_username" class="input" placeholder="Nom d’utilisateur">
+      <input id="op_password" type="password" class="input" placeholder="Mot de passe">
+      <select id="op_profile" class="input"></select>
+      <div class="combo" id="combo-op-ferme">
+        <input id="op_ferme_input" class="input" placeholder="Choisir une ferme...">
+        <div id="op_ferme_list" class="combo-list hidden"></div>
+        <input type="hidden" id="op_ferme">
+      </div>
+      <button class="btn" onclick="opAdd()">Confirmer</button>
+      <button class="btn danger" onclick="opToggleForm(false)">Annuler</button>
+    </div>
+    <div id="operatorsList" class="list"></div>
+  </section>
+
+  <!-- Farms -->
+  <section id="page-farms" class="card hidden">
+    <div class="right">
+      <button class="btn icon" onclick="farmToggleForm(true)">➕</button>
+    </div>
+    <h2>Fermes</h2>
+    <p class="hint">إدارة الضيعات لاستعمالها في باقي الشاشات.</p>
+    <div id="farmAddForm" class="row hidden">
+      <input id="farm_name" class="input" placeholder="Nom de la ferme">
+      <input id="farm_area" class="input" placeholder="Surface">
+      <input id="farm_company" class="input" placeholder="Société">
+      <input id="farm_location" class="input" placeholder="Emplacement">
+      <input id="farm_manager" class="input" placeholder="Responsable">
+      <input id="farm_phone" class="input" placeholder="Téléphone">
+      <button class="btn" onclick="farmAdd()">Confirmer</button>
+      <button class="btn danger" onclick="farmToggleForm(false)">Annuler</button>
+    </div>
+    <div id="farmsList" class="list"></div>
+  </section>
+
+  <!-- Référentiels -->
+  <section id="page-refs" class="card hidden">
+    <h2>Référentiels</h2>
+    <p class="hint">لوائح مساعدة: sociétés, variétés, transports...</p>
+    <div id="refsHome" class="stack">
+      <div class="tile" onclick="openPage('farms')"><div class="icon">🏞️</div><div><h4>Fermes</h4></div></div>
+      <div class="tile" onclick="refsOpen('companies')"><div class="icon">🏢</div><div><h4>Sociétés</h4></div></div>
+      <div class="tile" onclick="refsOpen('responsables')"><div class="icon">👤</div><div><h4>Responsables</h4></div></div>
+      <div class="tile" onclick="refsOpen('stations')"><div class="icon">🚏</div><div><h4>Stations</h4></div></div>
+      <div class="tile" onclick="refsOpen('secteurs')"><div class="icon">🧭</div><div><h4>Secteurs</h4></div></div>
+      <div class="tile" onclick="refsOpen('parcelles')"><div class="icon">🧱</div><div><h4>Parcelles</h4></div></div>
+      <div class="tile" onclick="refsOpen('transports')"><div class="icon">🚚</div><div><h4>Transports</h4></div></div>
+      <div class="tile" onclick="refsOpen('varietes')"><div class="icon">🌱</div><div><h4>Variétés</h4></div></div>
+      <div class="tile" onclick="refsOpen('varietes_champ')"><div class="icon">🌿</div><div><h4>Variétés champ</h4></div></div>
+      <div class="tile" onclick="refsOpen('gestions')"><div class="icon">📦</div><div><h4>Gestion stock</h4></div></div>
+      <div class="tile" onclick="refsOpen('achats')"><div class="icon">🧾</div><div><h4>Achats</h4></div></div>
+    </div>
+
+    <div id="refsCat" class="hidden" style="margin-top:12px">
+      <div class="right">
+        <button class="btn icon" onclick="refsToggleForm(true)">➕</button>
+      </div>
+      <h3 id="refsCatTitle" style="font-size:14px;margin-bottom:4px">Catégorie</h3>
+      <div id="refsHint" class="hint">استعمل ✏️ للتعديل و 🗑️ للحذف.</div>
+      <div id="refsAddForm" class="row hidden">
+        <input id="refsInput" class="input" placeholder="Nom à ajouter">
+        <button class="btn" onclick="refsAdd()">Confirmer</button>
+        <button class="btn danger" onclick="refsToggleForm(false)">Annuler</button>
+      </div>
+      <div id="refsList" class="list"></div>
+    </div>
+  </section>
+
+  <!-- Réglages de l’application -->
+  <section id="page-appcfg" class="card hidden">
+    <h2>Réglages de l’application</h2>
+    <p class="hint">كل إعدادات الاسم، اللوغو، الخلفية، والنصوص من هنا.</p>
+
+    <!-- 1) Général -->
+    <div id="acc-general" class="accordion acc open">
+      <button class="acc-hd" onclick="toggleAcc('acc-general')">
+        1) Général
+        <span>Nom de l’app + titre الواجهة</span>
+      </button>
+      <div class="acc-bd">
+        <div class="grid">
+          <div>
+            <label class="label">Nom de l’application (App Title)</label>
+            <input id="cfg-app-title" class="input" placeholder="AB AGRIWEB">
+          </div>
+          <div>
+            <label class="label">Logo de l’application (PNG/GIF, header)</label>
+            <input id="cfg-logo-url" class="input" placeholder="URL (png/gif)">
+            <input id="cfg-logo-file" type="file" accept="image/png,image/gif" class="input">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2) Libellés Navigation -->
+    <div id="acc-nav" class="accordion acc">
+      <button class="acc-hd" onclick="toggleAcc('acc-nav')">
+        2) Libellés Navigation
+        <span>Accueil • Irrigation • Traitement • Paramètres • Logout</span>
+      </button>
+      <div class="acc-bd">
+        <div class="grid">
+          <div><label class="label">Accueil</label><input id="cfg-nav-home" class="input"></div>
+          <div><label class="label">Irrigation</label><input id="cfg-nav-irrig" class="input"></div>
+          <div><label class="label">Traitement</label><input id="cfg-nav-trait" class="input"></div>
+          <div><label class="label">Paramètres</label><input id="cfg-nav-settings" class="input"></div>
+          <div><label class="label">Logout</label><input id="cfg-nav-logout" class="input"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3) Tuiles -->
+    <div id="acc-tiles" class="accordion acc">
+      <button class="acc-hd" onclick="toggleAcc('acc-tiles')">
+        3) Tuiles Paramètres
+        <span>Opérateur • Profil • Référentiels • Réglages app</span>
+      </button>
+      <div class="acc-bd">
+        <div class="grid">
+          <div><label class="label">Opérateur</label><input id="cfg-tile-operators" class="input"></div>
+          <div><label class="label">Profil</label><input id="cfg-tile-profiles" class="input"></div>
+          <div><label class="label">Référentiels</label><input id="cfg-tile-refs" class="input"></div>
+          <div><label class="label">Réglages app</label><input id="cfg-tile-appcfg" class="input"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4) Sécurité -->
+    <div id="acc-sec" class="accordion acc">
+      <button class="acc-hd" onclick="toggleAcc('acc-sec')">
+        4) Sécurité
+        <span>Email • Téléphone • Question • Code</span>
+      </button>
+      <div class="acc-bd">
+        <div class="grid">
+          <div><label class="label">Email de récupération</label><input id="sec-email" class="input"></div>
+          <div><label class="label">Téléphone</label><input id="sec-phone" class="input"></div>
+          <div><label class="label">Question secrète</label><input id="sec-question" class="input"></div>
+          <div><label class="label">Réponse</label><input id="sec-answer" class="input" placeholder="Saisir pour mettre à jour"></div>
+          <div>
+            <label class="label">Code de récupération</label>
+            <div class="row">
+              <input id="sec-code" class="input" disabled>
+              <button class="btn" onclick="secGenCode()">Générer</button>
+            </div>
+            <div class="hint">يُستخدم في صفحة تسجيل الدخول لاسترجاع الوصول.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5) Branding (logos + fonds) -->
+    <div id="acc-brand" class="accordion acc">
+      <button class="acc-hd" onclick="toggleAcc('acc-brand')">
+        5) Branding
+        <span>Badge • Sidebar • Login banner • Backgrounds</span>
+      </button>
+      <div class="acc-bd">
+        <div class="grid">
+          <div>
+            <label class="label">Badge header (صغير شفاف)</label>
+            <input id="cfg-badge-url" class="input" placeholder="URL (png/gif)">
+            <input id="cfg-badge-file" type="file" accept="image/png,image/gif" class="input">
+          </div>
+          <div>
+            <label class="label">Sidebar banner</label>
+            <input id="cfg-side-url" class="input" placeholder="URL (png/gif)">
+            <input id="cfg-side-file" type="file" accept="image/png,image/gif" class="input">
+          </div>
+          <div>
+            <label class="label">Login banner (داخل بطاقة الدخول)</label>
+            <input id="cfg-login-url" class="input" placeholder="URL (png/gif)">
+            <input id="cfg-login-file" type="file" accept="image/png,image/gif" class="input">
+          </div>
+          <div>
+            <label class="label">Login background (خلفية صفحة الدخول)</label>
+            <input id="cfg-loginbg-url" class="input" placeholder="URL (png/gif/jpg)">
+            <input id="cfg-loginbg-file" type="file" accept="image/png,image/gif,image/jpeg" class="input">
+          </div>
+          <div>
+            <label class="label">App Background (خلفية لوحة التحكم)</label>
+            <input id="cfg-appbg-url" class="input" placeholder="URL (png/jpg/gif)">
+            <input id="cfg-appbg-file" type="file" accept="image/png,image/gif,image/jpeg" class="input">
+          </div>
+        </div>
+        <div class="hint">الصور تحفظ محلياً على هذا الجهاز (localStorage).</div>
+      </div>
+    </div>
+
+    <div class="row" style="margin-top:10px">
+      <button class="btn" onclick="appcfgSave()">Enregistrer</button>
+      <button class="btn danger" onclick="appcfgReset()">Reset (défaut)</button>
     </div>
   </section>
 </main>
 
+<!-- Modals -->
+<div id="opModal" class="modal-wrap">
+  <div class="modal-bg" onclick="opCloseModal()"></div>
+  <div class="modal">
+    <h3>Modifier l’opérateur</h3>
+    <div class="row">
+      <input id="edit_username" class="input" placeholder="Nom d’utilisateur">
+      <input id="edit_password" type="password" class="input" placeholder="Mot de passe">
+    </div>
+    <div class="row">
+      <select id="edit_profile" class="input"></select>
+      <div class="combo" id="combo-edit-ferme">
+        <input id="edit_ferme_input" class="input" placeholder="Choisir une ferme...">
+        <div id="edit_ferme_list" class="combo-list hidden"></div>
+        <input type="hidden" id="edit_ferme">
+      </div>
+    </div>
+    <div class="right">
+      <button class="btn danger" onclick="opCloseModal()">Annuler</button>
+      <button class="btn" onclick="opSaveEdit()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
+<div id="farmModal" class="modal-wrap">
+  <div class="modal-bg" onclick="farmCloseModal()"></div>
+  <div class="modal">
+    <h3>Modifier la ferme</h3>
+    <div class="row">
+      <input id="edit_farm_name" class="input">
+      <input id="edit_farm_area" class="input">
+    </div>
+    <div class="row">
+      <input id="edit_farm_company" class="input">
+      <input id="edit_farm_location" class="input">
+    </div>
+    <div class="row">
+      <input id="edit_farm_manager" class="input">
+      <input id="edit_farm_phone" class="input">
+    </div>
+    <div class="right">
+      <button class="btn danger" onclick="farmCloseModal()">Annuler</button>
+      <button class="btn" onclick="farmSaveEdit()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
 <script>
-const LS_THEME='ab_theme';
+/* ======= CONSTANTS & HELPERS ======= */
+const LS_PROFILES='ab_profiles';
+const LS_FARMS='ab_farms';
+const LS_OPERATORS='ab_operators';
+const LS_REFS='ab_refs';
+const LS_APP='ab_appcfg';
+const LS_IMG='ab_appimg';
+const LS_SEC='ab_security';
+const SETUP_ON = localStorage.getItem('ab_setup') === '1';
 
-/* ========== Sidebar ========== */
-const sidebar=document.getElementById('sidebar');
-const overlay=document.getElementById('overlay');
-document.getElementById('menuBtn').onclick=()=>{sidebar.classList.add('open');overlay.classList.add('active');}
-overlay.onclick=()=>{sidebar.classList.remove('open');overlay.classList.remove('active');}
+const DEFAULT_PROFILES=["Admin","Magasinier","Pointeur","Directeur"];
+const APP_DEFAULT={
+  appTitle:"AB AGRIWEB",
+  nav:{home:"Accueil",irrig:"Irrigation",trait:"Traitement",settings:"Paramètres",logout:"Logout"},
+  tiles:{operators:"OPÉRATEUR",profiles:"PROFILE",refs:"RÉFÉRENTIELS",appcfg:"RÉGLAGES APP"}
+};
 
-/* ========== Page navigation ========== */
-function showPage(id){
-  document.querySelectorAll('main > section').forEach(s=>s.classList.add('hidden'));
-  document.getElementById('page-'+id).classList.remove('hidden');
-  sidebar.classList.remove('open');overlay.classList.remove('active');
+function g(id){return document.getElementById(id)}
+function v(id){return g(id).value.trim()}
+function s(id,val){g(id).value = val || ""}
+
+/* Escape */
+function escapeHtml(str){
+  return String(str).replace(/[&<>"']/g,m=>({ "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[m]));
 }
-document.getElementById('nav-home').onclick=e=>{e.preventDefault();showPage('home');}
-document.getElementById('nav-settings').onclick=e=>{e.preventDefault();showPage('settings');}
-document.getElementById('nav-theme').onclick=e=>{e.preventDefault();showPage('theme');}
-document.getElementById('nav-logout').onclick=e=>{e.preventDefault();location='index.html';}
 
-/* ========== Theme background ========== */
-function getTheme(){
-  try{return JSON.parse(localStorage.getItem(LS_THEME)||'{}');}catch{return {};}
+/* ======= GUARD: block if no operator & no setup ======= */
+(function guard(){
+  let ops=[];
+  try{ops=JSON.parse(localStorage.getItem(LS_OPERATORS)||"[]");}catch{}
+  if(!SETUP_ON && ops.length===0){
+    alert("لا يمكن الدخول بدون مستخدم. رجوع إلى صفحة الدخول.");
+    location="index.html";
+  }
+})();
+
+/* ======= SIDEBAR ======= */
+const sidebar=g('sidebar'),overlay=g('overlay');
+g('menuBtn').onclick=()=>{sidebar.classList.add('open');overlay.classList.add('active')}
+overlay.onclick=closeMenu;
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMenu()});
+function closeMenu(){sidebar.classList.remove('open');overlay.classList.remove('active')}
+function setActiveLink(el){
+  document.querySelectorAll('.sidebar a').forEach(a=>a.classList.remove('active'));
+  el.classList.add('active');
 }
-function saveTheme(v){localStorage.setItem(LS_THEME,JSON.stringify(v));}
-function applyTheme(){
-  const t=getTheme();
-  if(t.bg){
-    document.body.style.backgroundImage=`url('${t.bg}')`;
+
+/* ======= PAGES NAV ======= */
+const pages={
+  home:g('page-home'),
+  settings:g('page-settings'),
+  profiles:g('page-profiles'),
+  operators:g('page-operators'),
+  farms:g('page-farms'),
+  refs:g('page-refs'),
+  appcfg:g('page-appcfg')
+};
+function showPage(name){
+  Object.values(pages).forEach(p=>p.classList.add('hidden'));
+  (pages[name]||pages.home).classList.remove('hidden');
+  closeMenu();
+}
+function openPage(name){
+  if(name==='appcfg') setActiveLink(g('nav-settings'));
+  showPage(name);
+}
+
+/* sidebar links */
+g('nav-home').onclick=e=>{e.preventDefault();setActiveLink(g('nav-home'));showPage('home')}
+g('nav-settings').onclick=e=>{e.preventDefault();setActiveLink(g('nav-settings'));showPage('settings')}
+g('nav-irrig').onclick=e=>{e.preventDefault();alert("Module Irrigation (لاحقاً).")}
+g('nav-trait').onclick=e=>{e.preventDefault();alert("Module Traitement (لاحقاً).")}
+g('nav-logout').onclick=e=>{e.preventDefault();location="index.html"}
+function goSettings(){setActiveLink(g('nav-settings'));showPage('settings')}
+
+/* ======= STORAGE LOADERS ======= */
+function loadJSON(key,def){try{return JSON.parse(localStorage.getItem(key)||JSON.stringify(def))}catch{return def}}
+function saveJSON(key,val){localStorage.setItem(key,JSON.stringify(val))}
+
+/* ======= APP CONFIG / BRANDING ======= */
+function appcfgLoad(){
+  const stored = loadJSON(LS_APP,{});
+  return {
+    appTitle: stored.appTitle || APP_DEFAULT.appTitle,
+    nav:Object.assign({},APP_DEFAULT.nav,stored.nav||{}),
+    tiles:Object.assign({},APP_DEFAULT.tiles,stored.tiles||{})
+  };
+}
+function loadImgs(){
+  return loadJSON(LS_IMG,{badge:null,sidebar:null,login:null,loginBg:null,logo:null,appBg:null});
+}
+function saveImgs(o){saveJSON(LS_IMG,o)}
+
+function applyBackground(){
+  const imgs=loadImgs();
+  if(imgs.appBg){
+    document.body.style.backgroundImage=`url('${imgs.appBg}')`;
     document.body.style.backgroundSize='cover';
     document.body.style.backgroundPosition='center';
   }else{
     document.body.style.backgroundImage='none';
+    document.body.style.backgroundColor=getComputedStyle(document.documentElement).getPropertyValue('--bg')||'#0f172a';
   }
 }
-document.getElementById('applyBg').onclick=()=>{
-  const t=getTheme();
-  const file=document.getElementById('bgFile').files[0];
-  const url=document.getElementById('bgUrl').value.trim();
-  if(file){
-    const r=new FileReader();
-    r.onload=e=>{
-      t.bg=e.target.result;
-      saveTheme(t);applyTheme();
-      alert("تم تعيين الخلفية ✅");
-    };
-    r.readAsDataURL(file);
-  }else if(url){
-    t.bg=url;saveTheme(t);applyTheme();
-    alert("تم تعيين الخلفية من الرابط ✅");
-  }else alert("اختر صورة أو ضع رابط أولاً.");
-};
-document.getElementById('clearBg').onclick=()=>{
-  const t=getTheme();t.bg=null;saveTheme(t);applyTheme();
-  alert("تم حذف الخلفية.");
-};
 
-/* تطبيق عند التحميل */
-applyTheme();
+function appcfgApply(){
+  const c=appcfgLoad();
+  const imgs=loadImgs();
+
+  document.title = c.appTitle + " - Dashboard";
+  const titleEl=g('appTitleTop');
+  if(imgs.logo){
+    titleEl.innerHTML = `<img src="${imgs.logo}" style="height:24px;border-radius:6px;vertical-align:middle">`;
+  }else{
+    titleEl.textContent = c.appTitle;
+  }
+
+  // nav labels
+  g('lbl-nav-home').textContent = c.nav.home;
+  g('lbl-nav-irrig').textContent = c.nav.irrig;
+  g('lbl-nav-trait').textContent = c.nav.trait;
+  g('lbl-nav-settings').textContent = c.nav.settings;
+  g('lbl-nav-logout').textContent = c.nav.logout;
+
+  // tiles
+  g('lbl-tile-operators').textContent = c.tiles.operators;
+  g('lbl-tile-profiles').textContent = c.tiles.profiles;
+  g('lbl-tile-refs').textContent = c.tiles.refs;
+  g('lbl-tile-appcfg').textContent = c.tiles.appcfg;
+
+  // badge
+  const badge=g('appBadgeImg');
+  if(imgs.badge){badge.src=imgs.badge;badge.classList.remove('hidden');}
+  else badge.classList.add('hidden');
+
+  // hint accueil
+  const ops = loadJSON(LS_OPERATORS,[]);
+  if(ops.length===0) g('firstRunHint').classList.remove('hidden'); else g('firstRunHint').classList.add('hidden');
+
+  applyBackground();
+}
+
+function appcfgFillForm(){
+  const c=appcfgLoad();
+  s('cfg-app-title',c.appTitle);
+  s('cfg-nav-home',c.nav.home);
+  s('cfg-nav-irrig',c.nav.irrig);
+  s('cfg-nav-trait',c.nav.trait);
+  s('cfg-nav-settings',c.nav.settings);
+  s('cfg-nav-logout',c.nav.logout);
+  s('cfg-tile-operators',c.tiles.operators);
+  s('cfg-tile-profiles',c.tiles.profiles);
+  s('cfg-tile-refs',c.tiles.refs);
+  s('cfg-tile-appcfg',c.tiles.appcfg);
+
+  const sec = loadJSON(LS_SEC,{});
+  s('sec-email',sec.email);
+  s('sec-phone',sec.phone);
+  s('sec-question',sec.question);
+  s('sec-code',sec.recoveryCode?String(sec.recoveryCode):"");
+}
+
+/* file -> dataURL helper */
+function fileToDataURL(file,cb){
+  const r=new FileReader();
+  r.onload=()=>cb(r.result);
+  r.readAsDataURL(file);
+}
+function isImgUrl(u){return /^https?:\/\//.test(u) && /\.(png|gif|jpe?g)(\?|#|$)/i.test(u)}
+
+['cfg-badge-file','cfg-side-file','cfg-login-file','cfg-loginbg-file','cfg-logo-file','cfg-appbg-file']
+.forEach(id=>{
+  const el=g(id); if(!el)return;
+  el.addEventListener('change',e=>{
+    const f=e.target.files[0]; if(!f)return;
+    fileToDataURL(f,data=>{
+      const imgs=loadImgs();
+      if(id==='cfg-badge-file') imgs.badge=data;
+      if(id==='cfg-side-file') imgs.sidebar=data;
+      if(id==='cfg-login-file') imgs.login=data;
+      if(id==='cfg-loginbg-file') imgs.loginBg=data;
+      if(id==='cfg-logo-file') imgs.logo=data;
+      if(id==='cfg-appbg-file') imgs.appBg=data;
+      saveImgs(imgs); appcfgApply();
+      alert('تم حفظ الصورة محلياً ✅');
+    });
+  });
+});
+
+function appcfgSave(){
+  const cfg=appcfgLoad();
+  const imgs=loadImgs();
+
+  // App title
+  const t=v('cfg-app-title');
+  cfg.appTitle = t || APP_DEFAULT.appTitle;
+
+  // logo url
+  const logoUrl=v('cfg-logo-url');
+  if(logoUrl){
+    if(!isImgUrl(logoUrl)) return alert('Logo: lien image غير صالح');
+    imgs.logo=logoUrl;
+  }
+
+  // nav
+  cfg.nav.home = v('cfg-nav-home')||APP_DEFAULT.nav.home;
+  cfg.nav.irrig = v('cfg-nav-irrig')||APP_DEFAULT.nav.irrig;
+  cfg.nav.trait = v('cfg-nav-trait')||APP_DEFAULT.nav.trait;
+  cfg.nav.settings = v('cfg-nav-settings')||APP_DEFAULT.nav.settings;
+  cfg.nav.logout = v('cfg-nav-logout')||APP_DEFAULT.nav.logout;
+
+  // tiles
+  cfg.tiles.operators = v('cfg-tile-operators')||APP_DEFAULT.tiles.operators;
+  cfg.tiles.profiles = v('cfg-tile-profiles')||APP_DEFAULT.tiles.profiles;
+  cfg.tiles.refs = v('cfg-tile-refs')||APP_DEFAULT.tiles.refs;
+  cfg.tiles.appcfg = v('cfg-tile-appcfg')||APP_DEFAULT.tiles.appcfg;
+
+  // security
+  const sec = loadJSON(LS_SEC,{});
+  sec.email = v('sec-email');
+  sec.phone = v('sec-phone');
+  sec.question = v('sec-question');
+  const ans = v('sec-answer');
+  if(ans) sec.answerHash = hashLite(ans.toLowerCase());
+  saveJSON(LS_SEC,sec);
+
+  // branding URLs
+  const badgeUrl=v('cfg-badge-url'); if(badgeUrl){ if(!isImgUrl(badgeUrl)) return alert('Badge URL غير صالح'); imgs.badge=badgeUrl; }
+  const sideUrl=v('cfg-side-url'); if(sideUrl){ if(!isImgUrl(sideUrl)) return alert('Sidebar URL غير صالح'); imgs.sidebar=sideUrl; }
+  const loginUrl=v('cfg-login-url'); if(loginUrl){ if(!isImgUrl(loginUrl)) return alert('Login banner URL غير صالح'); imgs.login=loginUrl; }
+  const loginBgUrl=v('cfg-loginbg-url'); if(loginBgUrl){ if(!isImgUrl(loginBgUrl)) return alert('Login background URL غير صالح'); imgs.loginBg=loginBgUrl; }
+  const appBgUrl=v('cfg-appbg-url'); if(appBgUrl){ if(!isImgUrl(appBgUrl)) return alert('App background URL غير صالح'); imgs.appBg=appBgUrl; }
+
+  saveImgs(imgs);
+  saveJSON(LS_APP,cfg);
+  appcfgApply();
+  appcfgFillForm();
+  alert('تم الحفظ ✅');
+}
+
+function appcfgReset(){
+  localStorage.removeItem(LS_APP);
+  localStorage.removeItem(LS_IMG);
+  localStorage.removeItem(LS_SEC);
+  appcfgApply();
+  appcfgFillForm();
+  alert('تمت إعادة الإعدادات الافتراضية ✅');
+}
+
+/* ======= SECURITY CODE ======= */
+function hashLite(s){let h=0;for(let i=0;i<s.length;i++){h=((h<<5)-h)+s.charCodeAt(i);h|=0}return String(h)}
+function secGenCode(){
+  const code = Math.floor(100000+Math.random()*900000);
+  const sec = loadJSON(LS_SEC,{});
+  sec.recoveryCode = code;
+  saveJSON(LS_SEC,sec);
+  s('sec-code',String(code));
+  alert('Code généré: '+code);
+}
+
+/* ======= SETUP BANNER ======= */
+function showSetupBanner(){
+  if(SETUP_ON) g('setupBanner').classList.remove('hidden');
+  else g('setupBanner').classList.add('hidden');
+}
+function disableSetup(){
+  localStorage.removeItem('ab_setup');
+  alert('Setup Mode تم إيقافه. لا تنس إنشاء مستخدم في Opérateurs.');
+  location.reload();
+}
+
+/* ======= PROFILES ======= */
+function loadProfiles(){return loadJSON(LS_PROFILES,[])}
+function saveProfiles(d){saveJSON(LS_PROFILES,d)}
+function renderProfiles(){
+  const list=g('profilesList');
+  const d=loadProfiles();
+  if(d.length===0){list.innerHTML='<div class="item"><div class="meta">لا توجد بروفايلات بعد.</div></div>';return;}
+  list.innerHTML=d.map((name,i)=>`
+    <div class="item">
+      <div class="meta"><span><b>${escapeHtml(name)}</b></span></div>
+      <div class="right">
+        <button class="btn icon" onclick="editProfile(${i})">✏️</button>
+        <button class="btn danger icon" onclick="removeProfile(${i})">🗑️</button>
+      </div>
+    </div>`).join('');
+}
+function toggleProfileForm(sh){g('profileForm').classList.toggle('hidden',!sh)}
+function addProfile(){
+  const name=v('profileName');
+  if(!name) return alert('Nom requis');
+  const d=loadProfiles();
+  if(d.some(x=>x.toLowerCase()===name.toLowerCase())) return alert('Profil existe déjà');
+  d.push(name);saveProfiles(d);s('profileName','');toggleProfileForm(false);renderProfiles();opRefreshProfileSelects();
+}
+function editProfile(i){
+  const d=loadProfiles();
+  const old=d[i];
+  const nv=prompt('Modifier le profil:',old);
+  if(nv===null) return;
+  const val=nv.trim();
+  if(!val) return alert('Nom vide');
+  if(val.toLowerCase()!==old.toLowerCase() && d.some(x=>x.toLowerCase()===val.toLowerCase())) return alert('Existe déjà');
+  d[i]=val;saveProfiles(d);renderProfiles();opRefreshProfileSelects();
+}
+function removeProfile(i){
+  const d=loadProfiles();
+  if(!confirm('Supprimer le profil '+d[i]+' ?'))return;
+  d.splice(i,1);saveProfiles(d);renderProfiles();opRefreshProfileSelects();
+}
+
+/* ======= FARMS ======= */
+function loadFarms(){return loadJSON(LS_FARMS,[])}
+function saveFarms(d){saveJSON(LS_FARMS,d)}
+function farmToggleForm(sh){g('farmAddForm').classList.toggle('hidden',!sh)}
+function farmAdd(){
+  const o={
+    name:v('farm_name'),
+    area:v('farm_area'),
+    company:v('farm_company'),
+    location:v('farm_location'),
+    manager:v('farm_manager'),
+    phone:v('farm_phone')
+  };
+  if(!o.name) return alert('Nom de la ferme requis');
+  const d=loadFarms();
+  if(d.some(x=>x.name.toLowerCase()===o.name.toLowerCase())) return alert('Existe déjà');
+  d.push(o);saveFarms(d);farmToggleForm(false);renderFarms();opRefreshFarmCombos();
+}
+function renderFarms(){
+  const list=g('farmsList');
+  const d=loadFarms();
+  if(d.length===0){list.innerHTML='<div class="item"><div class="meta">لا توجد ضيعات بعد.</div></div>';return;}
+  list.innerHTML=d.map((f,i)=>`
+    <div class="item">
+      <div class="meta">
+        <span><b>Ferme:</b> ${escapeHtml(f.name)}</span>
+        ${f.area?`<span><b>Surf.:</b> ${escapeHtml(f.area)}</span>`:""}
+        ${f.company?`<span><b>Société:</b> ${escapeHtml(f.company)}</span>`:""}
+        ${f.location?`<span><b>Lieu:</b> ${escapeHtml(f.location)}</span>`:""}
+        ${f.manager?`<span><b>Resp.:</b> ${escapeHtml(f.manager)}</span>`:""}
+        ${f.phone?`<span><b>Tél:</b> ${escapeHtml(f.phone)}</span>`:""}
+      </div>
+      <div class="right">
+        <button class="btn icon" onclick="farmEdit(${i})">✏️</button>
+        <button class="btn danger icon" onclick="farmDelete(${i})">🗑️</button>
+      </div>
+    </div>`).join('');
+}
+let farmEditIndex=null;
+function farmEdit(i){
+  const f=loadFarms()[i];farmEditIndex=i;
+  s('edit_farm_name',f.name||'');
+  s('edit_farm_area',f.area||'');
+  s('edit_farm_company',f.company||'');
+  s('edit_farm_location',f.location||'');
+  s('edit_farm_manager',f.manager||'');
+  s('edit_farm_phone',f.phone||'');
+  g('farmModal').classList.add('show');
+}
+function farmCloseModal(){g('farmModal').classList.remove('show');farmEditIndex=null}
+function farmSaveEdit(){
+  if(farmEditIndex==null)return;
+  const d=loadFarms();
+  const cur=d[farmEditIndex];
+  const n={
+    name:v('edit_farm_name'),
+    area:v('edit_farm_area'),
+    company:v('edit_farm_company'),
+    location:v('edit_farm_location'),
+    manager:v('edit_farm_manager'),
+    phone:v('edit_farm_phone')
+  };
+  if(!n.name) return alert('Nom requis');
+  if(n.name.toLowerCase()!==cur.name.toLowerCase()
+     && d.some(x=>x.name.toLowerCase()===n.name.toLowerCase()))
+     return alert('Nom existe déjà');
+  d[farmEditIndex]=n;saveFarms(d);farmCloseModal();renderFarms();opRefreshFarmCombos();
+}
+function farmDelete(i){
+  const d=loadFarms();
+  if(!confirm('Supprimer la ferme '+d[i].name+' ?'))return;
+  d.splice(i,1);saveFarms(d);renderFarms();opRefreshFarmCombos();
+}
+
+/* ======= OPERATORS ======= */
+function loadOps(){return loadJSON(LS_OPERATORS,[])}
+function saveOps(d){saveJSON(LS_OPERATORS,d)}
+function opToggleForm(sh){
+  g('opAddForm').classList.toggle('hidden',!sh);
+  if(sh){opRefreshProfileSelects();opRefreshFarmCombos();}
+}
+function opBuildProfileOptions(id){
+  const sel=g(id); if(!sel) return;
+  const p=loadProfiles();
+  sel.innerHTML = p.length ? p.map(x=>`<option value="${escapeHtml(x)}">${escapeHtml(x)}</option>`).join('')
+                           : `<option value="">(Aucun profil)</option>`;
+}
+function opRefreshProfileSelects(){
+  opBuildProfileOptions('op_profile');
+  opBuildProfileOptions('edit_profile');
+}
+function comboFill(baseId,items){
+  const input=g(baseId+'_input');
+  const list=g(baseId+'_list');
+  const hidden=g(baseId);
+  if(!input || !list || !hidden) return;
+
+  function render(q){
+    const m=items.filter(x=>x.toLowerCase().includes((q||'').toLowerCase()));
+    if(!m.length){list.innerHTML='<div class="combo-item muted">(aucun résultat)</div>';return;}
+    list.innerHTML=m.map(v=>`<div class="combo-item" data-v="${escapeHtml(v)}">${escapeHtml(v)}</div>`).join('');
+  }
+  input.oninput=()=>{list.classList.remove('hidden');render(input.value);}
+  input.onfocus=()=>{list.classList.remove('hidden');render(input.value);}
+  document.addEventListener('click',e=>{
+    if(!list.contains(e.target) && e.target!==input) list.classList.add('hidden');
+  });
+  list.onclick=e=>{
+    const it=e.target.closest('.combo-item'); if(!it || it.classList.contains('muted')) return;
+    const val=it.getAttribute('data-v');
+    input.value=val; hidden.value=val; list.classList.add('hidden');
+  };
+  render('');
+}
+function opRefreshFarmCombos(){
+  const farms=loadFarms().map(f=>f.name);
+  comboFill('op_ferme',farms);
+  comboFill('edit_ferme',farms);
+}
+function renderOps(){
+  const list=g('operatorsList');
+  const d=loadOps();
+  if(d.length===0){list.innerHTML='<div class="item"><div class="meta">لا يوجد أي مستخدم بعد.</div></div>';return;}
+  list.innerHTML=d.map((u,i)=>`
+    <div class="item">
+      <div class="meta">
+        <span><b>Utilisateur:</b> ${escapeHtml(u.username)}</span>
+        <span><b>Profil:</b> ${escapeHtml(u.profile||'')}</span>
+        <span><b>Ferme:</b> ${escapeHtml(u.ferme||'')}</span>
+      </div>
+      <div class="right">
+        <button class="btn icon" onclick="opEdit(${i})">✏️</button>
+        <button class="btn danger icon" onclick="opDelete(${i})">🗑️</button>
+      </div>
+    </div>`).join('');
+}
+let editIndex=null;
+function opEdit(i){
+  const d=loadOps(),u=d[i];editIndex=i;
+  s('edit_username',u.username);
+  s('edit_password',u.password);
+  opRefreshProfileSelects();
+  g('edit_profile').value=u.profile||'';
+  opRefreshFarmCombos();
+  s('edit_ferme_input',u.ferme||'');
+  s('edit_ferme',u.ferme||'');
+  g('opModal').classList.add('show');
+}
+function opCloseModal(){g('opModal').classList.remove('show');editIndex=null}
+function opSaveEdit(){
+  if(editIndex==null)return;
+  const d=loadOps(),u=d[editIndex];
+  const nu=v('edit_username');
+  const np=v('edit_password');
+  const npr=g('edit_profile').value.trim();
+  const nfe=v('edit_ferme');
+  if(!nu||!np||!npr||!nfe) return alert('Remplir tous les champs.');
+  if(nu.toLowerCase()!==u.username.toLowerCase()
+     && d.some(x=>x.username.toLowerCase()===nu.toLowerCase()))
+     return alert('Nom déjà utilisé.');
+  d[editIndex]={username:nu,password:np,profile:npr,ferme:nfe};
+  saveOps(d);opCloseModal();renderOps();
+}
+function opAdd(){
+  const username=v('op_username');
+  const password=v('op_password');
+  const profile=g('op_profile').value.trim();
+  const ferme=v('op_ferme');
+  if(!username||!password||!profile||!ferme) return alert('Remplir tous les champs.');
+  const d=loadOps();
+  if(d.some(x=>x.username.toLowerCase()===username.toLowerCase()))
+    return alert('Cet utilisateur existe déjà.');
+  d.push({username,password,profile,ferme});
+  saveOps(d);
+  s('op_username','');s('op_password','');s('op_ferme_input','');s('op_ferme','');
+  opToggleForm(false);renderOps();
+}
+function opDelete(i){
+  const d=loadOps();
+  if(!confirm('Supprimer '+d[i].username+' ?'))return;
+  d.splice(i,1);saveOps(d);renderOps();
+}
+
+/* ======= RÉFS ======= */
+const REF_KEYS={
+  companies:"Sociétés",
+  responsables:"Responsables",
+  stations:"Stations",
+  secteurs:"Secteurs",
+  parcelles:"Parcelles",
+  transports:"Transports",
+  varietes:"Variétés",
+  varietes_champ:"Variétés champ",
+  gestions:"Gestion stock",
+  achats:"Achats"
+};
+function loadRefs(){
+  const base={
+    companies:[],responsables:[],stations:[],secteurs:[],
+    parcelles:[],transports:[],varietes:[],varietes_champ:[],
+    gestions:[],achats:[]
+  };
+  return Object.assign(base,loadJSON(LS_REFS,{}));
+}
+function saveRefs(o){saveJSON(LS_REFS,o)}
+let currentRefKey=null;
+function refsOpen(key){
+  currentRefKey=key;
+  g('refsHome').classList.add('hidden');
+  g('refsCat').classList.remove('hidden');
+  g('refsCatTitle').textContent=REF_KEYS[key]||'Catégorie';
+  refsRender();
+}
+function refsRender(){
+  const list=g('refsList');
+  const refs=loadRefs();
+  const arr=refs[currentRefKey]||[];
+  if(arr.length===0){list.innerHTML='<div class="item"><div class="meta">لا توجد عناصر بعد.</div></div>';return;}
+  list.innerHTML=arr.map((name,i)=>`
+    <div class="item">
+      <div class="meta"><span><b>${escapeHtml(name)}</b></span></div>
+      <div class="right">
+        <button class="btn icon" onclick="refsEdit(${i})">✏️</button>
+        <button class="btn danger icon" onclick="refsDelete(${i})">🗑️</button>
+      </div>
+    </div>`).join('');
+}
+function refsToggleForm(sh){g('refsAddForm').classList.toggle('hidden',!sh);if(sh)g('refsInput').focus()}
+function refsAdd(){
+  const name=v('refsInput');
+  if(!name) return alert('Nom requis');
+  const refs=loadRefs();
+  const arr=refs[currentRefKey]||[];
+  if(arr.some(x=>x.toLowerCase()===name.toLowerCase())) return alert('Existe déjà');
+  arr.push(name);refs[currentRefKey]=arr;saveRefs(refs);s('refsInput','');refsToggleForm(false);refsRender();
+}
+function refsEdit(i){
+  const refs=loadRefs();const arr=refs[currentRefKey]||[];
+  const old=arr[i];
+  const nv=prompt('Modifier:',old);
+  if(nv===null)return;
+  const val=nv.trim();
+  if(!val) return alert('Nom vide');
+  if(val.toLowerCase()!==old.toLowerCase() && arr.some(x=>x.toLowerCase()===val.toLowerCase()))
+    return alert('Existe déjà');
+  arr[i]=val;refs[currentRefKey]=arr;saveRefs(refs);refsRender();
+}
+function refsDelete(i){
+  const refs=loadRefs();const arr=refs[currentRefKey]||[];
+  if(!confirm('Supprimer '+arr[i]+' ?'))return;
+  arr.splice(i,1);refs[currentRefKey]=arr;saveRefs(refs);refsRender();
+}
+
+/* ======= ACCORDION ======= */
+function toggleAcc(id){g(id).classList.toggle('open')}
+
+/* ======= INIT ======= */
+(function init(){
+  if(!localStorage.getItem(LS_PROFILES)) saveProfiles(DEFAULT_PROFILES.slice());
+  saveRefs(loadRefs());         // ensure keys
+  appcfgApply();
+  appcfgFillForm();
+  renderProfiles();
+  renderFarms();
+  renderOps();
+  showSetupBanner();
+})();
 </script>
-
 </body>
 </html>
