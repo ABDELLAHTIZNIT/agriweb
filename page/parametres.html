@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Paramètres - AB AGRIWEB</title>
+<style>
+body{
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  background:linear-gradient(180deg,#0f172a,#1e293b);
+  color:#e2e8f0;
+  padding:10px;
+}
+.card{
+  max-width:480px;
+  margin:auto;
+  background:#0b1220cc;
+  padding:12px;
+  border-radius:12px;
+  box-shadow:0 0 10px rgba(0,0,0,.4);
+}
+h2{color:#22c55e;text-align:center;margin-bottom:10px;}
+label{display:block;margin-top:10px;font-size:13px;}
+input[type="file"],input[type="range"],input[type="text"]{
+  width:100%;
+  margin-top:4px;
+  background:#020617;
+  border:1px solid #1e293b;
+  border-radius:8px;
+  padding:8px;
+  color:#e2e8f0;
+}
+.slider-container{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-top:5px;
+}
+.slider-container span{font-size:12px;color:#9ca3af;width:80px}
+button{
+  width:100%;
+  margin-top:12px;
+  padding:10px;
+  border:none;
+  border-radius:8px;
+  background:#22c55e;
+  color:#020817;
+  font-weight:700;
+  cursor:pointer;
+}
+button:hover{background:#16a34a;}
+.preview{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  margin-top:12px;
+}
+.preview img{
+  max-width:100%;
+  transition:transform 0.3s ease;
+}
+</style>
+</head>
+<body>
+
+<div class="card">
+  <h2>Branding & Fond</h2>
+
+  <label>Changer le logo (PNG/GIF)</label>
+  <input type="file" id="logoInput" accept="image/*"/>
+
+  <label>Changer le fond de connexion</label>
+  <input type="file" id="fondInput" accept="image/*"/>
+
+  <div class="slider-container">
+    <span>Zoom Horizontal:</span>
+    <input type="range" id="zoomX" min="50" max="150" value="100"/>
+  </div>
+
+  <div class="slider-container">
+    <span>Zoom Vertical:</span>
+    <input type="range" id="zoomY" min="50" max="150" value="100"/>
+  </div>
+
+  <div class="preview">
+    <img id="previewLogo" src="" alt="Aperçu du logo"/>
+  </div>
+
+  <button id="saveBtn">Enregistrer</button>
+</div>
+
+<script>
+const LS_IMG='ab_appimg';
+const LS_ZOOM='ab_zoom';
+
+// تحميل الإعدادات
+function loadJSON(k,def){try{return JSON.parse(localStorage.getItem(k)||JSON.stringify(def))}catch{return def}}
+function saveJSON(k,v){localStorage.setItem(k,JSON.stringify(v))}
+
+// معاينة فورية للصورة
+document.getElementById('logoInput').addEventListener('change', e=>{
+  const f=e.target.files[0];
+  if(f){
+    const r=new FileReader();
+    r.onload=()=>{document.getElementById('previewLogo').src=r.result};
+    r.readAsDataURL(f);
+  }
+});
+
+// تحميل الإعدادات القديمة
+const imgs=loadJSON(LS_IMG,{logo:null,loginBg:null});
+const zoom=loadJSON(LS_ZOOM,{x:100,y:100});
+document.getElementById('zoomX').value=zoom.x;
+document.getElementById('zoomY').value=zoom.y;
+if(imgs.logo){document.getElementById('previewLogo').src=imgs.logo;}
+
+// تحكم بالـ Zoom مباشر
+const preview=document.getElementById('previewLogo');
+function applyZoom(){
+  const zx=document.getElementById('zoomX').value;
+  const zy=document.getElementById('zoomY').value;
+  preview.style.transform=`scale(${zx/100},${zy/100})`;
+}
+document.getElementById('zoomX').addEventListener('input',applyZoom);
+document.getElementById('zoomY').addEventListener('input',applyZoom);
+applyZoom();
+
+// حفظ التغييرات
+document.getElementById('saveBtn').addEventListener('click',()=>{
+  const fLogo=document.getElementById('logoInput').files[0];
+  const fFond=document.getElementById('fondInput').files[0];
+  const readerLogo=fLogo?new FileReader():null;
+  const readerFond=fFond?new FileReader():null;
+  const newImgs={...imgs};
+
+  const zoomX=document.getElementById('zoomX').value;
+  const zoomY=document.getElementById('zoomY').value;
+  saveJSON(LS_ZOOM,{x:zoomX,y:zoomY});
+
+  function saveFinal(){
+    saveJSON(LS_IMG,newImgs);
+    alert("Changements enregistrés ✅");
+  }
+
+  if(readerLogo){
+    readerLogo.onload=()=>{
+      newImgs.logo=readerLogo.result;
+      if(readerFond){
+        readerFond.onload=()=>{
+          newImgs.loginBg=readerFond.result;
+          saveFinal();
+        };
+        readerFond.readAsDataURL(fFond);
+      } else saveFinal();
+    };
+    readerLogo.readAsDataURL(fLogo);
+  } else if(readerFond){
+    readerFond.onload=()=>{
+      newImgs.loginBg=readerFond.result;
+      saveFinal();
+    };
+    readerFond.readAsDataURL(fFond);
+  } else saveFinal();
+});
+</script>
+
+</body>
+</html>
