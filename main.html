@@ -141,6 +141,38 @@ main.content{padding:16px}
 .tile p{margin:0;font-size:10px;color:var(--muted)}
 .tile:hover{border-color:var(--accent);box-shadow:0 0 0 1px rgba(34,197,94,.15) inset}
 
+/* Home quick modules */
+.home-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(130px,1fr));
+  gap:8px;
+  margin-top:10px;
+}
+.home-card{
+  background:#020817;
+  border-radius:12px;
+  border:1px solid #111827;
+  padding:8px;
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+  cursor:pointer;
+}
+.home-card .icon{
+  width:22px;height:22px;
+  display:grid;place-items:center;
+  border-radius:7px;
+  background:#052e16;
+  font-size:13px;
+  margin-bottom:2px;
+}
+.home-card strong{font-size:11px;color:#bbf7d0}
+.home-card span{font-size:9px;color:#9ca3af}
+.home-card:hover{
+  border-color:var(--accent);
+  box-shadow:0 10px 20px rgba(0,0,0,.4);
+}
+
 /* Lists */
 .list{display:grid;gap:6px;margin-top:8px}
 .item{
@@ -197,7 +229,7 @@ main.content{padding:16px}
 .modal h3{margin-bottom:4px;font-size:14px}
 .right{display:flex;justify-content:flex-end;gap:6px;margin-top:6px}
 
-/* TOAST (رسائل التطبيق) */
+/* TOAST */
 #toast{
   position:fixed;
   left:50%;
@@ -261,9 +293,53 @@ main.content{padding:16px}
   <!-- Accueil -->
   <section id="page-home" class="card">
     <h2>Bienvenue 👋</h2>
-    <p>لوحة التحكم الخاصة بـ AB AGRIWEB. استعمل القائمة الجانبية للانتقال بين الأقسام.</p>
+    <p>لوحة التحكم الخاصة بـ AB AGRIWEB. استعمل القائمة الجانبية أو الاختصارات أدناه للوصول السريع لوظائف السقي.</p>
     <div id="firstRunHint" class="hint hidden">
       🔐 لا يوجد أي مستخدم بعد. اذهب إلى <b>Paramètres → Opérateurs</b> وأضف أول مستخدم.
+    </div>
+
+    <!-- QUICK IRRIGATION MODULES -->
+    <div class="home-grid">
+      <div class="home-card" onclick="homeShortcut('parcelles')">
+        <div class="icon">📍</div>
+        <strong>Parcelles</strong>
+        <span>تعريف القطع المسقية وربطها بالضّيعات.</span>
+      </div>
+      <div class="home-card" onclick="homeShortcut('planning')">
+        <div class="icon">📅</div>
+        <strong>Plan d’irrigation</strong>
+        <span>برمجة دورات السقي حسب القطعة والمحصول.</span>
+      </div>
+      <div class="home-card" onclick="homeShortcut('humidite')">
+        <div class="icon">💧</div>
+        <strong>Suivi humidité</strong>
+        <span>تتبع رطوبة التربة أو ملاحظات السقي.</span>
+      </div>
+      <div class="home-card" onclick="homeShortcut('eau')">
+        <div class="icon">🚰</div>
+        <strong>Consommation d’eau</strong>
+        <span>تسجيل عدّادات المياه لكل ضيعة.</span>
+      </div>
+      <div class="home-card" onclick="homeShortcut('fertil')">
+        <div class="icon">🌱</div>
+        <strong>Fertigation / Engrais</strong>
+        <span>تدوين برامج الأسمدة مع السقي.</span>
+      </div>
+      <div class="home-card" onclick="homeShortcut('alertes')">
+        <div class="icon">⚠️</div>
+        <strong>Alertes</strong>
+        <span>تنبيهات لنقص السقي أو أعطال النظام.</span>
+      </div>
+      <div class="home-card" onclick="homeShortcut('hist')">
+        <div class="icon">📜</div>
+        <strong>Historique</strong>
+        <span>سجل عمليات السقي السابقة.</span>
+      </div>
+      <div class="home-card" onclick="homeShortcut('meteo')">
+        <div class="icon">☀️</div>
+        <strong>Météo & ETc</strong>
+        <span>ربط قرار السقي بالأحوال الجوية (فكرة مستقبلية).</span>
+      </div>
     </div>
   </section>
 
@@ -602,7 +678,7 @@ function saveJSON(k,v){localStorage.setItem(k,JSON.stringify(v))}
 let toastTimer=null;
 function showToast(msg,type='info'){
   const box=g('toast'), span=g('toast-msg');
-  if(!box||!span) return alert(msg); // fallback
+  if(!box||!span) return alert(msg);
   span.textContent=msg;
   box.classList.remove('info','success','error');
   box.classList.add(type);
@@ -614,6 +690,21 @@ function hideToast(){
   const box=g('toast');
   if(box) box.classList.remove('show');
   if(toastTimer) clearTimeout(toastTimer);
+}
+
+/* home shortcuts (placeholder logic) */
+function homeShortcut(key){
+  const messages={
+    parcelles:"إدارة القطع سيتم ربطها لاحقاً مع référentiels.",
+    planning:"تخطيط دورات السقي : ميزة مستقبلية، يمكنك حالياً استعمال Référentiels + ملاحظات.",
+    humidite:"تسجيل ملاحظات رطوبة التربة لكل قطعة (سيتم تطوير واجهة خاصة).",
+    eau:"تتبع استهلاك المياه حسب العدادات والضيعات (فكرة مفعّلة لاحقاً).",
+    fertil:"تدوين برامج الأسمدة مع السقي (fertigation).",
+    alertes:"تنبيهات عند تأخر السقي أو تجاوز الكميات.",
+    hist:"عرض تاريخ جميع عمليات السقي.",
+    meteo:"ربط قرار السقي بالطقس ومعامل ETc."
+  };
+  showToast(messages[key]||"Module en préparation.",'info');
 }
 
 /* GUARD */
@@ -664,7 +755,7 @@ function goSettings(){setActiveLink(g('nav-settings'));showPage('settings')}
 /* NAV */
 g('nav-home').onclick=e=>{e.preventDefault();setActiveLink(g('nav-home'));showPage('home')}
 g('nav-settings').onclick=e=>{e.preventDefault();setActiveLink(g('nav-settings'));showPage('settings')}
-g('nav-irrig').onclick=e=>{e.preventDefault();showToast("Module Irrigation (لاحقاً).","info")}
+g('nav-irrig').onclick=e=>{e.preventDefault();showPage('home');showToast("استعمل كروت Accueil للوصول لوظائف السقي.","info")}
 g('nav-trait').onclick=e=>{e.preventDefault();showToast("Module Traitement (لاحقاً).","info")}
 g('nav-logout').onclick=e=>{e.preventDefault();location="index.html"}
 
@@ -683,7 +774,6 @@ function saveImgs(o){saveJSON(LS_IMG,o)}
 function loadZoom(){return loadJSON(LS_ZOOM,{x:100,y:100})}
 function saveZoom(z){saveJSON(LS_ZOOM,z)}
 
-/* قبول data:image و الروابط العادية */
 function isImgUrl(u){
   if(/^data:image\//i.test(u)) return true;
   return /^https?:\/\//i.test(u) && /\.(png|gif|jpe?g)(\?|#|$)/i.test(u);
@@ -781,7 +871,7 @@ function fileToDataURL(file,cb){
   r.readAsDataURL(file);
 }
 
-/* Inputs fichiers */
+/* file inputs */
 ['cfg-badge-file','cfg-loginbg-file','cfg-logo-file','cfg-appbg-file'].forEach(id=>{
   const el=g(id); if(!el)return;
   el.addEventListener('change',e=>{
@@ -987,6 +1077,8 @@ function farmDelete(i){
   list.splice(i,1);saveJSON(LS_FARMS,list);
   renderFarms();fillFarmsCombo();
 }
+function farmCloseModal(){g('farmModal').classList.remove('show')}
+function farmSaveEdit(){/* placeholder future */}
 
 /* OPERATORS */
 let editOpIndex=null;
