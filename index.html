@@ -1,51 +1,382 @@
-<!doctype html>
-<html lang="ar">
+<!DOCTYPE html>
+<html lang="fr">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>AB AGRIWEB — Login</title>
-  <link rel="stylesheet" href="assets/css/base.css">
-  <link rel="stylesheet" href="assets/css/login.css">
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>AB AGRIWEB</title>
+<style>
+:root{
+  --bg:#0f172a;
+  --panel:#0b1220;
+  --text:#e2e8f0;
+  --accent:#22c55e;
+  --muted:#9ca3af;
+  --border:#1f2937;
+}
+
+/* RESET */
+*{box-sizing:border-box;margin:0;padding:0}
+
+/* BODY = خلفية تغطي كامل الشاشة + الكارت وسط */
+body{
+  min-height:100vh;
+  display:grid;
+  place-items:center;
+  padding:16px;
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  color:var(--text);
+  background:linear-gradient(180deg,#0f172a,#1e293b);
+  background-size:cover;
+  background-position:center;
+}
+
+/* كارد تسجيل الدخول */
+.card{
+  width:min(420px,100%);
+  padding:22px 18px 18px;
+  background:rgba(5,10,20,0.94);
+  border-radius:18px;
+  border:1px solid rgba(15,23,42,.9);
+  box-shadow:0 22px 50px rgba(0,0,0,.65);
+  backdrop-filter:blur(10px);
+}
+
+/* اللوغو / القالب فوق */
+.logo-wrap{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:6px;
+  margin-bottom:14px;
+}
+#loginLogoImg{
+  max-height:40px;
+  max-width:220px;
+  object-fit:contain;
+}
+#appTitle{
+  font-size:22px;
+  font-weight:800;
+  letter-spacing:.4px;
+  color:var(--accent);
+  text-shadow:0 3px 10px rgba(0,0,0,.7);
+}
+
+/* رسالة لا يوجد مستخدم */
+#noOpsHint{
+  margin:-4px 0 10px;
+  font-size:11px;
+  padding:7px 9px;
+  border-radius:10px;
+  border:1px dashed #facc15;
+  background:rgba(23,23,0,.12);
+  color:#fde68a;
+}
+
+/* labels + inputs */
+label{
+  display:block;
+  margin:6px 0 3px;
+  font-size:12px;
+  color:#e5e7eb;
+}
+.input{
+  width:100%;
+  padding:10px 11px;
+  border-radius:10px;
+  border:1px solid #111827;
+  background:#020817;
+  color:var(--text);
+  font-size:13px;
+  box-shadow:0 8px 18px rgba(0,0,0,.45) inset;
+}
+.field{position:relative}
+.eye{
+  position:absolute;right:9px;top:50%;
+  transform:translateY(-50%);
+  cursor:pointer;
+  font-size:16px;
+}
+
+/* أزرار */
+.btn{
+  width:100%;
+  margin-top:10px;
+  padding:11px;
+  border-radius:10px;
+  border:1px solid var(--accent);
+  background:var(--accent);
+  color:#020817;
+  font-weight:700;
+  font-size:13px;
+  text-align:center;
+  cursor:pointer;
+  box-shadow:0 14px 30px rgba(0,0,0,.55);
+}
+.btn.secondary{
+  background:transparent;
+  border-color:#334155;
+  color:#93c5fd;
+  box-shadow:none;
+}
+.btn.secondary:hover{
+  background:#111827;
+}
+#forgotLink{
+  display:block;
+  margin-top:10px;
+  text-align:center;
+  font-size:12px;
+  color:#93c5fd;
+  text-decoration:none;
+}
+#forgotLink:hover{text-decoration:underline}
+
+/* Modal recovery */
+.modal-wrap{position:fixed;inset:0;display:none;place-items:center;z-index:60}
+.modal-wrap.show{display:grid}
+.modal-bg{position:absolute;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(2px);}
+.modal{
+  position:relative;
+  width:min(480px,92vw);
+  background:#020817;
+  border-radius:16px;
+  border:1px solid #1f2937;
+  padding:14px;
+  box-shadow:0 22px 50px rgba(0,0,0,.7);
+  font-size:12px;
+}
+.modal h3{margin-bottom:4px;font-size:14px}
+.small{font-size:11px;color:#9ca3af}
+.tabbar{display:flex;gap:6px;margin:6px 0 8px}
+.tabbar .btn{
+  width:auto;
+  margin-top:0;
+  padding:6px 9px;
+  font-size:11px;
+  box-shadow:none;
+}
+.tabbar .btn.secondary{
+  color:#93c5fd;border-color:#334155;background:transparent;
+}
+.tabbar .btn.active{
+  background:var(--accent);
+  color:#020817;
+  border-color:var(--accent);
+}
+.hidden{display:none!important}
+</style>
 </head>
 <body>
-  <main class="card">
-    <div id="loginLogoWrap" class="banner"><img id="loginLogoImg" alt="Logo" src=""></div>
-    <h1 id="appTitle">AB AGRIWEB</h1>
 
-    <div id="noOpsHint" class="hint">لا يوجد مستخدم مُسجل — استخدم <b>Setup (no login)</b> أو افتح Paramètres لإضافة مستخدم.</div>
-
-    <label>Username</label>
-    <input id="u" class="input" placeholder="Enter your username"/>
-
-    <label>Password</label>
-    <div class="field">
-      <input id="p" type="password" class="input" placeholder="Enter your password"/>
-      <span class="eye" onclick="togglePass()" title="Show/Hide">👁️</span>
+<div class="card">
+  <div class="logo-wrap">
+    <div id="loginLogoWrap" class="hidden">
+      <img id="loginLogoImg" alt="Logo">
     </div>
-
-    <button class="btn" id="loginBtn">Se connecter</button>
-    <button class="btn secondary" id="setupBtn" title="دخول مؤقت بدون كلمة السر">Setup (no login)</button>
-    <a href="#" id="forgotLink">Forgot password?</a>
-  </main>
-
-  <!-- Recovery modal (خفيف) -->
-  <div id="recoveryModal" class="modal-wrap hidden">
-    <div class="modal-bg" onclick="closeRecovery()"></div>
-    <div class="modal">
-      <h3>Account recovery</h3>
-      <div class="small" id="recoveryHints"></div>
-      <div style="text-align:right;margin-top:10px">
-        <button class="btn inline" onclick="closeRecovery()">Fermer</button>
-      </div>
-    </div>
+    <div id="appTitle">AB AGRIWEB</div>
   </div>
 
-  <!-- core scripts -->
-  <script src="assets/js/core/storage.js"></script>
-  <script src="assets/js/core/config.js"></script>
-  <script src="assets/js/core/security.js"></script>
+  <div id="noOpsHint" class="hidden">
+    لا يوجد أي مستخدم مُسجّل. يمكنك استعمال <b>Setup (no login)</b> مؤقتاً
+    ثم الذهاب إلى <b>Paramètres → Opérateurs</b> لإضافة أول مستخدم.
+  </div>
 
-  <!-- page -->
-  <script src="assets/js/pages/index.js"></script>
+  <label>Username</label>
+  <input id="u" class="input" placeholder="Enter your username"/>
+
+  <label>Password</label>
+  <div class="field">
+    <input id="p" type="password" class="input" placeholder="Enter your password"/>
+    <span class="eye" onclick="togglePass()">👁️</span>
+  </div>
+
+  <button class="btn" id="loginBtn">Se connecter</button>
+  <button class="btn secondary" id="setupBtn">Setup (no login)</button>
+  <a href="#" id="forgotLink">Forgot password?</a>
+</div>
+
+<!-- Recovery Modal -->
+<div id="recoveryModal" class="modal-wrap">
+  <div class="modal-bg" onclick="closeRecovery()"></div>
+  <div class="modal">
+    <h3>Account recovery</h3>
+    <div class="small" id="recoveryHints"></div>
+    <div class="tabbar">
+      <button id="tabCode" class="btn secondary active" onclick="switchRecTab('code')">Code</button>
+      <button id="tabQA" class="btn secondary" onclick="switchRecTab('qa')">Question secrète</button>
+    </div>
+
+    <div id="recTabCode">
+      <label>Recovery code (6 digits)</label>
+      <input id="rec_code" class="input" placeholder="Ex: 123456">
+      <button class="btn" onclick="tryCode()">Vérifier &amp; ouvrir</button>
+    </div>
+
+    <div id="recTabQA" class="hidden">
+      <div id="qa_wrap">
+        <label id="qa_question">Question</label>
+        <input id="qa_answer" class="input" placeholder="Votre réponse">
+        <button class="btn" onclick="tryQA()">Vérifier &amp; ouvrir</button>
+      </div>
+      <div id="qa_empty" class="small hidden">Question secrète غير مفعّلة.</div>
+    </div>
+
+    <div class="small" style="margin-top:8px" id="recoveryContact"></div>
+
+    <div class="right" style="margin-top:8px">
+      <button class="btn secondary" onclick="closeRecovery()">Fermer</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const LS_APP='ab_appcfg';
+const LS_IMG='ab_appimg';
+const LS_SEC='ab_security';
+const LS_OPERATORS='ab_operators';
+
+function loadJSON(key,def){try{return JSON.parse(localStorage.getItem(key)||JSON.stringify(def))}catch{return def}}
+function saveJSON(key,val){localStorage.setItem(key,JSON.stringify(val))}
+
+function loadCfg(){
+  const base={appTitle:"AB AGRIWEB"};
+  try{
+    const raw=JSON.parse(localStorage.getItem(LS_APP)||'{}');
+    return Object.assign(base,raw);
+  }catch{return base}
+}
+function loadImgs(){
+  return loadJSON(LS_IMG,{logo:null,login:null,loginBg:null,badge:null,sidebar:null,appBg:null});
+}
+function loadSec(){return loadJSON(LS_SEC,{})}
+function loadOps(){return loadJSON(LS_OPERATORS,[])}
+
+function applyBranding(){
+  const cfg=loadCfg();
+  const imgs=loadImgs();
+
+  // عنوان التبويب
+  document.title = (cfg.appTitle||'AB AGRIWEB');
+
+  // عنوان فوق
+  const titleEl=document.getElementById('appTitle');
+  if(imgs.logo){
+    document.getElementById('loginLogoWrap').classList.remove('hidden');
+    document.getElementById('loginLogoImg').src=imgs.logo;
+    titleEl.textContent = cfg.appTitle || 'AB AGRIWEB';
+  }else{
+    document.getElementById('loginLogoWrap').classList.add('hidden');
+    titleEl.textContent = cfg.appTitle || 'AB AGRIWEB';
+  }
+
+  // خلفية صفحة الدخول
+  if(imgs.loginBg){
+    document.body.style.backgroundImage=`url('${imgs.loginBg}')`;
+    document.body.style.backgroundSize='cover';
+    document.body.style.backgroundPosition='center';
+    document.body.style.backgroundRepeat='no-repeat';
+  }else{
+    document.body.style.background='linear-gradient(180deg,#0f172a,#1e293b)';
+  }
+}
+
+function togglePass(){
+  const i=document.getElementById('p');
+  i.type = i.type==='password' ? 'text' : 'password';
+}
+
+function loginFlow(){
+  const ops=loadOps();
+  const u=(document.getElementById('u').value||'').trim();
+  const p=(document.getElementById('p').value||'').trim();
+
+  // لا يوجد أي مستخدم و Setup mode مقطوع
+  const setupOn = localStorage.getItem('ab_setup')==='1';
+  if(ops.length===0 && !setupOn){
+    alert('لا يمكن الدخول: لا يوجد أي مستخدم. استعمل Setup (no login) أو استرجاع الحساب.');
+    openRecovery();
+    return;
+  }
+  if(!u || !p){ alert('أدخل اسم المستخدم وكلمة المرور.'); return; }
+
+  const ok = ops.find(x =>
+    (x.username||'').toLowerCase()===u.toLowerCase() &&
+    (x.password||'')===p
+  );
+  if(!ok){
+    alert('اسم المستخدم أو كلمة المرور غير صحيحة.');
+    return;
+  }
+  window.location.href = 'main.html';
+}
+
+/* Setup بدون كلمة سر */
+function setupMode(){
+  localStorage.setItem('ab_setup','1');
+  window.location.href='main.html';
+}
+
+/* Recovery */
+function openRecovery(){
+  const sec=loadSec();
+  const email=sec.email||'', phone=sec.phone||'';
+  const emailHint=email?`Email: ${email.replace(/(.{2}).+(@.+)/,'$1***$2')}`:'Email non configuré';
+  const phoneHint=phone?`Téléphone: ****${phone.slice(-4)}`:'Téléphone non configuré';
+  document.getElementById('recoveryHints').textContent='استعمل الرمز أو أجب على السؤال السرّي إن وُجد.';
+  document.getElementById('recoveryContact').textContent=`${emailHint} | ${phoneHint}`;
+
+  const hasQ=!!sec.question;
+  document.getElementById('qa_wrap').classList.toggle('hidden', !hasQ);
+  document.getElementById('qa_empty').classList.toggle('hidden', hasQ);
+  if(hasQ) document.getElementById('qa_question').textContent=sec.question;
+
+  switchRecTab('code');
+  document.getElementById('recoveryModal').classList.add('show');
+}
+function closeRecovery(){document.getElementById('recoveryModal').classList.remove('show');}
+function switchRecTab(tab){
+  document.getElementById('recTabCode').classList.toggle('hidden',tab!=='code');
+  document.getElementById('recTabQA').classList.toggle('hidden',tab!=='qa');
+  document.getElementById('tabCode').classList.toggle('active',tab==='code');
+  document.getElementById('tabQA').classList.toggle('active',tab==='qa');
+}
+function tryCode(){
+  const code=(document.getElementById('rec_code').value||'').trim();
+  const sec=loadSec();
+  if(code && sec.recoveryCode && code===String(sec.recoveryCode)){
+    localStorage.setItem('ab_setup','1');
+    window.location.href='main.html';
+  }else{
+    alert('Code invalide ou non configuré.');
+  }
+}
+function hashLite(s){let h=0;for(let i=0;i<s.length;i++){h=((h<<5)-h)+s.charCodeAt(i);h|=0}return String(h)}
+function tryQA(){
+  const ans=(document.getElementById('qa_answer').value||'').trim().toLowerCase();
+  const sec=loadSec();
+  if(!sec.answerHash){ alert('Question secrète غير مفعلة.'); return; }
+  if(hashLite(ans)===sec.answerHash){
+    localStorage.setItem('ab_setup','1');
+    window.location.href='main.html';
+  } else {
+    alert('Réponse incorrecte.');
+  }
+}
+
+/* INIT */
+document.addEventListener('DOMContentLoaded',()=>{
+  applyBranding();
+
+  // إظهار تنبيه لا يوجد مستخدم
+  if(loadOps().length===0){
+    document.getElementById('noOpsHint').classList.remove('hidden');
+  }
+
+  document.getElementById('loginBtn').addEventListener('click',e=>{e.preventDefault();loginFlow();});
+  document.getElementById('setupBtn').addEventListener('click',e=>{e.preventDefault();setupMode();});
+  document.getElementById('forgotLink').addEventListener('click',e=>{e.preventDefault();openRecovery();});
+});
+</script>
 </body>
 </html>
