@@ -245,7 +245,7 @@ main.content{padding:16px}
     </div>
   </section>
 
-  <!-- Paramètres (menu tuiles) -->
+  <!-- Paramètres (tuiles) -->
   <section id="page-settings" class="card hidden">
     <h2>Paramètres</h2>
     <p class="hint">اختر القسم الذي تريد إدارته.</p>
@@ -262,9 +262,17 @@ main.content{padding:16px}
         <div class="icon">🗂️</div>
         <div><h4 id="lbl-tile-refs">RÉFÉRENTIELS</h4><p>Listes maîtres</p></div>
       </div>
-      <div class="tile" onclick="openPage('appcfg')">
+      <div class="tile" onclick="openPage('appcfg');focusAcc('acc-brand')">
         <div class="icon">🎨</div>
-        <div><h4 id="lbl-tile-appcfg">RÉGLAGES APP</h4><p>Nom, logos, خلفيات, sécurité</p></div>
+        <div><h4 id="lbl-tile-appcfg">BRANDING</h4><p>لوغو + قوالب + خلفيات</p></div>
+      </div>
+      <div class="tile" onclick="openPage('appcfg');focusAcc('acc-nav')">
+        <div class="icon">🔤</div>
+        <div><h4>Libellés</h4><p>تخصيص نصوص القائمة والتبويبات</p></div>
+      </div>
+      <div class="tile" onclick="openPage('appcfg');focusAcc('acc-sec')">
+        <div class="icon">🔐</div>
+        <div><h4>Sécurité</h4><p>Email / Téléphone / Question secrète / Code</p></div>
       </div>
     </div>
   </section>
@@ -359,36 +367,15 @@ main.content{padding:16px}
     </div>
   </section>
 
-  <!-- Réglages de l’application -->
+  <!-- Réglages de l’application (Libellés + Sécurité + Branding) -->
   <section id="page-appcfg" class="card hidden">
     <h2>Réglages de l’application</h2>
-    <p class="hint">كل إعدادات الاسم، اللوغو، الخلفية، والنصوص من هنا.</p>
-
-    <!-- 1) Général -->
-    <div id="acc-general" class="accordion acc open">
-      <button class="acc-hd" onclick="toggleAcc('acc-general')">
-        1) Général
-        <span>Nom de l’app + titre الواجهة</span>
-      </button>
-      <div class="acc-bd">
-        <div class="grid">
-          <div>
-            <label class="label">Nom de l’application (App Title)</label>
-            <input id="cfg-app-title" class="input" placeholder="AB AGRIWEB">
-          </div>
-          <div>
-            <label class="label">Logo de l’application (PNG/GIF, header)</label>
-            <input id="cfg-logo-url" class="input" placeholder="URL (png/gif)">
-            <input id="cfg-logo-file" type="file" accept="image/png,image/gif" class="input">
-          </div>
-        </div>
-      </div>
-    </div>
+    <p class="hint">Libellés, sécurité، والـ Branding (اللوغو والخلفيات) من هنا.</p>
 
     <!-- 2) Libellés Navigation -->
     <div id="acc-nav" class="accordion acc">
       <button class="acc-hd" onclick="toggleAcc('acc-nav')">
-        2) Libellés Navigation
+        1) Libellés Navigation
         <span>Accueil • Irrigation • Traitement • Paramètres • Logout</span>
       </button>
       <div class="acc-bd">
@@ -405,15 +392,15 @@ main.content{padding:16px}
     <!-- 3) Tuiles -->
     <div id="acc-tiles" class="accordion acc">
       <button class="acc-hd" onclick="toggleAcc('acc-tiles')">
-        3) Tuiles Paramètres
-        <span>Opérateur • Profil • Référentiels • Réglages app</span>
+        2) Tuiles Paramètres
+        <span>Opérateur • Profil • Référentiels • Branding</span>
       </button>
       <div class="acc-bd">
         <div class="grid">
           <div><label class="label">Opérateur</label><input id="cfg-tile-operators" class="input"></div>
           <div><label class="label">Profil</label><input id="cfg-tile-profiles" class="input"></div>
           <div><label class="label">Référentiels</label><input id="cfg-tile-refs" class="input"></div>
-          <div><label class="label">Réglages app</label><input id="cfg-tile-appcfg" class="input"></div>
+          <div><label class="label">Branding</label><input id="cfg-tile-appcfg" class="input"></div>
         </div>
       </div>
     </div>
@@ -421,7 +408,7 @@ main.content{padding:16px}
     <!-- 4) Sécurité -->
     <div id="acc-sec" class="accordion acc">
       <button class="acc-hd" onclick="toggleAcc('acc-sec')">
-        4) Sécurité
+        3) Sécurité
         <span>Email • Téléphone • Question • Code</span>
       </button>
       <div class="acc-bd">
@@ -442,41 +429,75 @@ main.content{padding:16px}
       </div>
     </div>
 
-    <!-- 5) Branding (logos + fonds) -->
-    <div id="acc-brand" class="accordion acc">
+    <!-- 5) Branding (كل ما يخص القوالب والخلفيات) -->
+    <div id="acc-brand" class="accordion acc open">
       <button class="acc-hd" onclick="toggleAcc('acc-brand')">
-        5) Branding
-        <span>Badge • Sidebar • Login banner • Backgrounds</span>
+        4) Branding
+        <span>لوغو التطبيق • قوالب تسجيل الدخول • الخلفيات</span>
       </button>
       <div class="acc-bd">
-        <div class="grid">
-          <div>
-            <label class="label">Badge header (صغير شفاف)</label>
-            <input id="cfg-badge-url" class="input" placeholder="URL (png/gif)">
-            <input id="cfg-badge-file" type="file" accept="image/png,image/gif" class="input">
-          </div>
-          <div>
-            <label class="label">Sidebar banner</label>
-            <input id="cfg-side-url" class="input" placeholder="URL (png/gif)">
-            <input id="cfg-side-file" type="file" accept="image/png,image/gif" class="input">
-          </div>
-          <div>
-            <label class="label">Login banner (داخل بطاقة الدخول)</label>
-            <input id="cfg-login-url" class="input" placeholder="URL (png/gif)">
-            <input id="cfg-login-file" type="file" accept="image/png,image/gif" class="input">
-          </div>
-          <div>
-            <label class="label">Login background (خلفية صفحة الدخول)</label>
-            <input id="cfg-loginbg-url" class="input" placeholder="URL (png/gif/jpg)">
-            <input id="cfg-loginbg-file" type="file" accept="image/png,image/gif,image/jpeg" class="input">
-          </div>
-          <div>
-            <label class="label">App Background (خلفية لوحة التحكم)</label>
-            <input id="cfg-appbg-url" class="input" placeholder="URL (png/jpg/gif)">
-            <input id="cfg-appbg-file" type="file" accept="image/png,image/gif,image/jpeg" class="input">
+
+        <!-- أ) هوية التطبيق (اللوغو + الاسم + الهيدر) -->
+        <div class="card" style="background:#050816;margin:0 0 8px 0;border-radius:12px;">
+          <h3 style="font-size:13px;margin-bottom:4px">هوية التطبيق</h3>
+          <div class="grid">
+            <div>
+              <label class="label">Nom de l’application (App Title)</label>
+              <input id="cfg-app-title" class="input" placeholder="AB AGRIWEB">
+            </div>
+            <div>
+              <label class="label">Logo principal (يظهر في الهيدر)</label>
+              <input id="cfg-logo-url" class="input" placeholder="URL (png/gif)">
+              <input id="cfg-logo-file" type="file" accept="image/png,image/gif" class="input">
+            </div>
+            <div>
+              <label class="label">Badge header صغير (اختياري)</label>
+              <input id="cfg-badge-url" class="input" placeholder="URL (png/gif)">
+              <input id="cfg-badge-file" type="file" accept="image/png,image/gif" class="input">
+            </div>
           </div>
         </div>
-        <div class="hint">الصور تحفظ محلياً على هذا الجهاز (localStorage).</div>
+
+        <!-- ب) واجهة تسجيل الدخول -->
+        <div class="card" style="background:#050816;margin:0 0 8px 0;border-radius:12px;">
+          <h3 style="font-size:13px;margin-bottom:4px">واجهة تسجيل الدخول</h3>
+          <div class="grid">
+            <div>
+              <label class="label">صورة داخل بطاقة تسجيل الدخول (Login banner)</label>
+              <input id="cfg-login-url" class="input" placeholder="URL (png/gif)">
+              <input id="cfg-login-file" type="file" accept="image/png,image/gif" class="input">
+            </div>
+            <div>
+              <label class="label">خلفية صفحة تسجيل الدخول</label>
+              <input id="cfg-loginbg-url" class="input" placeholder="URL (png/jpg/gif)">
+              <input id="cfg-loginbg-file" type="file" accept="image/png,image/gif,image/jpeg" class="input">
+            </div>
+          </div>
+          <p class="hint">هذه الإعدادات تُستخدم في صفحة <b>index.html</b>.</p>
+        </div>
+
+        <!-- ج) الخلفيات الداخلية للتطبيق -->
+        <div class="card" style="background:#050816;margin:0;border-radius:12px;">
+          <h3 style="font-size:13px;margin-bottom:4px">الخلفيات الداخلية (لوحة التحكم)</h3>
+          <div class="grid">
+            <div>
+              <label class="label">لون الخلفية (إن لم تستعمل صورة)</label>
+              <input id="cfg-appbg-color" type="color" class="input" style="padding:0;height:36px;">
+            </div>
+            <div>
+              <label class="label">صورة خلفية لوحة التحكم (App Background)</label>
+              <input id="cfg-appbg-url" class="input" placeholder="URL (png/jpg/gif)">
+              <input id="cfg-appbg-file" type="file" accept="image/png,image/gif,image/jpeg" class="input">
+            </div>
+            <div>
+              <label class="label">صورة شريط جانبي (اختياري)</label>
+              <input id="cfg-side-url" class="input" placeholder="URL (png/gif)">
+              <input id="cfg-side-file" type="file" accept="image/png,image/gif" class="input">
+            </div>
+          </div>
+          <p class="hint">إذا تم تعيين صورة App Background سيتم استعمالها؛ إذا لا، يتم استعمال اللون.</p>
+        </div>
+
       </div>
     </div>
 
@@ -535,7 +556,7 @@ main.content{padding:16px}
 </div>
 
 <script>
-/* ======= CONSTANTS & HELPERS ======= */
+/* ======= CONSTANTS ======= */
 const LS_PROFILES='ab_profiles';
 const LS_FARMS='ab_farms';
 const LS_OPERATORS='ab_operators';
@@ -549,19 +570,18 @@ const DEFAULT_PROFILES=["Admin","Magasinier","Pointeur","Directeur"];
 const APP_DEFAULT={
   appTitle:"AB AGRIWEB",
   nav:{home:"Accueil",irrig:"Irrigation",trait:"Traitement",settings:"Paramètres",logout:"Logout"},
-  tiles:{operators:"OPÉRATEUR",profiles:"PROFILE",refs:"RÉFÉRENTIELS",appcfg:"RÉGLAGES APP"}
+  tiles:{operators:"OPÉRATEUR",profiles:"PROFILE",refs:"RÉFÉRENTIELS",appcfg:"BRANDING"},
+  appBgColor:"#0f172a"
 };
 
 function g(id){return document.getElementById(id)}
 function v(id){return g(id).value.trim()}
-function s(id,val){g(id).value = val || ""}
-
-/* Escape */
+function s(id,val){if(g(id)) g(id).value = val || "";}
 function escapeHtml(str){
   return String(str).replace(/[&<>"']/g,m=>({ "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[m]));
 }
 
-/* ======= GUARD: block if no operator & no setup ======= */
+/* GUARD */
 (function guard(){
   let ops=[];
   try{ops=JSON.parse(localStorage.getItem(LS_OPERATORS)||"[]");}catch{}
@@ -571,7 +591,7 @@ function escapeHtml(str){
   }
 })();
 
-/* ======= SIDEBAR ======= */
+/* SIDEBAR */
 const sidebar=g('sidebar'),overlay=g('overlay');
 g('menuBtn').onclick=()=>{sidebar.classList.add('open');overlay.classList.add('active')}
 overlay.onclick=closeMenu;
@@ -582,7 +602,7 @@ function setActiveLink(el){
   el.classList.add('active');
 }
 
-/* ======= PAGES NAV ======= */
+/* PAGES */
 const pages={
   home:g('page-home'),
   settings:g('page-settings'),
@@ -601,6 +621,12 @@ function openPage(name){
   if(name==='appcfg') setActiveLink(g('nav-settings'));
   showPage(name);
 }
+function focusAcc(id){
+  const acc=g(id);
+  if(!acc) return;
+  acc.classList.add('open');
+  setTimeout(()=>acc.scrollIntoView({behavior:'smooth',block:'start'}),80);
+}
 
 /* sidebar links */
 g('nav-home').onclick=e=>{e.preventDefault();setActiveLink(g('nav-home'));showPage('home')}
@@ -610,33 +636,41 @@ g('nav-trait').onclick=e=>{e.preventDefault();alert("Module Traitement (لاحق
 g('nav-logout').onclick=e=>{e.preventDefault();location="index.html"}
 function goSettings(){setActiveLink(g('nav-settings'));showPage('settings')}
 
-/* ======= STORAGE LOADERS ======= */
+/* STORAGE HELPERS */
 function loadJSON(key,def){try{return JSON.parse(localStorage.getItem(key)||JSON.stringify(def))}catch{return def}}
 function saveJSON(key,val){localStorage.setItem(key,JSON.stringify(val))}
 
-/* ======= APP CONFIG / BRANDING ======= */
+/* APP CONFIG & BRANDING */
 function appcfgLoad(){
   const stored = loadJSON(LS_APP,{});
   return {
     appTitle: stored.appTitle || APP_DEFAULT.appTitle,
     nav:Object.assign({},APP_DEFAULT.nav,stored.nav||{}),
-    tiles:Object.assign({},APP_DEFAULT.tiles,stored.tiles||{})
+    tiles:Object.assign({},APP_DEFAULT.tiles,stored.tiles||{}),
+    appBgColor: stored.appBgColor || APP_DEFAULT.appBgColor
   };
 }
 function loadImgs(){
-  return loadJSON(LS_IMG,{badge:null,sidebar:null,login:null,loginBg:null,logo:null,appBg:null});
+  return loadJSON(LS_IMG,{
+    badge:null,sidebar:null,login:null,
+    loginBg:null,logo:null,appBg:null
+  });
 }
 function saveImgs(o){saveJSON(LS_IMG,o)}
 
 function applyBackground(){
+  const cfg=appcfgLoad();
   const imgs=loadImgs();
   if(imgs.appBg){
     document.body.style.backgroundImage=`url('${imgs.appBg}')`;
     document.body.style.backgroundSize='cover';
     document.body.style.backgroundPosition='center';
+  }else if(cfg.appBgColor){
+    document.body.style.backgroundImage='none';
+    document.body.style.backgroundColor=cfg.appBgColor;
   }else{
     document.body.style.backgroundImage='none';
-    document.body.style.backgroundColor=getComputedStyle(document.documentElement).getPropertyValue('--bg')||'#0f172a';
+    document.body.style.backgroundColor=APP_DEFAULT.appBgColor;
   }
 }
 
@@ -645,6 +679,7 @@ function appcfgApply(){
   const imgs=loadImgs();
 
   document.title = c.appTitle + " - Dashboard";
+
   const titleEl=g('appTitleTop');
   if(imgs.logo){
     titleEl.innerHTML = `<img src="${imgs.logo}" style="height:24px;border-radius:6px;vertical-align:middle">`;
@@ -659,7 +694,7 @@ function appcfgApply(){
   g('lbl-nav-settings').textContent = c.nav.settings;
   g('lbl-nav-logout').textContent = c.nav.logout;
 
-  // tiles
+  // tiles libellés
   g('lbl-tile-operators').textContent = c.tiles.operators;
   g('lbl-tile-profiles').textContent = c.tiles.profiles;
   g('lbl-tile-refs').textContent = c.tiles.refs;
@@ -670,7 +705,7 @@ function appcfgApply(){
   if(imgs.badge){badge.src=imgs.badge;badge.classList.remove('hidden');}
   else badge.classList.add('hidden');
 
-  // hint accueil
+  // accueil hint
   const ops = loadJSON(LS_OPERATORS,[]);
   if(ops.length===0) g('firstRunHint').classList.remove('hidden'); else g('firstRunHint').classList.add('hidden');
 
@@ -679,12 +714,16 @@ function appcfgApply(){
 
 function appcfgFillForm(){
   const c=appcfgLoad();
+  const imgs=loadImgs();
+
   s('cfg-app-title',c.appTitle);
+
   s('cfg-nav-home',c.nav.home);
   s('cfg-nav-irrig',c.nav.irrig);
   s('cfg-nav-trait',c.nav.trait);
   s('cfg-nav-settings',c.nav.settings);
   s('cfg-nav-logout',c.nav.logout);
+
   s('cfg-tile-operators',c.tiles.operators);
   s('cfg-tile-profiles',c.tiles.profiles);
   s('cfg-tile-refs',c.tiles.refs);
@@ -695,16 +734,26 @@ function appcfgFillForm(){
   s('sec-phone',sec.phone);
   s('sec-question',sec.question);
   s('sec-code',sec.recoveryCode?String(sec.recoveryCode):"");
+
+  // branding values (URLs فقط كمرجع)
+  s('cfg-logo-url',imgs.logo||"");
+  s('cfg-badge-url',imgs.badge||"");
+  s('cfg-side-url',imgs.sidebar||"");
+  s('cfg-login-url',imgs.login||"");
+  s('cfg-loginbg-url',imgs.loginBg||"");
+  s('cfg-appbg-url',imgs.appBg||"");
+  if(g('cfg-appbg-color')) g('cfg-appbg-color').value = c.appBgColor || APP_DEFAULT.appBgColor;
 }
 
-/* file -> dataURL helper */
+/* helpers */
+function isImgUrl(u){return /^https?:\/\//.test(u) && /\.(png|gif|jpe?g)(\?|#|$)/i.test(u)}
 function fileToDataURL(file,cb){
   const r=new FileReader();
   r.onload=()=>cb(r.result);
   r.readAsDataURL(file);
 }
-function isImgUrl(u){return /^https?:\/\//.test(u) && /\.(png|gif|jpe?g)(\?|#|$)/i.test(u)}
 
+/* file inputs */
 ['cfg-badge-file','cfg-side-file','cfg-login-file','cfg-loginbg-file','cfg-logo-file','cfg-appbg-file']
 .forEach(id=>{
   const el=g(id); if(!el)return;
@@ -728,7 +777,7 @@ function appcfgSave(){
   const cfg=appcfgLoad();
   const imgs=loadImgs();
 
-  // App title
+  // titre app
   const t=v('cfg-app-title');
   cfg.appTitle = t || APP_DEFAULT.appTitle;
 
@@ -752,7 +801,7 @@ function appcfgSave(){
   cfg.tiles.refs = v('cfg-tile-refs')||APP_DEFAULT.tiles.refs;
   cfg.tiles.appcfg = v('cfg-tile-appcfg')||APP_DEFAULT.tiles.appcfg;
 
-  // security
+  // sécurité
   const sec = loadJSON(LS_SEC,{});
   sec.email = v('sec-email');
   sec.phone = v('sec-phone');
@@ -767,6 +816,10 @@ function appcfgSave(){
   const loginUrl=v('cfg-login-url'); if(loginUrl){ if(!isImgUrl(loginUrl)) return alert('Login banner URL غير صالح'); imgs.login=loginUrl; }
   const loginBgUrl=v('cfg-loginbg-url'); if(loginBgUrl){ if(!isImgUrl(loginBgUrl)) return alert('Login background URL غير صالح'); imgs.loginBg=loginBgUrl; }
   const appBgUrl=v('cfg-appbg-url'); if(appBgUrl){ if(!isImgUrl(appBgUrl)) return alert('App background URL غير صالح'); imgs.appBg=appBgUrl; }
+
+  // app background color
+  const colEl=g('cfg-appbg-color');
+  if(colEl && colEl.value) cfg.appBgColor = colEl.value;
 
   saveImgs(imgs);
   saveJSON(LS_APP,cfg);
@@ -784,7 +837,7 @@ function appcfgReset(){
   alert('تمت إعادة الإعدادات الافتراضية ✅');
 }
 
-/* ======= SECURITY CODE ======= */
+/* SECURITY CODE */
 function hashLite(s){let h=0;for(let i=0;i<s.length;i++){h=((h<<5)-h)+s.charCodeAt(i);h|=0}return String(h)}
 function secGenCode(){
   const code = Math.floor(100000+Math.random()*900000);
@@ -795,7 +848,7 @@ function secGenCode(){
   alert('Code généré: '+code);
 }
 
-/* ======= SETUP BANNER ======= */
+/* SETUP BANNER */
 function showSetupBanner(){
   if(SETUP_ON) g('setupBanner').classList.remove('hidden');
   else g('setupBanner').classList.add('hidden');
@@ -806,7 +859,7 @@ function disableSetup(){
   location.reload();
 }
 
-/* ======= PROFILES ======= */
+/* PROFILES */
 function loadProfiles(){return loadJSON(LS_PROFILES,[])}
 function saveProfiles(d){saveJSON(LS_PROFILES,d)}
 function renderProfiles(){
@@ -846,7 +899,7 @@ function removeProfile(i){
   d.splice(i,1);saveProfiles(d);renderProfiles();opRefreshProfileSelects();
 }
 
-/* ======= FARMS ======= */
+/* FARMS */
 function loadFarms(){return loadJSON(LS_FARMS,[])}
 function saveFarms(d){saveJSON(LS_FARMS,d)}
 function farmToggleForm(sh){g('farmAddForm').classList.toggle('hidden',!sh)}
@@ -920,7 +973,7 @@ function farmDelete(i){
   d.splice(i,1);saveFarms(d);renderFarms();opRefreshFarmCombos();
 }
 
-/* ======= OPERATORS ======= */
+/* OPERATORS */
 function loadOps(){return loadJSON(LS_OPERATORS,[])}
 function saveOps(d){saveJSON(LS_OPERATORS,d)}
 function opToggleForm(sh){
@@ -942,7 +995,6 @@ function comboFill(baseId,items){
   const list=g(baseId+'_list');
   const hidden=g(baseId);
   if(!input || !list || !hidden) return;
-
   function render(q){
     const m=items.filter(x=>x.toLowerCase().includes((q||'').toLowerCase()));
     if(!m.length){list.innerHTML='<div class="combo-item muted">(aucun résultat)</div>';return;}
@@ -1029,7 +1081,7 @@ function opDelete(i){
   d.splice(i,1);saveOps(d);renderOps();
 }
 
-/* ======= RÉFS ======= */
+/* REFS */
 const REF_KEYS={
   companies:"Sociétés",
   responsables:"Responsables",
@@ -1099,13 +1151,13 @@ function refsDelete(i){
   arr.splice(i,1);refs[currentRefKey]=arr;saveRefs(refs);refsRender();
 }
 
-/* ======= ACCORDION ======= */
+/* ACCORDION */
 function toggleAcc(id){g(id).classList.toggle('open')}
 
-/* ======= INIT ======= */
+/* INIT */
 (function init(){
   if(!localStorage.getItem(LS_PROFILES)) saveProfiles(DEFAULT_PROFILES.slice());
-  saveRefs(loadRefs());         // ensure keys
+  saveRefs(loadRefs());
   appcfgApply();
   appcfgFillForm();
   renderProfiles();
