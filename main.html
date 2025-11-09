@@ -196,7 +196,7 @@ main.content{padding:16px}
 }
 .modal h3{margin-bottom:4px;font-size:14px}
 .right{display:flex;justify-content:flex-end;gap:6px;margin-top:6px}
-.hint{font-size:11px;color:var(--muted);margin-top:2px}
+.hint{font-size:11px;color:#9ca3af;margin-top:2px}
 </style>
 </head>
 <body>
@@ -235,13 +235,13 @@ main.content{padding:16px}
   <!-- Accueil -->
   <section id="page-home" class="card">
     <h2>Bienvenue 👋</h2>
-    <p id="homeText">لوحة التحكم الخاصة بـ AB AGRIWEB. استعمل القائمة الجانبية للبدء.</p>
+    <p>لوحة التحكم الخاصة بـ AB AGRIWEB. استعمل القائمة الجانبية للانتقال بين الأقسام.</p>
     <div id="firstRunHint" class="hint hidden">
       🔐 لا يوجد أي مستخدم بعد. اذهب إلى <b>Paramètres → Opérateurs</b> وأضف أول مستخدم.
     </div>
   </section>
 
-  <!-- Paramètres (tuiles) -->
+  <!-- Paramètres (menu tuiles) -->
   <section id="page-settings" class="card hidden">
     <h2>Paramètres</h2>
     <p class="hint">اختر القسم الذي تريد إدارته.</p>
@@ -252,19 +252,19 @@ main.content{padding:16px}
       </div>
       <div class="tile" onclick="openPage('profiles')">
         <div class="icon">🧩</div>
-        <div><h4 id="lbl-tile-profiles">PROFILE</h4><p>Profils et rôles</p></div>
+        <div><h4 id="lbl-tile-profiles">PROFILE</h4><p>Profils & rôles</p></div>
       </div>
       <div class="tile" onclick="openPage('rights')">
         <div class="icon">🛡️</div>
-        <div><h4>Droit d’accès</h4><p>صلاحيات مبسّطة حسب البروفايل</p></div>
+        <div><h4>Droit d’accès</h4><p>صلاحيات مبسطة (يمكن تطويرها لاحقاً)</p></div>
       </div>
       <div class="tile" onclick="openPage('refs')">
         <div class="icon">🗂️</div>
-        <div><h4 id="lbl-tile-refs">RÉFÉRENTIELS</h4><p>Listes maîtres: fermes, variétés...</p></div>
+        <div><h4 id="lbl-tile-refs">RÉFÉRENTIELS</h4><p>Listes maîtres</p></div>
       </div>
       <div class="tile" onclick="openPage('appcfg')">
         <div class="icon">🎨</div>
-        <div><h4 id="lbl-tile-appcfg">BRANDING</h4><p>لوغو، قوالب، خلفيات، libellés, sécurité</p></div>
+        <div><h4 id="lbl-tile-appcfg">BRANDING</h4><p>لوغو، خلفيات، Libellés, Sécurité</p></div>
       </div>
     </div>
   </section>
@@ -275,7 +275,7 @@ main.content{padding:16px}
       <button class="btn icon" onclick="toggleProfileForm(true)">＋</button>
     </div>
     <h2>Profils</h2>
-    <p class="hint">أضف الأدوار (Admin, Magasinier, Pointeur...).</p>
+    <p class="hint">أضف الأدوار (Admin, Magasinier, Pointeur, ...).</p>
     <div id="profileForm" class="row hidden">
       <input id="profileName" class="input" placeholder="Ex: Admin, Magasinier">
       <button class="btn" onclick="addProfile()">Ajouter</button>
@@ -287,11 +287,11 @@ main.content{padding:16px}
   <!-- Droits d’accès (عرض بسيط) -->
   <section id="page-rights" class="card hidden">
     <h2>Droit d’accès</h2>
-    <p class="hint">تمهيد فقط: ربط الأدوار مع الأقسام. يمكن تطوير من بعد.</p>
+    <p class="hint">تمهيد فقط لربط الأدوار بالصلاحيات. يمكن تطويره لاحقاً حسب حاجتك.</p>
     <div class="list">
-      <div class="item"><div class="meta"><b>Admin:</b> كل الأقسام</div></div>
-      <div class="item"><div class="meta"><b>Magasinier:</b> Référentiels & Stock فقط</div></div>
-      <div class="item"><div class="meta"><b>Pointeur:</b> إدخال البيانات اليومية، لا إعدادات</div></div>
+      <div class="item"><div class="meta"><b>Admin:</b> Accès complet à tous les modules.</div></div>
+      <div class="item"><div class="meta"><b>Magasinier:</b> Stock, Référentiels liés.</div></div>
+      <div class="item"><div class="meta"><b>Pointeur:</b> Saisie quotidienne فقط.</div></div>
     </div>
   </section>
 
@@ -339,7 +339,7 @@ main.content{padding:16px}
   <!-- Référentiels -->
   <section id="page-refs" class="card hidden">
     <h2>Référentiels</h2>
-    <p class="hint">لوائح مساعدة لتسهيل الإدخال. اختر واحدة للتعديل.</p>
+    <p class="hint">لوائح مرجعية: شركات، مسؤولين، محطات، قطاعات، ...</p>
     <div id="refsHome" class="stack">
       <div class="tile" onclick="openPage('farms')"><div class="icon">🏞️</div><div><h4>Fermes</h4></div></div>
       <div class="tile" onclick="refsOpen('companies')"><div class="icon">🏢</div><div><h4>Sociétés</h4></div></div>
@@ -359,7 +359,7 @@ main.content{padding:16px}
         <button class="btn icon" onclick="refsToggleForm(true)">＋</button>
       </div>
       <h3 id="refsCatTitle" style="font-size:14px;margin-bottom:3px">Catégorie</h3>
-      <div id="refsHint" class="hint">Ajouter / supprimer العناصر في هذه القائمة.</div>
+      <div id="refsHint" class="hint">Ajouter / supprimer عناصر هذه الفئة.</div>
       <div id="refsAddForm" class="row hidden">
         <input id="refsInput" class="input" placeholder="Nom à ajouter">
         <button class="btn" onclick="refsAdd()">Ajouter</button>
@@ -369,10 +369,10 @@ main.content{padding:16px}
     </div>
   </section>
 
-  <!-- Réglages de l’application -->
+  <!-- Réglages de l’application (Branding + Libellés + Sécurité) -->
   <section id="page-appcfg" class="card hidden">
     <h2>Réglages de l’application</h2>
-    <p class="hint">Libellés, sécurité، و Branding (اللوغو والخلفيات) من هنا.</p>
+    <p class="hint">هنا تتحكم في: اسم التطبيق، النصوص، اللوغو، الخلفيات، وأمان الحساب.</p>
 
     <!-- 1) Libellés Navigation -->
     <div id="acc-nav" class="accordion acc">
@@ -391,7 +391,7 @@ main.content{padding:16px}
       </div>
     </div>
 
-    <!-- 2) Tuiles -->
+    <!-- 2) Tuiles Paramètres -->
     <div id="acc-tiles" class="accordion acc">
       <button class="acc-hd" onclick="toggleAcc('acc-tiles')">
         2) Tuiles Paramètres
@@ -426,7 +426,7 @@ main.content{padding:16px}
               <input id="sec-code" class="input" disabled>
               <button class="btn" onclick="secGenCode()">Générer</button>
             </div>
-            <div class="hint">يُستخدم في صفحة تسجيل الدخول.</div>
+            <div class="hint">يُستعمل في “Forgot password” في صفحة الدخول.</div>
           </div>
         </div>
       </div>
@@ -436,7 +436,7 @@ main.content{padding:16px}
     <div id="acc-brand" class="accordion acc">
       <button class="acc-hd" onclick="toggleAcc('acc-brand')">
         4) Branding
-        <span>لوغو التطبيق • خلفية تسجيل الدخول • خلفية لوحة التحكم</span>
+        <span>Logo • Badge • Login background • Fond dashboard • Zoom logo</span>
       </button>
       <div class="acc-bd">
         <div class="grid">
@@ -445,31 +445,39 @@ main.content{padding:16px}
             <input id="cfg-app-title" class="input" placeholder="AB AGRIWEB">
           </div>
           <div>
-            <label class="label">Logo principal (هيدر + Login)</label>
+            <label class="label">Logo principal (PNG/GIF)</label>
             <input id="cfg-logo-url" class="input" placeholder="URL (png/gif)">
             <input id="cfg-logo-file" type="file" accept="image/png,image/gif" class="input">
           </div>
           <div>
-            <label class="label">Badge header صغير</label>
+            <label class="label">Badge header</label>
             <input id="cfg-badge-url" class="input" placeholder="URL (png/gif)">
             <input id="cfg-badge-file" type="file" accept="image/png,image/gif" class="input">
           </div>
           <div>
-            <label class="label">Login background (تغطي الشاشة)</label>
+            <label class="label">Login background</label>
             <input id="cfg-loginbg-url" class="input" placeholder="URL (png/jpg/gif)">
             <input id="cfg-loginbg-file" type="file" accept="image/png,image/gif,image/jpeg" class="input">
           </div>
           <div>
-            <label class="label">Background لوحة التحكم (داخلي)</label>
+            <label class="label">Fond dashboard (intérieur)</label>
             <input id="cfg-appbg-url" class="input" placeholder="URL (png/jpg/gif)">
             <input id="cfg-appbg-file" type="file" accept="image/png,image/gif,image/jpeg" class="input">
           </div>
           <div>
-            <label class="label">لون خلفية لوحة التحكم</label>
+            <label class="label">Couleur fond dashboard</label>
             <input id="cfg-appbg-color" type="color" class="input" style="padding:0;height:34px;">
           </div>
+          <div>
+            <label class="label">Zoom logo horizontal</label>
+            <input id="cfg-zoom-x" type="range" min="50" max="150" value="100" class="input">
+          </div>
+          <div>
+            <label class="label">Zoom logo vertical</label>
+            <input id="cfg-zoom-y" type="range" min="50" max="150" value="100" class="input">
+          </div>
         </div>
-        <p class="hint">كل شيء محفوظ محلياً في المتصفح (localStorage).</p>
+        <p class="hint">كل هذه الإعدادات تُحفظ محلياً في المتصفح (localStorage).</p>
       </div>
     </div>
 
@@ -524,7 +532,7 @@ main.content{padding:16px}
 </div>
 
 <script>
-/* CONSTANTS */
+/* KEYS */
 const LS_PROFILES='ab_profiles';
 const LS_FARMS='ab_farms';
 const LS_OPERATORS='ab_operators';
@@ -532,6 +540,7 @@ const LS_REFS='ab_refs';
 const LS_APP='ab_appcfg';
 const LS_IMG='ab_appimg';
 const LS_SEC='ab_security';
+const LS_ZOOM='ab_zoom';
 const SETUP_ON = localStorage.getItem('ab_setup') === '1';
 
 const DEFAULT_PROFILES=["Admin","Magasinier","Pointeur","Directeur"];
@@ -541,10 +550,22 @@ const APP_DEFAULT={
   tiles:{operators:"OPÉRATEUR",profiles:"PROFILE",rights:"Droit d’accès",refs:"RÉFÉRENTIELS",appcfg:"BRANDING"},
   appBgColor:"#0f172a"
 };
+const REF_LABELS={
+  companies:"Sociétés",
+  responsables:"Responsables",
+  stations:"Stations",
+  secteurs:"Secteurs",
+  parcelles:"Parcelles",
+  transports:"Transports",
+  varietes:"Variétés",
+  varietes_champ:"Variétés champ",
+  gestions:"Gestion stock",
+  achats:"Achats"
+};
 
 function g(id){return document.getElementById(id)}
-function loadJSON(key,def){try{return JSON.parse(localStorage.getItem(key)||JSON.stringify(def))}catch{return def}}
-function saveJSON(key,val){localStorage.setItem(key,JSON.stringify(val))}
+function loadJSON(k,def){try{return JSON.parse(localStorage.getItem(k)||JSON.stringify(def))}catch{return def}}
+function saveJSON(k,v){localStorage.setItem(k,JSON.stringify(v))}
 
 /* GUARD */
 (function guard(){
@@ -591,14 +612,14 @@ function openPage(name){
 }
 function goSettings(){setActiveLink(g('nav-settings'));showPage('settings')}
 
-/* NAV LINKS */
+/* NAV */
 g('nav-home').onclick=e=>{e.preventDefault();setActiveLink(g('nav-home'));showPage('home')}
 g('nav-settings').onclick=e=>{e.preventDefault();setActiveLink(g('nav-settings'));showPage('settings')}
 g('nav-irrig').onclick=e=>{e.preventDefault();alert("Module Irrigation (لاحقاً).")}
 g('nav-trait').onclick=e=>{e.preventDefault();alert("Module Traitement (لاحقاً).")}
 g('nav-logout').onclick=e=>{e.preventDefault();location="index.html"}
 
-/* APP CONFIG & BRANDING */
+/* APP CONFIG / BRANDING */
 function appcfgLoad(){
   const stored = loadJSON(LS_APP,{});
   return {
@@ -612,6 +633,8 @@ function loadImgs(){
   return loadJSON(LS_IMG,{badge:null,loginBg:null,logo:null,appBg:null});
 }
 function saveImgs(o){saveJSON(LS_IMG,o)}
+function loadZoom(){return loadJSON(LS_ZOOM,{x:100,y:100})}
+function saveZoom(z){saveJSON(LS_ZOOM,z)}
 
 function applyBackground(){
   const cfg=appcfgLoad();
@@ -664,6 +687,7 @@ function appcfgFillForm(){
   const c=appcfgLoad();
   const imgs=loadImgs();
   const sec = loadJSON(LS_SEC,{});
+  const zoom = loadZoom();
 
   g('cfg-app-title').value = c.appTitle;
 
@@ -692,6 +716,9 @@ function appcfgFillForm(){
   if(g('cfg-appbg-color') && c.appBgColor){
     g('cfg-appbg-color').value = c.appBgColor;
   }
+
+  g('cfg-zoom-x').value = zoom.x;
+  g('cfg-zoom-y').value = zoom.y;
 }
 
 function isImgUrl(u){return /^https?:\/\//.test(u) && /\.(png|gif|jpe?g)(\?|#|$)/i.test(u)}
@@ -715,7 +742,7 @@ function fileToDataURL(file,cb){
       if(id==='cfg-appbg-file') imgs.appBg=data;
       saveImgs(imgs);
       appcfgApply();
-      alert('تم حفظ الصورة ✅');
+      alert('Image enregistrée ✅');
     });
   });
 });
@@ -724,58 +751,74 @@ function appcfgSave(){
   const cfg=appcfgLoad();
   const imgs=loadImgs();
   const sec = loadJSON(LS_SEC,{});
+  const zoom = loadZoom();
 
+  // Titre
   const t=g('cfg-app-title').value.trim();
   cfg.appTitle = t || APP_DEFAULT.appTitle;
 
+  // Logo URL
   const logoUrl=g('cfg-logo-url').value.trim();
   if(logoUrl){
     if(!isImgUrl(logoUrl)) return alert('Logo URL غير صالح');
     imgs.logo=logoUrl;
   }
 
+  // Nav
   cfg.nav.home = g('cfg-nav-home').value.trim()||APP_DEFAULT.nav.home;
   cfg.nav.irrig = g('cfg-nav-irrig').value.trim()||APP_DEFAULT.nav.irrig;
   cfg.nav.trait = g('cfg-nav-trait').value.trim()||APP_DEFAULT.nav.trait;
   cfg.nav.settings = g('cfg-nav-settings').value.trim()||APP_DEFAULT.nav.settings;
   cfg.nav.logout = g('cfg-nav-logout').value.trim()||APP_DEFAULT.nav.logout;
 
+  // Tiles
   cfg.tiles.operators = g('cfg-tile-operators').value.trim()||APP_DEFAULT.tiles.operators;
   cfg.tiles.profiles = g('cfg-tile-profiles').value.trim()||APP_DEFAULT.tiles.profiles;
   cfg.tiles.rights = g('cfg-tile-rights').value.trim()||APP_DEFAULT.tiles.rights;
   cfg.tiles.refs = g('cfg-tile-refs').value.trim()||APP_DEFAULT.tiles.refs;
   cfg.tiles.appcfg = g('cfg-tile-appcfg').value.trim()||APP_DEFAULT.tiles.appcfg;
 
+  // Sécurité
   sec.email = g('sec-email').value.trim();
   sec.phone = g('sec-phone').value.trim();
   sec.question = g('sec-question').value.trim();
   const ans = g('sec-answer').value.trim();
   if(ans) sec.answerHash = hashLite(ans.toLowerCase());
 
+  // Badge
   const badgeUrl=g('cfg-badge-url').value.trim();
   if(badgeUrl){
     if(!isImgUrl(badgeUrl)) return alert('Badge URL غير صالح');
     imgs.badge=badgeUrl;
   }
 
+  // Login bg
   const loginBgUrl=g('cfg-loginbg-url').value.trim();
   if(loginBgUrl){
     if(!isImgUrl(loginBgUrl)) return alert('Login bg URL غير صالح');
     imgs.loginBg=loginBgUrl;
   }
 
+  // App bg
   const appBgUrl=g('cfg-appbg-url').value.trim();
   if(appBgUrl){
     if(!isImgUrl(appBgUrl)) return alert('App bg URL غير صالح');
     imgs.appBg=appBgUrl;
   }
 
+  // Colors
   const colEl=g('cfg-appbg-color');
   if(colEl && colEl.value) cfg.appBgColor = colEl.value;
+
+  // Zoom
+  zoom.x = parseInt(g('cfg-zoom-x').value||'100',10);
+  zoom.y = parseInt(g('cfg-zoom-y').value||'100',10);
 
   saveJSON(LS_SEC,sec);
   saveImgs(imgs);
   saveJSON(LS_APP,cfg);
+  saveZoom(zoom);
+
   appcfgApply();
   appcfgFillForm();
   alert('تم الحفظ ✅');
@@ -785,12 +828,13 @@ function appcfgReset(){
   localStorage.removeItem(LS_APP);
   localStorage.removeItem(LS_IMG);
   localStorage.removeItem(LS_SEC);
+  localStorage.removeItem(LS_ZOOM);
   appcfgApply();
   appcfgFillForm();
   alert('تمت إعادة الإعدادات الافتراضية ✅');
 }
 
-/* SECURITY CODE */
+/* SECURITY */
 function hashLite(s){let h=0;for(let i=0;i<s.length;i++){h=((h<<5)-h)+s.charCodeAt(i);h|=0}return String(h)}
 function secGenCode(){
   const code = Math.floor(100000+Math.random()*900000);
@@ -828,9 +872,7 @@ function renderProfiles(){
     const div=document.createElement('div');
     div.className='item';
     div.innerHTML=`<div>${name}</div>
-      <div>
-        <button class="btn danger" onclick="delProfile(${idx})">🗑️</button>
-      </div>`;
+      <div><button class="btn danger" onclick="delProfile(${idx})">🗑️</button></div>`;
     wrap.appendChild(div);
   });
 }
@@ -1000,21 +1042,7 @@ function opSaveEdit(){
 
 /* REFS */
 let currentRefCat=null;
-const REF_LABELS={
-  companies:"Sociétés",
-  responsables:"Responsables",
-  stations:"Stations",
-  secteurs:"Secteurs",
-  parcelles:"Parcelles",
-  transports:"Transports",
-  varietes:"Variétés",
-  varietes_champ:"Variétés champ",
-  gestions:"Gestion stock",
-  achats:"Achats"
-};
-function getRefs(){
-  return loadJSON(LS_REFS,{});
-}
+function getRefs(){return loadJSON(LS_REFS,{})}
 function saveRefs(data){saveJSON(LS_REFS,data)}
 function refsOpen(cat){
   currentRefCat=cat;
@@ -1078,6 +1106,7 @@ function toggleAcc(id){
 
 /* INIT */
 document.addEventListener('DOMContentLoaded',()=>{
+  if(!loadJSON(LS_PROFILES,[]).length) saveJSON(LS_PROFILES,DEFAULT_PROFILES);
   appcfgApply();
   appcfgFillForm();
   renderProfiles();
@@ -1086,6 +1115,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   fillProfilesSelects();
   fillFarmsCombo();
   showSetupBanner();
+  showPage('home');
 });
 </script>
 </body>
