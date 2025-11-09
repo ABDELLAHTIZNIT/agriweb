@@ -16,7 +16,7 @@
 /* RESET */
 *{box-sizing:border-box;margin:0;padding:0}
 
-/* BODY = الخلفية (كتشد من Branding) + الكارت وسط */
+/* BODY = الخلفية (كتشد من Branding) */
 body{
   min-height:100vh;
   display:grid;
@@ -29,7 +29,7 @@ body{
   background-position:center;
 }
 
-/* الكارد: دابا بلا خلفية سوداء، غير layout */
+/* الكارت العامة */
 .card{
   width:min(420px,100%);
   padding:0;
@@ -56,14 +56,13 @@ body{
   text-shadow:0 3px 10px rgba(0,0,0,.9);
 }
 
-/* صندوق الحقول فقط، شبه زجاجي */
+/* صندوق الحقول: دابا شفاف تماما بلا خلفية */
 .form-wrap{
   width:100%;
   padding:18px 16px 14px;
   border-radius:18px;
-  background:rgba(0,0,0,0.78);
-  box-shadow:0 22px 50px rgba(0,0,0,.8);
-  backdrop-filter:blur(10px);
+  background:transparent;              /* <== هنا التغيير */
+  box-shadow:none;                     /* بلا ظل غامق */
 }
 
 /* رسالة لا يوجد مستخدم */
@@ -89,7 +88,7 @@ label{
   padding:10px 11px;
   border-radius:10px;
   border:1px solid #111827;
-  background:#020817;
+  background:#020817ee;
   color:var(--text);
   font-size:13px;
   box-shadow:0 8px 18px rgba(0,0,0,.45) inset;
