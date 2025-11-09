@@ -6,106 +6,29 @@
 <title>AB AGRIWEB</title>
 <link rel="stylesheet" href="assets/css/base.css">
 <style>
-body {
-  margin:0;
-  font-family: system-ui, sans-serif;
-  background:#0f172a;
-  color:#e2e8f0;
-}
-header {
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  background:#1e293b;
-  padding:10px 14px;
-  border-bottom:1px solid #334155;
-  position:relative;
-}
-header h1 {
-  margin:0;
-  font-size:1.1rem;
-  color:#22c55e;
-}
-.menu-btn {
-  background:none;
-  border:none;
-  color:#e2e8f0;
-  font-size:1.6rem;
-  cursor:pointer;
-}
-.sidebar {
-  position:fixed;
-  left:-260px;
-  top:0;
-  width:250px;
-  height:100%;
-  background:#0b1220;
-  border-right:1px solid #1e293b;
-  transition:left 0.3s ease;
-  padding:10px;
-  overflow-y:auto;
-}
-.sidebar.open { left:0; }
-.sidebar h2 {
-  font-size:1rem;
-  color:#22c55e;
-  border-bottom:1px solid #1e293b;
-  padding-bottom:6px;
-  margin:10px 0;
-}
-.sidebar a {
-  display:block;
-  color:#cbd5e1;
-  text-decoration:none;
-  padding:8px 6px;
-  border-radius:8px;
-}
-.sidebar a:hover {
-  background:#1e293b;
-  color:#fff;
-}
-.card {
-  padding:20px;
-}
-button.btn {
-  background:#22c55e;
-  color:#0b1220;
-  border:none;
-  border-radius:8px;
-  padding:10px 14px;
-  cursor:pointer;
-}
-button.btn:hover { background:#16a34a; }
-button.danger { background:#ef4444; color:#fff; }
-.hidden { display:none; }
-
-.accordion { border:1px solid #1e293b; border-radius:8px; margin:10px 0; }
-.acc-hd {
-  background:#1e293b;
-  color:#e2e8f0;
-  padding:10px;
-  border:none;
-  text-align:left;
-  width:100%;
-  font-weight:bold;
-  cursor:pointer;
-}
-.acc-bd { display:none; padding:10px; background:#0f172a; }
-.accordion.open .acc-bd { display:block; }
-
-.input {
-  width:100%;
-  padding:8px;
-  background:#0b1220;
-  border:1px solid #1e293b;
-  color:#e2e8f0;
-  border-radius:6px;
-  margin-bottom:8px;
-}
-.label { font-weight:bold; display:block; margin-bottom:4px; }
-.row { display:flex; gap:8px; flex-wrap:wrap; }
-.grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-.muted { font-size:0.85rem; opacity:0.8; }
+body{margin:0;font-family:system-ui,sans-serif;background:#0f172a;color:#e2e8f0}
+header{display:flex;align-items:center;justify-content:space-between;background:#1e293b;padding:10px 14px;border-bottom:1px solid #334155}
+header h1{margin:0;font-size:1.1rem;color:#22c55e}
+.menu-btn{background:none;border:none;color:#e2e8f0;font-size:1.6rem;cursor:pointer}
+.sidebar{position:fixed;left:-260px;top:0;width:250px;height:100%;background:#0b1220;border-right:1px solid #1e293b;transition:left .3s ease;padding:10px;overflow-y:auto;z-index:50}
+.sidebar.open{left:0}
+.sidebar h2{font-size:1rem;color:#22c55e;border-bottom:1px solid #1e293b;padding-bottom:6px;margin:10px 0}
+.sidebar a{display:block;color:#cbd5e1;text-decoration:none;padding:8px 6px;border-radius:8px}
+.sidebar a:hover{background:#1e293b;color:#fff}
+.card{padding:20px;background:#0b1220;border:1px solid #1e293b;border-radius:10px}
+button.btn{background:#22c55e;color:#0b1220;border:none;border-radius:8px;padding:10px 14px;cursor:pointer}
+button.btn:hover{background:#16a34a}
+button.danger{background:#ef4444;color:#fff}
+.hidden{display:none}
+.accordion{border:1px solid #1e293b;border-radius:8px;margin:10px 0}
+.acc-hd{background:#1e293b;color:#e2e8f0;padding:10px;border:none;text-align:left;width:100%;font-weight:700;cursor:pointer}
+.acc-bd{display:none;padding:10px;background:#0f172a}
+.accordion.open .acc-bd{display:block}
+.input{width:100%;padding:8px;background:#0b1220;border:1px solid #1e293b;color:#e2e8f0;border-radius:6px;margin-bottom:8px}
+.label{font-weight:700;display:block;margin-bottom:4px}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.muted{font-size:.85rem;opacity:.8}
 </style>
 </head>
 <body>
@@ -113,7 +36,7 @@ button.danger { background:#ef4444; color:#fff; }
 <header>
   <button class="menu-btn" id="menuBtn">☰</button>
   <h1 id="appTitleTop">AB AGRIWEB</h1>
-  <img id="appBadgeImg" src="" alt="" style="height:26px;object-fit:contain;" class="hidden">
+  <img id="appBadgeImg" src="" alt="" style="height:26px;object-fit:contain" class="hidden">
 </header>
 
 <aside class="sidebar" id="sidebar">
@@ -124,14 +47,16 @@ button.danger { background:#ef4444; color:#fff; }
   <a href="#" onclick="showPage('param')">⚙️ Paramètres</a>
   <a href="#" onclick="logout()">🚪 Déconnecter</a>
 
-  <div id="sidebarBrand" class="hidden" style="margin-top:12px;">
-    <img id="sidebarBrandImg" src="" alt="" style="width:100%;border-radius:6px;">
+  <div id="sidebarBrand" class="hidden" style="margin-top:12px">
+    <img id="sidebarBrandImg" src="" alt="" style="width:100%;border-radius:6px">
   </div>
 </aside>
 
-<main style="margin-top:10px; padding:20px;">
+<main style="margin-top:10px;padding:20px">
+  <!-- Accueil (مرئي افتراضياً) -->
   <section id="page-accueil" class="card">Bienvenue dans AB AGRIWEB 👋</section>
 
+  <!-- Paramètres (قائمة أزرار) -->
   <section id="page-param" class="card hidden">
     <h2>Paramètres</h2>
     <div class="grid">
@@ -144,12 +69,16 @@ button.danger { background:#ef4444; color:#fff; }
     </div>
   </section>
 
-  <!-- باقي الصفحات الأخرى ممكن تكمّلها هنا -->
+  <!-- Placeholder لصفحات أخرى (اختياري) -->
+  <section id="page-operators" class="card hidden"><h3>Opérateurs</h3><p class="muted">صفحة قيد الإعداد.</p></section>
+  <section id="page-profiles"  class="card hidden"><h3>Profiles</h3><p class="muted">صفحة قيد الإعداد.</p></section>
+  <section id="page-refs"      class="card hidden"><h3>Référentiels</h3><p class="muted">صفحة قيد الإعداد.</p></section>
+  <section id="page-rights"    class="card hidden"><h3>Droits accès</h3><p class="muted">صفحة قيد الإعداد.</p></section>
+  <section id="page-pass"      class="card hidden"><h3>Mot de passe</h3><p class="muted">صفحة قيد الإعداد.</p></section>
 
-  <!-- ====================================== -->
-  <!-- RÉGLAGES DE L’APPLICATION (BRANDING) -->
-  <!-- ====================================== -->
-
+  <!-- ========================= -->
+  <!-- RÉGLAGES DE L’APPLICATION -->
+  <!-- ========================= -->
   <section id="page-appcfg" class="card hidden">
     <h2>Réglages de l’application</h2>
     <p class="muted">كل إعدادات التطبيق مجمّعة حسب النوع.</p>
@@ -160,12 +89,12 @@ button.danger { background:#ef4444; color:#fff; }
       <div class="acc-bd">
         <label class="label">Titre de l’application</label>
         <input id="cfg-app-title" class="input" placeholder="Nom de l’app (laisser vide لإخفاء)">
-        <label><input id="cfg-title-hide" type="checkbox"> إخفاء العنوان النصي</label>
+        <label style="display:flex;align-items:center;gap:8px"><input id="cfg-title-hide" type="checkbox"> إخفاء العنوان النصي</label>
         <div class="muted">يمكنك إخفاء النص إذا لديك Logo.</div>
       </div>
     </div>
 
-    <!-- 5) Branding -->
+    <!-- 2) Branding (كل الصور مجمّعة) -->
     <div class="accordion acc" id="acc-brand">
       <button class="acc-hd" onclick="toggleAcc('acc-brand')">2) Branding <span>Logo, Badge, Sidebar, Login</span></button>
       <div class="acc-bd">
@@ -211,19 +140,28 @@ button.danger { background:#ef4444; color:#fff; }
   </section>
 </main>
 
+<!-- سكريبتات -->
 <script src="assets/js/ui/sidebar.js"></script>
 <script src="assets/js/pages/appcfg.js"></script>
 <script>
 const sidebar=document.getElementById('sidebar');
 document.getElementById('menuBtn').onclick=()=>sidebar.classList.toggle('open');
 
+/* مهم: دالة showPage دابا كتقبل 'accueil' أو 'page-accueil' معا */
 function showPage(id){
+  // زيد prefix إذا ناقص
+  const pid = id.startsWith('page-') ? id : ('page-'+id);
+  // خبي الجميع
   document.querySelectorAll('main > section').forEach(s=>s.classList.add('hidden'));
-  const page=document.getElementById(id);
-  if(page) page.classList.remove('hidden');
+  // بيّن المطلوب
+  const page=document.getElementById(pid);
+  if(page){ page.classList.remove('hidden'); }
+  // سد السايدبار
   sidebar.classList.remove('open');
 }
+
 function logout(){ alert('Déconnecté. (Simulation)'); }
+
 function toggleAcc(id){
   const el=document.getElementById(id);
   if(el) el.classList.toggle('open');
