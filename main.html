@@ -6,17 +6,26 @@
 <title>AB AGRIWEB - Dashboard</title>
 <style>
 :root{
-  --bg:#0f172a;--panel:#0b1220;--text:#e2e8f0;--accent:#22c55e;
-  --border:#243046;--tile:#0c1526;--tileIcon:#0f1a2e;--warn:#fde68a1a
+  --bg:#0f172a;
+  --bg-soft:#020817;
+  --panel:#0b1220;
+  --text:#e2e8f0;
+  --muted:#9ca3af;
+  --accent:#22c55e;
+  --border:#243046;
+  --tile:#0c1526;
+  --tileIcon:#0f1a2e;
+  --warn:#fde68a1a;
 }
 *{box-sizing:border-box}
 body{
   margin:0;
   font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-  background:linear-gradient(180deg,var(--bg),#1e293b);
+  background:var(--bg);
   color:var(--text);
   min-height:100vh;
   overflow-x:hidden;
+  transition:background .25s ease,color .25s ease;
 }
 .hidden{display:none!important}
 
@@ -24,29 +33,65 @@ body{
 header{
   position:sticky;top:0;z-index:40;
   display:flex;align-items:center;justify-content:space-between;
-  background:var(--panel);padding:10px 14px;
+  background:var(--panel);
+  padding:8px 12px;
   border-bottom:1px solid var(--border);
+  box-shadow:0 4px 16px rgba(0,0,0,.45);
 }
+.left-head{display:flex;align-items:center;gap:8px}
 .menu-btn{
-  width:40px;height:40px;border-radius:10px;
-  border:1px solid #111827;background:#020817;
-  color:var(--text);font-size:20px;
-  display:grid;place-items:center;cursor:pointer;
+  width:36px;height:36px;
+  border-radius:10px;
+  border:1px solid #111827;
+  background:#020817;
+  color:var(--text);
+  font-size:20px;
+  display:grid;place-items:center;
+  cursor:pointer;
 }
-.brand{display:flex;align-items:center;gap:10px}
+.brand{
+  display:flex;align-items:center;gap:8px;
+}
 #appTitleTop{
-  font-weight:800;letter-spacing:.4px;color:var(--accent);
+  font-weight:800;
+  letter-spacing:.4px;
+  color:var(--accent);
+  font-size:15px;
 }
 #appBadgeImg{
-  height:22px;border-radius:6px;border:1px solid #1f2937;
+  height:22px;
+  border-radius:6px;
+  border:1px solid #1f2937;
 }
+.right-head{
+  display:flex;align-items:center;gap:6px;
+  font-size:11px;color:var(--muted);
+}
+.head-pill{
+  padding:3px 7px;
+  border-radius:999px;
+  border:1px solid #111827;
+  background:rgba(0,0,0,.45);
+  display:flex;align-items:center;gap:4px;
+}
+.icon-btn{
+  width:30px;height:30px;
+  border-radius:50%;
+  border:1px solid #111827;
+  background:#020817;
+  color:var(--text);
+  display:grid;place-items:center;
+  cursor:pointer;
+  font-size:15px;
+}
+.icon-btn:hover{border-color:var(--accent);color:var(--accent)}
 
 /* SIDEBAR */
 .sidebar{
   position:fixed;top:0;left:-260px;width:260px;height:100%;
   background:#020817;
   border-right:1px solid var(--border);
-  transition:left .3s ease;
+  transition:left .28s ease;
   display:flex;flex-direction:column;
   padding-top:52px;
   box-shadow:4px 0 18px rgba(0,0,0,.45);
@@ -55,82 +100,98 @@ header{
 .sidebar.open{left:0}
 .side-header{
   position:absolute;top:0;left:0;right:0;
-  height:52px;display:flex;align-items:center;gap:8px;
+  height:52px;
+  display:flex;align-items:center;gap:8px;
   padding:0 10px;
-  background:#020817;border-bottom:1px solid #111827;
+  background:#020817;
+  border-bottom:1px solid #111827;
 }
 .close-btn{
-  width:32px;height:32px;border-radius:8px;
-  border:none;background:#0f172a;color:#e5e7eb;
-  font-size:20px;cursor:pointer;
+  width:30px;height:30px;
+  border-radius:8px;
+  border:none;
+  background:#0f172a;
+  color:#e5e7eb;
+  font-size:20px;
+  cursor:pointer;
 }
 .sidebar h3{
-  margin:6px 10px 4px;font-size:13px;
-  text-transform:uppercase;color:#6b7280;
+  margin:8px 10px 4px;
+  font-size:11px;
+  text-transform:uppercase;
+  color:#6b7280;
 }
 .sidebar a{
   display:flex;align-items:center;gap:8px;
-  padding:9px 14px;margin:2px 8px;
+  padding:8px 12px;margin:2px 8px;
   color:#cbd5e1;text-decoration:none;
-  border-radius:10px;font-size:14px;
+  border-radius:9px;
+  font-size:13px;
 }
 .sidebar a:hover{
   background:#111827;color:#fff;
 }
 .sidebar a.active{
-  background:var(--accent);color:#020817;font-weight:700;
+  background:var(--accent);
+  color:#020817;
+  font-weight:700;
 }
 .sidebar-brand{
-  margin:10px;padding:6px 8px;
-  border-radius:10px;border:1px solid #111827;
+  margin:10px;
+  padding:6px 8px;
+  border-radius:10px;
+  border:1px solid #111827;
   background:#020817;
 }
 .sidebar-brand img{
-  width:100%;border-radius:8px;
+  width:100%;
+  border-radius:8px;
 }
 
 /* OVERLAY */
 .overlay{
   position:fixed;inset:0;
-  background:rgba(0,0,0,.45);
-  opacity:0;pointer-events:none;
+  background:rgba(0,0,0,.5);
+  opacity:0;
+  pointer-events:none;
   transition:opacity .25s;
   z-index:30;
 }
 .overlay.active{
-  opacity:1;pointer-events:auto;
+  opacity:1;
+  pointer-events:auto;
 }
 
-/* CONTENT */
+/* CONTENT / CARDS */
 main.content{padding:16px}
 .card{
-  max-width:1100px;margin:14px auto;
-  background:#020817;
+  max-width:1100px;
+  margin:14px auto;
+  background:var(--bg-soft);
   border:1px solid var(--border);
   border-radius:14px;
-  padding:16px 14px 16px;
+  padding:16px 14px 14px;
   box-shadow:0 10px 26px rgba(0,0,0,.35);
   position:relative;
 }
-h2{margin:0 0 6px}
-.muted{font-size:13px;opacity:.85}
-
+h2{margin:0 0 4px}
+.muted{font-size:12px;color:var(--muted)}
 .stack{display:grid;gap:10px}
 .tile{
   display:flex;align-items:center;gap:10px;
   background:var(--tile);
   border-radius:12px;
-  padding:12px 14px;
+  padding:10px 12px;
   border:1px solid #111827;
   cursor:pointer;
 }
 .tile .icon{
-  width:34px;height:34px;
+  width:32px;height:32px;
   display:grid;place-items:center;
   background:var(--tileIcon);
   border-radius:10px;
   border:1px solid #1f2a44;
-  font-size:18px;
+  font-size:17px;
 }
 .tile:hover{
   border-color:var(--accent);
@@ -139,20 +200,20 @@ h2{margin:0 0 6px}
 
 /* Buttons & Inputs */
 .actions-top{
-  position:absolute;top:10px;right:10px;
+  position:absolute;top:8px;right:8px;
   display:flex;gap:6px;
 }
 .btn{
-  padding:8px 10px;
-  border-radius:9px;
+  padding:7px 9px;
+  border-radius:8px;
   border:1px solid var(--accent);
   background:transparent;
   color:var(--accent);
   cursor:pointer;
-  font-size:13px;
+  font-size:12px;
 }
 .btn.icon{
-  width:32px;height:32px;padding:0;
+  width:30px;height:30px;padding:0;
   display:grid;place-items:center;
 }
 .btn:hover{background:var(--accent);color:#020817}
@@ -165,43 +226,48 @@ h2{margin:0 0 6px}
 .row{display:flex;gap:8px;flex-wrap:wrap}
 .input,select,textarea{
   width:100%;max-width:340px;
-  padding:9px 10px;
+  padding:8px 9px;
   border-radius:9px;
   border:1px solid #111827;
   background:#020817;
   color:#e5e7eb;
-  font-size:13px;
+  font-size:12px;
 }
-.list{display:grid;gap:8px;margin-top:12px}
+.list{display:grid;gap:8px;margin-top:8px}
 .item{
   display:grid;grid-template-columns:1fr auto;
   gap:6px;align-items:center;
   background:#020817;
   border-radius:10px;
-  padding:9px 10px;
+  padding:8px 9px;
   border:1px solid #111827;
 }
 .meta{
   display:flex;flex-wrap:wrap;
-  gap:8px;font-size:12px;color:#9ca3af;
+  gap:8px;
+  font-size:11px;
+  color:var(--muted);
 }
 .meta b{color:#e5e7eb}
 .actions{display:flex;gap:6px}
 .label{
-  display:block;margin-bottom:3px;
-  font-size:11px;color:#9ca3af;
+  display:block;
+  margin-bottom:3px;
+  font-size:10px;
+  color:#9ca3af;
 }
-.sectionTitle{margin:10px 0 4px;font-weight:700;color:#e5e7eb}
+.sectionTitle{margin:8px 0 4px;font-weight:700;color:#e5e7eb}
 
 /* Accordion */
 .accordion{
   border:1px solid #111827;
   border-radius:10px;
-  margin:10px 0;
+  margin:8px 0;
   background:#020817;
 }
 .acc-hd{
-  width:100%;padding:8px 10px;
+  width:100%;
+  padding:7px 9px;
   background:#020817;
   border:none;
   border-radius:10px 10px 0 0;
@@ -211,12 +277,12 @@ h2{margin:0 0 6px}
   align-items:center;
   justify-content:space-between;
   cursor:pointer;
-  font-size:13px;
+  font-size:12px;
 }
-.acc-hd span{font-weight:400;font-size:11px;color:#9ca3af}
+.acc-hd span{font-weight:400;font-size:10px;color:#9ca3af}
 .acc-bd{
   display:none;
-  padding:10px;
+  padding:8px 9px;
   border-top:1px solid #111827;
 }
 .acc.open .acc-bd{display:block}
@@ -239,7 +305,7 @@ h2{margin:0 0 6px}
   margin-top:3px;
 }
 .combo-item{
-  padding:6px 8px;font-size:12px;cursor:pointer;
+  padding:6px 8px;font-size:11px;cursor:pointer;
   border-bottom:1px solid #020817;
 }
 .combo-item:hover{background:#111827}
@@ -261,10 +327,10 @@ h2{margin:0 0 6px}
   background:#020817;
   border-radius:12px;
   border:1px solid #111827;
-  padding:12px;
+  padding:10px;
   box-shadow:0 20px 40px rgba(0,0,0,.6);
 }
-.modal h3{margin:0 0 6px;font-size:15px}
+.modal h3{margin:0 0 6px;font-size:14px}
 .right{display:flex;gap:6px;justify-content:flex-end}
 .hint{
   background:var(--warn);
@@ -272,18 +338,49 @@ h2{margin:0 0 6px}
   color:#fcd34d;
   padding:6px 7px;
   border-radius:8px;
-  font-size:11px;margin-top:6px;
+  font-size:10px;
+  margin-top:4px;
 }
+
+/* Logs table */
+.log-list{
+  max-height:260px;
+  overflow-y:auto;
+  border-radius:8px;
+  border:1px solid #111827;
+  background:#020817;
+  margin-top:6px;
+  font-size:10px;
+}
+.log-row{
+  display:grid;
+  grid-template-columns:82px 80px 1fr;
+  gap:6px;
+  padding:4px 6px;
+  border-bottom:1px solid #020817;
+}
+.log-row:nth-child(odd){background:#020817}
+.log-row:nth-child(even){background:#050816}
+.log-ts{color:#9ca3af}
+.log-type{color:#22c55e}
+.log-text{color:#e5e7eb}
 </style>
 </head>
 <body>
 
 <!-- HEADER -->
 <header>
-  <button class="menu-btn" id="menuBtn">☰</button>
-  <div class="brand">
-    <div id="appTitleTop">AB AGRIWEB</div>
-    <img id="appBadgeImg" class="hidden" alt="">
+  <div class="left-head">
+    <button class="menu-btn" id="menuBtn">☰</button>
+    <div class="brand">
+      <div id="appTitleTop">AB AGRIWEB</div>
+      <img id="appBadgeImg" class="hidden" alt="">
+    </div>
+  </div>
+  <div class="right-head">
+    <div id="setupPill" class="head-pill hidden">⚠️ Setup mode</div>
+    <button id="themeBtn" class="icon-btn" title="Changer le thème">🌗</button>
+    <button id="logBtn" class="icon-btn" title="Journal d’activité">📜</button>
   </div>
 </header>
 
@@ -299,6 +396,7 @@ h2{margin:0 0 6px}
   <a href="#" id="nav-irrig">🌿 <span id="lbl-nav-irrig">Irrigation</span></a>
   <a href="#" id="nav-trait">💧 <span id="lbl-nav-trait">Traitement</span></a>
   <a href="#" id="nav-settings">⚙️ <span id="lbl-nav-settings">Paramètres</span></a>
+  <a href="#" id="nav-logs">📜 Journal</a>
   <a href="#" id="logout">🚪 <span id="lbl-nav-logout">Logout</span></a>
 
   <div id="sidebarBrand" class="sidebar-brand hidden">
@@ -313,7 +411,7 @@ h2{margin:0 0 6px}
   <section id="setupBanner" class="card hidden" style="border-color:#fbbf24">
     <div class="hint">⚠️ Setup Mode مفعّل: يمكنك الدخول بدون كلمة السر لإعداد أول مستخدم.</div>
     <div class="row" style="margin-top:4px">
-      <button class="btn" id="btnGoSettings">اذهب إلى Paramètres</button>
+      <button class="btn" id="btnGoSettings">Paramètres</button>
       <button class="btn danger" id="btnDisableSetup">إيقاف Setup Mode</button>
     </div>
   </section>
@@ -321,7 +419,7 @@ h2{margin:0 0 6px}
   <!-- Accueil -->
   <section id="page-home" class="card">
     <h2>Bienvenue 👋</h2>
-    <p class="muted">لوحة تحكم AB AGRIWEB.</p>
+    <p class="muted">لوحة تحكم AB AGRIWEB. استعمل القائمة للوصول إلى الإعدادات.</p>
     <div id="firstRunHint" class="hint hidden">
       🔐 لا يوجد أي مستخدم بعد. من فضلك اذهب إلى
       <b>Paramètres → OPÉRATEUR</b> وأضف أول مستخدم.
@@ -345,13 +443,13 @@ h2{margin:0 0 6px}
         <div class="icon">🗂️</div>
         <div><h4 id="lbl-tile-refs">RÉFÉRENTIELS</h4><p>Listes de base</p></div>
       </div>
-      <div class="tile" id="tile-rights">
-        <div class="icon">🛡️</div>
-        <div><h4 id="lbl-tile-rights">DROITS ACCÈS</h4><p>Permissions (à venir)</p></div>
+      <div class="tile" id="tile-theme">
+        <div class="icon">🎨</div>
+        <div><h4>THÈME &amp; FOND</h4><p>Couleurs &amp; arrière-plan</p></div>
       </div>
-      <div class="tile" id="tile-pass">
-        <div class="icon">🔑</div>
-        <div><h4 id="lbl-tile-pass">MOT DE PASSE</h4><p>Gestion du mot de passe</p></div>
+      <div class="tile" id="tile-logs">
+        <div class="icon">📜</div>
+        <div><h4>JOURNAL</h4><p>Historique des actions</p></div>
       </div>
       <div class="tile" id="tile-appcfg">
         <div class="icon">⚙️</div>
@@ -367,12 +465,12 @@ h2{margin:0 0 6px}
     </div>
     <h2>Profiles</h2>
     <p class="muted">أضف و عدّل أنواع المستخدمين.</p>
-    <div id="addProfileForm" class="row hidden" style="margin-top:8px">
+    <div id="addProfileForm" class="row hidden" style="margin-top:6px">
       <input id="profileName" class="input" placeholder="Ex: Admin, Magasinier, Pointeur, Directeur">
       <button class="btn" id="profileConfirm">Confirmer</button>
       <button class="btn danger" id="profileCancel">Annuler</button>
     </div>
-    <div id="profilesList" class="list" style="margin-top:8px"></div>
+    <div id="profilesList" class="list"></div>
   </section>
 
   <!-- Operators -->
@@ -382,7 +480,7 @@ h2{margin:0 0 6px}
     </div>
     <h2>Opérateurs</h2>
     <p class="muted">حسابات الدخول للتطبيق.</p>
-    <div id="opAddForm" class="row hidden" style="margin-top:8px">
+    <div id="opAddForm" class="row hidden" style="margin-top:6px">
       <input id="op_username" class="input" placeholder="Nom d’utilisateur">
       <input id="op_password" type="password" class="input" placeholder="Mot de passe">
       <select id="op_profile" class="input"></select>
@@ -394,7 +492,7 @@ h2{margin:0 0 6px}
       <button class="btn" id="opConfirm">Confirmer</button>
       <button class="btn danger" id="opCancel">Annuler</button>
     </div>
-    <div id="operatorsList" class="list" style="margin-top:8px"></div>
+    <div id="operatorsList" class="list"></div>
   </section>
 
   <!-- Fermes -->
@@ -404,7 +502,7 @@ h2{margin:0 0 6px}
     </div>
     <h2>Fermes</h2>
     <p class="muted">إعداد الضيعات المستعملة في التطبيق.</p>
-    <div id="farmAddForm" class="row hidden" style="margin-top:8px">
+    <div id="farmAddForm" class="row hidden" style="margin-top:6px">
       <input id="farm_name" class="input" placeholder="Nom de la ferme">
       <input id="farm_area" class="input" placeholder="Surface (ha)">
       <input id="farm_company" class="input" placeholder="Société">
@@ -414,7 +512,7 @@ h2{margin:0 0 6px}
       <button class="btn" id="farmConfirm">Confirmer</button>
       <button class="btn danger" id="farmCancel">Annuler</button>
     </div>
-    <div id="farmsList" class="list" style="margin-top:8px"></div>
+    <div id="farmsList" class="list"></div>
   </section>
 
   <!-- Référentiels -->
@@ -441,23 +539,46 @@ h2{margin:0 0 6px}
       </div>
       <h3 id="refsCatTitle" style="margin-top:0">Catégorie</h3>
       <div id="refsHint" class="hint hidden">✏️ للتعديل • 🗑️ للحذف.</div>
-      <div id="refsAddForm" class="row hidden" style="margin-top:8px">
+      <div id="refsAddForm" class="row hidden" style="margin-top:6px">
         <input id="refsInput" class="input" placeholder="Nom à ajouter">
         <button class="btn" id="refsConfirm">Confirmer</button>
         <button class="btn danger" id="refsCancel">Annuler</button>
       </div>
-      <div id="refsList" class="list" style="margin-top:8px"></div>
+      <div id="refsList" class="list"></div>
     </div>
   </section>
 
-  <!-- Réglages APP -->
+  <!-- Thème & Fond -->
+  <section id="page-theme" class="card hidden">
+    <h2>Thème &amp; Fond</h2>
+    <p class="muted">غيّر ألوان الواجهة وخلفية لوحة التحكم.</p>
+    <div class="grid">
+      <div>
+        <label class="label">Thème</label>
+        <select id="theme-select" class="input">
+          <option value="dark">Dark (par défaut)</option>
+          <option value="light">Light</option>
+          <option value="forest">Forest</option>
+        </select>
+      </div>
+      <div>
+        <label class="label">Image de fond (URL)</label>
+        <input id="theme-bg-url" class="input" placeholder="URL (png/jpg/gif)">
+        <button class="btn" id="themeApplyBg">Appliquer</button>
+        <button class="btn danger" id="themeClearBg">Supprimer fond</button>
+      </div>
+    </div>
+    <div class="hint">التغييرات تحفظ محليًا في هذا الجهاز فقط.</div>
+  </section>
+
+  <!-- Réglages APP (Général + Labels + Sécurité + Branding) -->
   <section id="page-appcfg" class="card hidden">
     <h2>Réglages de l’application</h2>
-    <p class="muted">تحكم في اسم التطبيق، نصوص القوائم، الأمان، وصور الواجهة.</p>
+    <p class="muted">تحكم في اسم التطبيق، النصوص، الأمان، وصور الواجهة.</p>
 
     <!-- Général -->
     <div class="accordion acc open" id="acc-general">
-      <button class="acc-hd" onclick="toggleAcc('acc-general')">1) Général <span>Titre de l’app</span></button>
+      <button class="acc-hd">1) Général <span>Titre de l’app</span></button>
       <div class="acc-bd">
         <label class="label">Titre de l’application</label>
         <input id="cfg-app-title" class="input" placeholder="Ex: AB AGRIWEB">
@@ -469,57 +590,45 @@ h2{margin:0 0 6px}
 
     <!-- Libellés navigation -->
     <div class="accordion acc" id="acc-nav">
-      <button class="acc-hd" onclick="toggleAcc('acc-nav')">2) Libellés Navigation <span>Accueil, Irrigation...</span></button>
+      <button class="acc-hd">2) Libellés Navigation <span>Accueil, Irrigation...</span></button>
       <div class="acc-bd">
         <div class="grid">
-          <div><label class="label">Accueil</label><input id="cfg-nav-home" class="input" placeholder="Accueil"></div>
-          <div><label class="label">Irrigation</label><input id="cfg-nav-irrig" class="input" placeholder="Irrigation"></div>
-          <div><label class="label">Traitement</label><input id="cfg-nav-trait" class="input" placeholder="Traitement"></div>
-          <div><label class="label">Paramètres</label><input id="cfg-nav-settings" class="input" placeholder="Paramètres"></div>
-          <div><label class="label">Logout</label><input id="cfg-nav-logout" class="input" placeholder="Logout"></div>
+          <div><label class="label">Accueil</label><input id="cfg-nav-home" class="input"></div>
+          <div><label class="label">Irrigation</label><input id="cfg-nav-irrig" class="input"></div>
+          <div><label class="label">Traitement</label><input id="cfg-nav-trait" class="input"></div>
+          <div><label class="label">Paramètres</label><input id="cfg-nav-settings" class="input"></div>
+          <div><label class="label">Logout</label><input id="cfg-nav-logout" class="input"></div>
         </div>
       </div>
     </div>
 
     <!-- Tuiles Param -->
     <div class="accordion acc" id="acc-tiles">
-      <button class="acc-hd" onclick="toggleAcc('acc-tiles')">3) Tuiles Paramètres <span>Opérateur, Profil...</span></button>
+      <button class="acc-hd">3) Tuiles Paramètres <span>Opérateur, Profil...</span></button>
       <div class="acc-bd">
         <div class="grid">
-          <div><label class="label">Opérateur</label><input id="cfg-tile-operators" class="input" placeholder="OPÉRATEUR"></div>
-          <div><label class="label">Profile</label><input id="cfg-tile-profiles" class="input" placeholder="PROFILE"></div>
-          <div><label class="label">Référentiels</label><input id="cfg-tile-refs" class="input" placeholder="RÉFÉRENTIELS"></div>
-          <div><label class="label">Droits accès</label><input id="cfg-tile-rights" class="input" placeholder="DROITS ACCÈS"></div>
-          <div><label class="label">Mot de passe</label><input id="cfg-tile-pass" class="input" placeholder="MOT DE PASSE"></div>
+          <div><label class="label">Opérateur</label><input id="cfg-tile-operators" class="input"></div>
+          <div><label class="label">Profil</label><input id="cfg-tile-profiles" class="input"></div>
+          <div><label class="label">Référentiels</label><input id="cfg-tile-refs" class="input"></div>
+          <div><label class="label">Droits accès</label><input id="cfg-tile-rights" class="input"></div>
+          <div><label class="label">Mot de passe</label><input id="cfg-tile-pass" class="input"></div>
         </div>
       </div>
     </div>
 
     <!-- Sécurité -->
     <div class="accordion acc" id="acc-sec">
-      <button class="acc-hd" onclick="toggleAcc('acc-sec')">4) Sécurité <span>Email, Téléphone, Question, Code</span></button>
+      <button class="acc-hd">4) Sécurité <span>Email, Téléphone, Question, Code</span></button>
       <div class="acc-bd">
         <div class="grid">
-          <div>
-            <label class="label">Email de récupération</label>
-            <input id="sec-email" class="input" placeholder="ex: admin@example.com">
-          </div>
-          <div>
-            <label class="label">Téléphone</label>
-            <input id="sec-phone" class="input" placeholder="+2126...">
-          </div>
-          <div>
-            <label class="label">Question secrète</label>
-            <input id="sec-question" class="input" placeholder="Ex: Ville de naissance ?">
-          </div>
-          <div>
-            <label class="label">Réponse</label>
-            <input id="sec-answer" class="input" placeholder="Votre réponse">
-          </div>
+          <div><label class="label">Email de récupération</label><input id="sec-email" class="input"></div>
+          <div><label class="label">Téléphone</label><input id="sec-phone" class="input"></div>
+          <div><label class="label">Question secrète</label><input id="sec-question" class="input"></div>
+          <div><label class="label">Réponse</label><input id="sec-answer" class="input"></div>
           <div>
             <label class="label">Code de récupération</label>
             <div class="row">
-              <input id="sec-code" class="input" placeholder="Cliquer sur Générer" disabled>
+              <input id="sec-code" class="input" disabled>
               <button class="btn" id="secGen">Générer</button>
             </div>
             <div class="muted">يُستخدم في صفحة "Mot de passe oublié".</div>
@@ -528,9 +637,9 @@ h2{margin:0 0 6px}
       </div>
     </div>
 
-    <!-- Branding: الكل هنا -->
+    <!-- Branding -->
     <div class="accordion acc" id="acc-brand">
-      <button class="acc-hd" onclick="toggleAcc('acc-brand')">5) Branding <span>Logo, Badge, Sidebar, Login</span></button>
+      <button class="acc-hd">5) Branding <span>Logo, Badge, Sidebar, Login</span></button>
       <div class="acc-bd">
         <div class="grid">
           <div>
@@ -541,25 +650,25 @@ h2{margin:0 0 6px}
           </div>
           <div>
             <label class="label">Badge header</label>
-            <input id="cfg-badge-url" class="input" placeholder="URL (png/gif)">
+            <input id="cfg-badge-url" class="input">
             <input id="cfg-badge-file" type="file" accept="image/png,image/gif" class="input">
             <button class="btn danger img-clear" data-key="badge">Supprimer badge</button>
           </div>
           <div>
             <label class="label">Sidebar banner</label>
-            <input id="cfg-side-url" class="input" placeholder="URL (png/gif)">
+            <input id="cfg-side-url" class="input">
             <input id="cfg-side-file" type="file" accept="image/png,image/gif" class="input">
             <button class="btn danger img-clear" data-key="sidebar">Supprimer sidebar</button>
           </div>
           <div>
             <label class="label">Login banner</label>
-            <input id="cfg-login-url" class="input" placeholder="URL (png/gif)">
+            <input id="cfg-login-url" class="input">
             <input id="cfg-login-file" type="file" accept="image/png,image/gif" class="input">
             <button class="btn danger img-clear" data-key="login">Supprimer login banner</button>
           </div>
           <div>
             <label class="label">Login background</label>
-            <input id="cfg-loginbg-url" class="input" placeholder="URL (png/gif)">
+            <input id="cfg-loginbg-url" class="input">
             <input id="cfg-loginbg-file" type="file" accept="image/png,image/gif" class="input">
             <button class="btn danger img-clear" data-key="loginBg">Supprimer background</button>
           </div>
@@ -567,10 +676,21 @@ h2{margin:0 0 6px}
       </div>
     </div>
 
-    <div class="row" style="margin-top:10px">
+    <div class="row" style="margin-top:6px">
       <button class="btn" id="appcfgSaveBtn">Enregistrer</button>
       <button class="btn danger" id="appcfgResetBtn">Reset</button>
     </div>
+  </section>
+
+  <!-- Journal d’activité -->
+  <section id="page-logs" class="card hidden">
+    <h2>Journal d’activité</h2>
+    <p class="muted">يسجل العمليات المهمة (إضافة/تعديل/حذف/تغييرات إعدادات...). محلي في هذا الجهاز فقط.</p>
+    <div class="row" style="margin-top:4px">
+      <button class="btn" id="logsRefresh">Actualiser</button>
+      <button class="btn danger" id="logsClear">Vider le journal</button>
+    </div>
+    <div class="log-list" id="logsList"></div>
   </section>
 
 </main>
@@ -624,7 +744,7 @@ h2{margin:0 0 6px}
 </div>
 
 <script>
-/*=== CONSTANTS & HELPERS ===*/
+/* ===== CONSTANTS & HELPERS ===== */
 const LS_PROFILES='ab_profiles';
 const LS_FARMS='ab_farms';
 const LS_OPERATORS='ab_operators';
@@ -632,101 +752,149 @@ const LS_REFS='ab_refs';
 const LS_APP='ab_appcfg';
 const LS_IMG='ab_appimg';
 const LS_SEC='ab_security';
-
-const DEFAULT_PROFILES=["Admin","Magasinier","Pointeur","Directeur"];
+const LS_THEME='ab_theme';
+const LS_LOGS='ab_logs';
 const SETUP_ON = localStorage.getItem('ab_setup') === '1';
 
-function $(id){return document.getElementById(id);}
-function loadJSON(k,f){try{return JSON.parse(localStorage.getItem(k)||JSON.stringify(f));}catch{return f;}}
-function saveJSON(k,v){localStorage.setItem(k,JSON.stringify(v));}
-function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[m]));}
-
-/*=== GUARD: لا دخول بدون opérateur إلا في Setup ===*/
-(function guard(){
-  let ops = loadJSON(LS_OPERATORS,[]);
-  if(!SETUP_ON && ops.length===0){
-    alert("لا يمكن فتح اللوحة بدون مستخدم. ارجع لصفحة الدخول.");
-    location="index.html";
-  }
-})();
-
-/*=== SIDEBAR & NAV ===*/
-(function sidebarInit(){
-  const sidebar=$('sidebar'), overlay=$('overlay');
-  $('menuBtn').onclick = ()=>{sidebar.classList.add('open');overlay.classList.add('active');};
-  $('closeSidebar').onclick = close;
-  if(overlay) overlay.onclick = close;
-  function close(){sidebar.classList.remove('open');overlay.classList.remove('active');}
-  document.addEventListener('keydown',e=>{if(e.key==='Escape')close();});
-
-  function setActive(linkId){
-    document.querySelectorAll('.sidebar a').forEach(a=>a.classList.remove('active'));
-    const el=$(linkId); if(el) el.classList.add('active');
-  }
-
-  function showPage(name){
-    const pid = name.startsWith('page-')?name:('page-'+name);
-    document.querySelectorAll('main > section').forEach(s=>s.classList.add('hidden'));
-    const tgt=$(pid); if(tgt) tgt.classList.remove('hidden');
-    sidebar.classList.remove('open');overlay.classList.remove('active');
-  }
-
-  $('nav-home').onclick = e=>{e.preventDefault();setActive('nav-home');showPage('home');};
-  $('nav-settings').onclick = e=>{e.preventDefault();setActive('nav-settings');showPage('settings');};
-  $('nav-irrig').onclick = e=>{e.preventDefault();alert("Page Irrigation (à développer).");};
-  $('nav-trait').onclick = e=>{e.preventDefault();alert("Page Traitement (à développer).");};
-  $('logout').onclick = e=>{e.preventDefault();location="index.html";};
-
-  // Tiles
-  $('tile-operators').onclick = ()=>{setActive('nav-settings');showPage('operators');};
-  $('tile-profiles').onclick  = ()=>{setActive('nav-settings');showPage('profiles');};
-  $('tile-refs').onclick      = ()=>{setActive('nav-settings');showPage('refs');};
-  $('tile-appcfg').onclick    = ()=>{setActive('nav-settings');showPage('appcfg');};
-  $('tile-rights').onclick    = ()=>{alert("Droits d'accès: لاحقاً.");};
-  $('tile-pass').onclick      = ()=>{alert("Gestion mot de passe: لاحقاً.");};
-
-  // Expose for other funcs
-  window.showPage = showPage;
-})();
-
-/*=== APP CONFIG + BRANDING ===*/
-const APP_DEFAULT = {
+const DEFAULT_PROFILES=["Admin","Magasinier","Pointeur","Directeur"];
+const REF_DEFAULT={
+  companies:[],responsables:[],stations:[],secteurs:[],
+  parcelles:[],transports:[],varietes:[],varietes_champ:[],
+  gestions:[],achats:[]
+};
+const APP_DEFAULT={
   appTitle:"AB AGRIWEB",
   hideTitle:false,
   nav:{home:"Accueil",irrig:"Irrigation",trait:"Traitement",settings:"Paramètres",logout:"Logout"},
   tiles:{operators:"OPÉRATEUR",profiles:"PROFILE",refs:"RÉFÉRENTIELS",rights:"DROITS ACCÈS",pass:"MOT DE PASSE",appcfg:"RÉGLAGES APP"}
 };
 
+function $(id){return document.getElementById(id);}
+function loadJSON(k,f){try{return JSON.parse(localStorage.getItem(k)||JSON.stringify(f));}catch{return f;}}
+function saveJSON(k,v){localStorage.setItem(k,JSON.stringify(v));}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
+
+/* ===== SIMPLE LOGGER ===== */
+function getLogs(){return loadJSON(LS_LOGS,[]);}
+function saveLogs(list){saveJSON(LS_LOGS,list);}
+function logAction(type,msg){
+  const now=new Date();
+  const ts=now.toLocaleDateString('fr-FR')+' '+now.toLocaleTimeString('fr-FR');
+  const entry={ts,type,msg};
+  const arr=getLogs();
+  arr.unshift(entry);
+  if(arr.length>300) arr.pop();
+  saveLogs(arr);
+}
+function renderLogs(){
+  const box=$('logsList');
+  const arr=getLogs();
+  if(arr.length===0){box.innerHTML='<div class="log-row"><div class="log-text">Aucune action enregistrée.</div></div>';return;}
+  box.innerHTML=arr.map(l=>`
+    <div class="log-row">
+      <div class="log-ts">${escapeHtml(l.ts)}</div>
+      <div class="log-type">${escapeHtml(l.type)}</div>
+      <div class="log-text">${escapeHtml(l.msg)}</div>
+    </div>`).join('');
+}
+
+/* ===== GUARD: no operators & no setup ===== */
+(function guard(){
+  const ops=loadJSON(LS_OPERATORS,[]);
+  if(!SETUP_ON && ops.length===0){
+    alert("لا يمكن فتح اللوحة بدون مستخدم. ارجع لصفحة الدخول.");
+    location="index.html";
+  }
+})();
+
+/* ===== THEME ===== */
+function getTheme(){
+  return loadJSON(LS_THEME,{mode:'dark',bg:null});
+}
+function saveTheme(t){
+  saveJSON(LS_THEME,t);
+}
+function applyTheme(){
+  const t=getTheme();
+  const root=document.documentElement;
+  if(t.mode==='light'){
+    root.style.setProperty('--bg','#f3f4f6');
+    root.style.setProperty('--bg-soft','#ffffff');
+    root.style.setProperty('--panel','#e5e7eb');
+    root.style.setProperty('--text','#111827');
+    root.style.setProperty('--muted','#6b7280');
+    root.style.setProperty('--accent','#22c55e');
+    root.style.setProperty('--border','#d1d5db');
+    root.style.setProperty('--tile','#f9fafb');
+    root.style.setProperty('--tileIcon','#e5e7eb');
+  }else if(t.mode==='forest'){
+    root.style.setProperty('--bg','#041418');
+    root.style.setProperty('--bg-soft','#02161c');
+    root.style.setProperty('--panel','#032026');
+    root.style.setProperty('--text','#e5f9f0');
+    root.style.setProperty('--muted','#7fb2a0');
+    root.style.setProperty('--accent','#22c55e');
+    root.style.setProperty('--border','#09423a');
+    root.style.setProperty('--tile','#062821');
+    root.style.setProperty('--tileIcon','#0a3b2e');
+  }else{ // dark
+    root.style.setProperty('--bg','#0f172a');
+    root.style.setProperty('--bg-soft','#020817');
+    root.style.setProperty('--panel','#0b1220');
+    root.style.setProperty('--text','#e2e8f0');
+    root.style.setProperty('--muted','#9ca3af');
+    root.style.setProperty('--accent','#22c55e');
+    root.style.setProperty('--border','#243046');
+    root.style.setProperty('--tile','#0c1526');
+    root.style.setProperty('--tileIcon','#0f1a2e');
+  }
+  if(t.bg){
+    document.body.style.backgroundImage=`url('${t.bg}')`;
+    document.body.style.backgroundSize='cover';
+    document.body.style.backgroundPosition='center';
+    document.body.style.backgroundAttachment='fixed';
+  }else{
+    document.body.style.backgroundImage='none';
+  }
+}
+function cycleTheme(){
+  const t=getTheme();
+  const modes=['dark','light','forest'];
+  const idx=modes.indexOf(t.mode);
+  t.mode = modes[(idx+1)%modes.length];
+  saveTheme(t);
+  applyTheme();
+  logAction('THÈME',`Mode changé: ${t.mode}`);
+}
+
+/* ===== APP CONFIG + BRANDING ===== */
 function appcfgLoad(){
-  const saved = loadJSON(LS_APP,{});
+  const saved=loadJSON(LS_APP,{});
   return {
-    appTitle: saved.appTitle ?? APP_DEFAULT.appTitle,
-    hideTitle: !!saved.hideTitle,
+    appTitle:saved.appTitle ?? APP_DEFAULT.appTitle,
+    hideTitle:!!saved.hideTitle,
     nav:{...APP_DEFAULT.nav,...(saved.nav||{})},
     tiles:{...APP_DEFAULT.tiles,...(saved.tiles||{})}
   };
 }
-function appcfgSaveConfig(cfg){ saveJSON(LS_APP,cfg); }
-
-function imgsLoad(){
-  return loadJSON(LS_IMG,{logo:null,badge:null,sidebar:null,login:null,loginBg:null});
-}
-function imgsSave(i){ saveJSON(LS_IMG,i); }
+function appcfgSaveConfig(cfg){saveJSON(LS_APP,cfg);}
+function imgsLoad(){return loadJSON(LS_IMG,{logo:null,badge:null,sidebar:null,login:null,loginBg:null});}
+function imgsSave(i){saveJSON(LS_IMG,i);}
 
 function applyBranding(){
   const cfg=appcfgLoad();
   const imgs=imgsLoad();
 
-  // document title
+  // title
   document.title = (cfg.appTitle && !cfg.hideTitle) ? cfg.appTitle+" - Dashboard" : "AB AGRIWEB - Dashboard";
 
   // header title / logo
   const titleTop=$('appTitleTop');
   if(imgs.logo){
-    titleTop.innerHTML = `<img src="${imgs.logo}" style="height:26px;border-radius:6px;vertical-align:middle">`;
+    titleTop.innerHTML=`<img src="${imgs.logo}" style="height:22px;border-radius:6px;vertical-align:middle">`;
     titleTop.classList.remove('hidden');
   }else if(!cfg.hideTitle && cfg.appTitle){
-    titleTop.textContent = cfg.appTitle;
+    titleTop.textContent=cfg.appTitle;
     titleTop.classList.remove('hidden');
   }else{
     titleTop.textContent='';
@@ -734,33 +902,31 @@ function applyBranding(){
   }
 
   // nav labels
-  $('lbl-nav-home').textContent   = cfg.nav.home;
-  $('lbl-nav-irrig').textContent  = cfg.nav.irrig;
-  $('lbl-nav-trait').textContent  = cfg.nav.trait;
+  $('lbl-nav-home').textContent=cfg.nav.home;
+  $('lbl-nav-irrig').textContent=cfg.nav.irrig;
+  $('lbl-nav-trait').textContent=cfg.nav.trait;
   $('lbl-nav-settings').textContent=cfg.nav.settings;
-  $('lbl-nav-logout').textContent = cfg.nav.logout;
+  $('lbl-nav-logout').textContent=cfg.nav.logout;
 
   // tiles
-  $('lbl-tile-operators').textContent = cfg.tiles.operators;
-  $('lbl-tile-profiles').textContent  = cfg.tiles.profiles;
-  $('lbl-tile-refs').textContent      = cfg.tiles.refs;
-  $('lbl-tile-rights').textContent    = cfg.tiles.rights;
-  $('lbl-tile-pass').textContent      = cfg.tiles.pass;
-  $('lbl-tile-appcfg').textContent    = cfg.tiles.appcfg;
+  $('lbl-tile-operators').textContent=cfg.tiles.operators;
+  $('lbl-tile-profiles').textContent=cfg.tiles.profiles;
+  $('lbl-tile-refs').textContent=cfg.tiles.refs;
+  $('lbl-tile-appcfg').textContent=cfg.tiles.appcfg;
 
   // badge
   const badge=$('appBadgeImg');
-  if(imgs.badge){ badge.src=imgs.badge; badge.classList.remove('hidden'); }
+  if(imgs.badge){badge.src=imgs.badge;badge.classList.remove('hidden');}
   else badge.classList.add('hidden');
 
-  // sidebar brand
+  // sidebar banner
   const sb=$('sidebarBrand'), sbImg=$('sidebarBrandImg');
-  if(imgs.sidebar){ sbImg.src=imgs.sidebar; sb.classList.remove('hidden'); }
+  if(imgs.sidebar){sbImg.src=imgs.sidebar;sb.classList.remove('hidden');}
   else sb.classList.add('hidden');
 
-  // Accueil hint
-  const ops = loadJSON(LS_OPERATORS,[]);
-  if(ops.length===0) $('firstRunHint').classList.remove('hidden');
+  // accueil hint
+  const ops=loadJSON(LS_OPERATORS,[]);
+  if(ops.length===0)$('firstRunHint').classList.remove('hidden');
   else $('firstRunHint').classList.add('hidden');
 }
 
@@ -768,114 +934,108 @@ function appcfgFillForm(){
   const cfg=appcfgLoad();
   const imgs=imgsLoad();
   const sec=loadJSON(LS_SEC,{});
-  // General
-  $('cfg-app-title').value = cfg.appTitle || '';
-  $('cfg-title-hide').checked = !!cfg.hideTitle;
+  // general
+  $('cfg-app-title').value=cfg.appTitle||'';
+  $('cfg-title-hide').checked=!!cfg.hideTitle;
   // nav
-  $('cfg-nav-home').value = cfg.nav.home;
-  $('cfg-nav-irrig').value = cfg.nav.irrig;
-  $('cfg-nav-trait').value = cfg.nav.trait;
-  $('cfg-nav-settings').value = cfg.nav.settings;
-  $('cfg-nav-logout').value = cfg.nav.logout;
+  $('cfg-nav-home').value=cfg.nav.home;
+  $('cfg-nav-irrig').value=cfg.nav.irrig;
+  $('cfg-nav-trait').value=cfg.nav.trait;
+  $('cfg-nav-settings').value=cfg.nav.settings;
+  $('cfg-nav-logout').value=cfg.nav.logout;
   // tiles
-  $('cfg-tile-operators').value = cfg.tiles.operators;
-  $('cfg-tile-profiles').value  = cfg.tiles.profiles;
-  $('cfg-tile-refs').value      = cfg.tiles.refs;
-  $('cfg-tile-rights').value    = cfg.tiles.rights;
-  $('cfg-tile-pass').value      = cfg.tiles.pass;
-  // security
-  $('sec-email').value = sec.email || '';
-  $('sec-phone').value = sec.phone || '';
-  $('sec-question').value = sec.question || '';
-  $('sec-answer').value = '';
-  $('sec-code').value = sec.recoveryCode || '';
-
-  // urls (نعرض اللي مخزن حتى لو base64)
-  $('cfg-logo-url').value    = imgs.logo    || '';
-  $('cfg-badge-url').value   = imgs.badge   || '';
-  $('cfg-side-url').value    = imgs.sidebar || '';
-  $('cfg-login-url').value   = imgs.login   || '';
-  $('cfg-loginbg-url').value = imgs.loginBg || '';
+  $('cfg-tile-operators').value=cfg.tiles.operators;
+  $('cfg-tile-profiles').value=cfg.tiles.profiles;
+  $('cfg-tile-refs').value=cfg.tiles.refs;
+  $('cfg-tile-rights').value=cfg.tiles.rights;
+  $('cfg-tile-pass').value=cfg.tiles.pass;
+  // sec
+  $('sec-email').value=sec.email||'';
+  $('sec-phone').value=sec.phone||'';
+  $('sec-question').value=sec.question||'';
+  $('sec-answer').value='';
+  $('sec-code').value=sec.recoveryCode||'';
+  // branding urls
+  $('cfg-logo-url').value=imgs.logo||'';
+  $('cfg-badge-url').value=imgs.badge||'';
+  $('cfg-side-url').value=imgs.sidebar||'';
+  $('cfg-login-url').value=imgs.login||'';
+  $('cfg-loginbg-url').value=imgs.loginBg||'';
 }
-
 function acceptImgUrl(u){
-  return !u || /\.(png|gif)(\?|#|$)/i.test(u) || u.startsWith("data:image/");
+  return !u || /\.(png|jpe?g|gif)(\?|#|$)/i.test(u) || u.startsWith("data:image/");
 }
-function onFileInput(id,key){
-  const input=$(id); if(!input) return;
+function bindFileInput(id,key){
+  const input=$(id); if(!input)return;
   input.addEventListener('change',e=>{
-    const f=e.target.files[0]; if(!f) return;
-    if(!/^image\/(png|gif)$/.test(f.type)){
-      alert("PNG أو GIF فقط"); input.value='';return;
-    }
+    const f=e.target.files[0]; if(!f)return;
+    if(!/^image\/(png|gif|jpe?g)$/.test(f.type)){alert("PNG/JPG/GIF فقط");input.value='';return;}
     const r=new FileReader();
     r.onload=ev=>{
-      const imgs=imgsLoad(); imgs[key]=String(ev.target.result||''); imgsSave(imgs); appcfgFillForm(); applyBranding();
+      const imgs=imgsLoad();imgs[key]=String(ev.target.result||'');imgsSave(imgs);
+      appcfgFillForm();applyBranding();
+      logAction('BRAND',`Image ${key} mise à jour (file)`);
     };
     r.readAsDataURL(f);
   });
 }
 function wireBrandingFiles(){
-  onFileInput('cfg-logo-file','logo');
-  onFileInput('cfg-badge-file','badge');
-  onFileInput('cfg-side-file','sidebar');
-  onFileInput('cfg-login-file','login');
-  onFileInput('cfg-loginbg-file','loginBg');
+  bindFileInput('cfg-logo-file','logo');
+  bindFileInput('cfg-badge-file','badge');
+  bindFileInput('cfg-side-file','sidebar');
+  bindFileInput('cfg-login-file','login');
+  bindFileInput('cfg-loginbg-file','loginBg');
 }
 function wireBrandingClear(){
   document.querySelectorAll('.img-clear').forEach(btn=>{
     btn.onclick=()=>{
-      const key=btn.dataset.key;
-      if(!key) return;
-      const imgs=imgsLoad(); imgs[key]=null; imgsSave(imgs);
-      appcfgFillForm(); applyBranding();
+      const key=btn.dataset.key;if(!key)return;
+      const imgs=imgsLoad();imgs[key]=null;imgsSave(imgs);
+      appcfgFillForm();applyBranding();
+      logAction('BRAND',`Image ${key} supprimée`);
     };
   });
 }
-
-function hashLite(s){let h=0;for(let i=0;i<s.length;i++){h=((h<<5)-h)+s.charCodeAt(i);h|=0}return String(h);}
-
 function appcfgSave(){
   const cfg=appcfgLoad();
   const imgs=imgsLoad();
   const sec=loadJSON(LS_SEC,{});
 
-  cfg.appTitle = $('cfg-app-title').value.trim() || '';
-  cfg.hideTitle = $('cfg-title-hide').checked;
+  cfg.appTitle=$('cfg-app-title').value.trim()||'';
+  cfg.hideTitle=$('cfg-title-hide').checked;
 
-  cfg.nav.home = $('cfg-nav-home').value || APP_DEFAULT.nav.home;
-  cfg.nav.irrig = $('cfg-nav-irrig').value || APP_DEFAULT.nav.irrig;
-  cfg.nav.trait = $('cfg-nav-trait').value || APP_DEFAULT.nav.trait;
-  cfg.nav.settings = $('cfg-nav-settings').value || APP_DEFAULT.nav.settings;
-  cfg.nav.logout = $('cfg-nav-logout').value || APP_DEFAULT.nav.logout;
+  cfg.nav.home=$('cfg-nav-home').value||APP_DEFAULT.nav.home;
+  cfg.nav.irrig=$('cfg-nav-irrig').value||APP_DEFAULT.nav.irrig;
+  cfg.nav.trait=$('cfg-nav-trait').value||APP_DEFAULT.nav.trait;
+  cfg.nav.settings=$('cfg-nav-settings').value||APP_DEFAULT.nav.settings;
+  cfg.nav.logout=$('cfg-nav-logout').value||APP_DEFAULT.nav.logout;
 
-  cfg.tiles.operators = $('cfg-tile-operators').value || APP_DEFAULT.tiles.operators;
-  cfg.tiles.profiles  = $('cfg-tile-profiles').value  || APP_DEFAULT.tiles.profiles;
-  cfg.tiles.refs      = $('cfg-tile-refs').value      || APP_DEFAULT.tiles.refs;
-  cfg.tiles.rights    = $('cfg-tile-rights').value    || APP_DEFAULT.tiles.rights;
-  cfg.tiles.pass      = $('cfg-tile-pass').value      || APP_DEFAULT.tiles.pass;
+  cfg.tiles.operators=$('cfg-tile-operators').value||APP_DEFAULT.tiles.operators;
+  cfg.tiles.profiles=$('cfg-tile-profiles').value||APP_DEFAULT.tiles.profiles;
+  cfg.tiles.refs=$('cfg-tile-refs').value||APP_DEFAULT.tiles.refs;
+  cfg.tiles.rights=$('cfg-tile-rights').value||APP_DEFAULT.tiles.rights;
+  cfg.tiles.pass=$('cfg-tile-pass').value||APP_DEFAULT.tiles.pass;
 
-  // security
-  sec.email = $('sec-email').value.trim();
-  sec.phone = $('sec-phone').value.trim();
-  sec.question = $('sec-question').value.trim();
-  const ans = $('sec-answer').value.trim().toLowerCase();
-  if(ans) sec.answerHash = hashLite(ans);
-  // recovery code من الحقل (ماشي ضروري)
-  const code = $('sec-code').value.trim();
-  if(code) sec.recoveryCode = code;
+  sec.email=$('sec-email').value.trim();
+  sec.phone=$('sec-phone').value.trim();
+  sec.question=$('sec-question').value.trim();
+  const ans=$('sec-answer').value.trim().toLowerCase();
+  if(ans) sec.answerHash=hashLite(ans);
+  const code=$('sec-code').value.trim();
+  if(code) sec.recoveryCode=code;
 
-  // URLs manual
-  const logoUrl = $('cfg-logo-url').value.trim();
-  if(acceptImgUrl(logoUrl) && logoUrl) imgs.logo=logoUrl;
-  const badgeUrl = $('cfg-badge-url').value.trim();
-  if(acceptImgUrl(badgeUrl) && badgeUrl) imgs.badge=badgeUrl;
-  const sideUrl = $('cfg-side-url').value.trim();
-  if(acceptImgUrl(sideUrl) && sideUrl) imgs.sidebar=sideUrl;
-  const loginUrl = $('cfg-login-url').value.trim();
-  if(acceptImgUrl(loginUrl) && loginUrl) imgs.login=loginUrl;
-  const bgUrl = $('cfg-loginbg-url').value.trim();
-  if(acceptImgUrl(bgUrl) && bgUrl) imgs.loginBg=bgUrl;
+  // branding URLs
+  const map=[
+    ['cfg-logo-url','logo'],
+    ['cfg-badge-url','badge'],
+    ['cfg-side-url','sidebar'],
+    ['cfg-login-url','login'],
+    ['cfg-loginbg-url','loginBg'],
+  ];
+  for(const [inputId,key] of map){
+    const u=$(inputId).value.trim();
+    if(acceptImgUrl(u)&&u) imgs[key]=u;
+  }
 
   appcfgSaveConfig(cfg);
   imgsSave(imgs);
@@ -883,6 +1043,7 @@ function appcfgSave(){
 
   appcfgFillForm();
   applyBranding();
+  logAction('APP','Réglages app enregistrés');
   alert("تم الحفظ ✅");
 }
 function appcfgReset(){
@@ -890,25 +1051,19 @@ function appcfgReset(){
   localStorage.removeItem(LS_IMG);
   appcfgFillForm();
   applyBranding();
+  logAction('APP','Réglages app réinitialisés');
   alert("تمت إعادة الإعدادات الافتراضية.");
 }
+function hashLite(s){let h=0;for(let i=0;i<s.length;i++){h=((h<<5)-h)+s.charCodeAt(i);h|=0}return String(h);}
 
-function toggleAcc(id){
-  const acc=$(id);
-  if(acc) acc.classList.toggle('open');
-}
-
-/*=== PROFILES ===*/
+/* ===== PROFILES ===== */
 function loadProfiles(){return loadJSON(LS_PROFILES,[]);}
-function saveProfiles(arr){saveJSON(LS_PROFILES,arr);}
+function saveProfiles(a){saveJSON(LS_PROFILES,a);}
 function renderProfiles(){
   const list=$('profilesList');
   const arr=loadProfiles();
-  if(arr.length===0){
-    list.innerHTML=`<div class="item"><div class="meta">لا توجد بروفايلات بعد.</div></div>`;
-    return;
-  }
-  list.innerHTML = arr.map((p,i)=>`
+  if(arr.length===0){list.innerHTML='<div class="item"><div class="meta">لا توجد بروفايلات بعد.</div></div>';return;}
+  list.innerHTML=arr.map((p,i)=>`
     <div class="item">
       <div class="meta"><b>${escapeHtml(p)}</b></div>
       <div class="actions">
@@ -917,33 +1072,34 @@ function renderProfiles(){
       </div>
     </div>`).join('');
 }
-function profileEdit(i){
-  const arr=loadProfiles();const old=arr[i];
-  const nv=prompt("Modifier le profil:",old);
-  if(nv===null) return;
-  const v=nv.trim();if(!v){alert("Nom vide");return;}
-  if(arr.some((x,idx)=>idx!==i && x.toLowerCase()===v.toLowerCase())){
-    alert("Ce profil existe déjà.");return;
-  }
-  arr[i]=v;saveProfiles(arr);renderProfiles();opRefreshProfiles();
-}
-function profileDelete(i){
-  const arr=loadProfiles();
-  if(!confirm("Supprimer ce profil ?"))return;
-  arr.splice(i,1);saveProfiles(arr);renderProfiles();opRefreshProfiles();
-}
 function profileAdd(){
   const name=$('profileName').value.trim();
   if(!name){alert("Entrer un nom.");return;}
   const arr=loadProfiles();
   if(arr.some(x=>x.toLowerCase()===name.toLowerCase())){alert("Existe déjà.");return;}
-  arr.push(name);saveProfiles(arr);$('profileName').value='';toggleProfileForm(false);renderProfiles();opRefreshProfiles();
+  arr.push(name);saveProfiles(arr);
+  $('profileName').value='';toggleProfileForm(false);renderProfiles();
+  logAction('PROFILE',`Ajout profil: ${name}`);
 }
-function toggleProfileForm(show){
-  $('addProfileForm').classList.toggle('hidden',!show);
+function profileEdit(i){
+  const arr=loadProfiles();const old=arr[i];
+  const nv=prompt("Modifier le profil:",old);
+  if(nv===null)return;
+  const v=nv.trim();
+  if(!v){alert("Nom vide.");return;}
+  if(arr.some((x,idx)=>idx!==i && x.toLowerCase()===v.toLowerCase())){alert("Existe déjà.");return;}
+  arr[i]=v;saveProfiles(arr);renderProfiles();
+  logAction('PROFILE',`Modif profil: ${old} -> ${v}`);
 }
+function profileDelete(i){
+  const arr=loadProfiles();const old=arr[i];
+  if(!confirm("Supprimer ce profil ?"))return;
+  arr.splice(i,1);saveProfiles(arr);renderProfiles();
+  logAction('PROFILE',`Suppression profil: ${old}`);
+}
+function toggleProfileForm(show){$('addProfileForm').classList.toggle('hidden',!show);}
 
-/*=== FARMS ===*/
+/* ===== FARMS ===== */
 function loadFarms(){return loadJSON(LS_FARMS,[]);}
 function saveFarms(a){saveJSON(LS_FARMS,a);}
 function renderFarms(){
@@ -965,6 +1121,7 @@ function renderFarms(){
       </div>
     </div>`).join('');
 }
+function toggleFarmForm(show){$('farmAddForm').classList.toggle('hidden',!show);}
 function farmAdd(){
   const o={
     name:$('farm_name').value.trim(),
@@ -980,8 +1137,8 @@ function farmAdd(){
   arr.push(o);saveFarms(arr);
   ['farm_name','farm_area','farm_company','farm_location','farm_manager','farm_phone'].forEach(id=>$(id).value='');
   toggleFarmForm(false);renderFarms();opRefreshFarms();
+  logAction('FERME',`Ajout ferme: ${o.name}`);
 }
-function toggleFarmForm(show){$('farmAddForm').classList.toggle('hidden',!show);}
 let farmEditIndex=null;
 function farmEdit(i){
   const f=loadFarms()[i];farmEditIndex=i;
@@ -993,15 +1150,9 @@ function farmEdit(i){
   $('edit_farm_phone').value=f.phone||'';
   $('farmModal').classList.add('show');
 }
-function farmDelete(i){
-  const arr=loadFarms();
-  if(!confirm("Supprimer cette ferme ?"))return;
-  arr.splice(i,1);saveFarms(arr);renderFarms();opRefreshFarms();
-}
 function farmSaveEdit(){
   if(farmEditIndex==null)return;
-  const arr=loadFarms();
-  const f=arr[farmEditIndex];
+  const arr=loadFarms();const old=arr[farmEditIndex];
   const nv={
     name:$('edit_farm_name').value.trim(),
     area:$('edit_farm_area').value.trim(),
@@ -1011,37 +1162,47 @@ function farmSaveEdit(){
     phone:$('edit_farm_phone').value.trim()
   };
   if(!nv.name){alert("Nom requis.");return;}
-  if(nv.name.toLowerCase()!==f.name.toLowerCase() &&
+  if(nv.name.toLowerCase()!==old.name.toLowerCase() &&
      arr.some(x=>x.name.toLowerCase()===nv.name.toLowerCase())){
     alert("Nom déjà utilisé.");return;
   }
-  arr[farmEditIndex]=nv;saveFarms(arr);farmEditIndex=null;
-  $('farmModal').classList.remove('show');renderFarms();opRefreshFarms();
+  arr[farmEditIndex]=nv;saveFarms(arr);
+  $('farmModal').classList.remove('show');farmEditIndex=null;
+  renderFarms();opRefreshFarms();
+  logAction('FERME',`Modif ferme: ${old.name} -> ${nv.name}`);
+}
+function farmDelete(i){
+  const arr=loadFarms();const old=arr[i];
+  if(!confirm("Supprimer cette ferme ?"))return;
+  arr.splice(i,1);saveFarms(arr);renderFarms();opRefreshFarms();
+  logAction('FERME',`Suppression ferme: ${old.name}`);
 }
 function farmCloseModal(){farmEditIndex=null;$('farmModal').classList.remove('show');}
 
-/*=== OPERATORS ===*/
+/* ===== OPERATORS ===== */
 function loadOps(){return loadJSON(LS_OPERATORS,[]);}
 function saveOps(a){saveJSON(LS_OPERATORS,a);}
 function opRefreshProfiles(){
-  const arr=loadProfiles();const sel1=$('op_profile'),sel2=$('edit_profile');
-  const opts=arr.length?arr.map(p=>`<option value="${escapeHtml(p)}">${escapeHtml(p)}</option>`).join('')
-                      :'<option value="">(Aucun profil)</option>';
-  if(sel1) sel1.innerHTML=opts;
-  if(sel2) sel2.innerHTML=opts;
+  const arr=loadProfiles();
+  const opts=arr.length
+    ? arr.map(p=>`<option value="${escapeHtml(p)}">${escapeHtml(p)}</option>`).join('')
+    : '<option value="">(Aucun profil)</option>';
+  if($('op_profile'))$('op_profile').innerHTML=opts;
+  if($('edit_profile'))$('edit_profile').innerHTML=opts;
 }
 function comboInit(baseId,items){
-  const input=$(baseId+'_input'), list=$(baseId+'_list'), hidden=$(baseId);
-  if(!input || !list || !hidden) return;
+  const input=$(baseId+'_input'),list=$(baseId+'_list'),hidden=$(baseId);
+  if(!input||!list||!hidden)return;
   function render(q){
     const m=items.filter(x=>x.toLowerCase().includes((q||'').toLowerCase()));
-    list.innerHTML=m.length?m.map(v=>`<div class="combo-item" data-v="${escapeHtml(v)}">${escapeHtml(v)}</div>`).join('')
-      :'<div class="combo-item">(Aucun résultat)</div>';
+    list.innerHTML=m.length
+      ? m.map(v=>`<div class="combo-item" data-v="${escapeHtml(v)}">${escapeHtml(v)}</div>`).join('')
+      : '<div class="combo-item">(Aucun résultat)</div>';
   }
   input.onfocus=()=>{list.classList.remove('hidden');render(input.value);}
   input.oninput=()=>render(input.value);
   document.addEventListener('click',e=>{
-    if(!list.contains(e.target) && e.target!==input) list.classList.add('hidden');
+    if(!list.contains(e.target)&&e.target!==input)list.classList.add('hidden');
   });
   list.onclick=e=>{
     const el=e.target.closest('.combo-item');if(!el)return;
@@ -1050,15 +1211,13 @@ function comboInit(baseId,items){
   };
 }
 function opRefreshFarms(){
-  const arr=loadFarms().map(f=>f.name);
-  comboInit('op_ferme',arr);
-  comboInit('edit_ferme',arr);
+  const names=loadFarms().map(f=>f.name);
+  comboInit('op_ferme',names);
+  comboInit('edit_ferme',names);
 }
 function renderOps(){
   const list=$('operatorsList');const arr=loadOps();
-  if(arr.length===0){
-    list.innerHTML='<div class="item"><div class="meta">لا يوجد أي مستخدم بعد.</div></div>';return;
-  }
+  if(arr.length===0){list.innerHTML='<div class="item"><div class="meta">لا يوجد أي مستخدم بعد.</div></div>';return;}
   list.innerHTML=arr.map((u,i)=>`
     <div class="item">
       <div class="meta">
@@ -1080,13 +1239,12 @@ function opAdd(){
   const fm=$('op_ferme').value.trim();
   if(!u||!p||!pr||!fm){alert("Remplir tous les champs.");return;}
   const arr=loadOps();
-  if(arr.some(x=>x.username.toLowerCase()===u.toLowerCase())){
-    alert("Nom d’utilisateur existe déjà.");return;
-  }
+  if(arr.some(x=>x.username.toLowerCase()===u.toLowerCase())){alert("Nom d’utilisateur existe déjà.");return;}
   arr.push({username:u,password:p,profile:pr,ferme:fm});
   saveOps(arr);
   ['op_username','op_password','op_ferme_input','op_ferme'].forEach(id=>$(id).value='');
   toggleOpForm(false);renderOps();
+  logAction('OP','Ajout opérateur: '+u);
 }
 let opEditIndex=null;
 function opEdit(i){
@@ -1112,21 +1270,20 @@ function opSaveEdit(){
     alert("Nom déjà utilisé.");return;
   }
   arr[opEditIndex]={username:u,password:p,profile:pr,ferme:fm};
-  saveOps(arr);opEditIndex=null;$('opModal').classList.remove('show');renderOps();
+  saveOps(arr);opEditIndex=null;
+  $('opModal').classList.remove('show');
+  renderOps();
+  logAction('OP','Modif opérateur: '+old.username+' -> '+u);
 }
 function opDelete(i){
-  const arr=loadOps();
+  const arr=loadOps();const old=arr[i];
   if(!confirm("Supprimer cet opérateur ?"))return;
   arr.splice(i,1);saveOps(arr);renderOps();
+  logAction('OP','Suppression opérateur: '+old.username);
 }
 function opCloseModal(){opEditIndex=null;$('opModal').classList.remove('show');}
 
-/*=== REFS ===*/
-const REF_DEFAULT = {
-  companies:[],responsables:[],stations:[],secteurs:[],
-  parcelles:[],transports:[],varietes:[],varietes_champ:[],
-  gestions:[],achats:[]
-};
+/* ===== REFS ===== */
 let currentRefKey=null;
 function loadRefs(){return Object.assign({},REF_DEFAULT,loadJSON(LS_REFS,{}));}
 function saveRefs(o){saveJSON(LS_REFS,o);}
@@ -1160,30 +1317,33 @@ function refsAdd(){
   if(arr.some(x=>x.toLowerCase()===name.toLowerCase())){alert("Existe déjà.");return;}
   arr.push(name);all[currentRefKey]=arr;saveRefs(all);
   $('refsInput').value='';$('refsAddForm').classList.add('hidden');refsRender();
+  logAction('REF',`Ajout ${currentRefKey}: ${name}`);
 }
 function refsEdit(i){
   const all=loadRefs();const arr=all[currentRefKey]||[];
   const old=arr[i];
   const nv=prompt("Modifier:",old);
-  if(nv===null) return;
+  if(nv===null)return;
   const val=nv.trim();
   if(!val){alert("Nom vide.");return;}
-  if(arr.some((x,idx)=>idx!==i && x.toLowerCase()===val.toLowerCase())){
-    alert("Existe déjà.");return;
-  }
+  if(arr.some((x,idx)=>idx!==i && x.toLowerCase()===val.toLowerCase())){alert("Existe déjà.");return;}
   arr[i]=val;all[currentRefKey]=arr;saveRefs(all);refsRender();
+  logAction('REF',`Modif ${currentRefKey}: ${old} -> ${val}`);
 }
 function refsDelete(i){
   const all=loadRefs();const arr=all[currentRefKey]||[];
+  const old=arr[i];
   if(!confirm("Supprimer ?"))return;
   arr.splice(i,1);all[currentRefKey]=arr;saveRefs(all);refsRender();
+  logAction('REF',`Suppression ${currentRefKey}: ${old}`);
 }
-function toggleRefsForm(show){$('refsAddForm').classList.toggle('hidden',!show);}
-function toggleRefsHint(){$('refsHint').classList.toggle('hidden');}
 
-/*=== SETUP BANNER ===*/
+/* ===== SETUP BANNER ===== */
 function setupInit(){
-  if(SETUP_ON){$('setupBanner').classList.remove('hidden');}
+  if(SETUP_ON){
+    $('setupBanner').classList.remove('hidden');
+    $('setupPill').classList.remove('hidden');
+  }
   $('btnGoSettings').onclick=()=>{showPage('settings');};
   $('btnDisableSetup').onclick=()=>{
     localStorage.removeItem('ab_setup');
@@ -1192,25 +1352,70 @@ function setupInit(){
   };
 }
 
-/*=== INIT ===*/
+/* ===== NAV & SHOWPAGE ===== */
+(function navInit(){
+  const sidebar=$('sidebar'),overlay=$('overlay');
+  $('menuBtn').onclick=()=>{sidebar.classList.add('open');overlay.classList.add('active');};
+  $('closeSidebar').onclick=close;
+  overlay.onclick=close;
+  function close(){sidebar.classList.remove('open');overlay.classList.remove('active');}
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')close();});
+
+  function setActive(linkId){
+    document.querySelectorAll('.sidebar a').forEach(a=>a.classList.remove('active'));
+    const el=$(linkId);if(el)el.classList.add('active');
+  }
+
+  window.showPage=function(name){
+    const pid=name.startsWith('page-')?name:('page-'+name);
+    document.querySelectorAll('main > section').forEach(s=>s.classList.add('hidden'));
+    const tgt=$(pid);if(tgt)tgt.classList.remove('hidden');
+    close();
+  }
+
+  $('nav-home').onclick=e=>{e.preventDefault();setActive('nav-home');showPage('home');};
+  $('nav-settings').onclick=e=>{e.preventDefault();setActive('nav-settings');showPage('settings');};
+  $('nav-irrig').onclick=e=>{e.preventDefault();alert("Page Irrigation (à développer).");};
+  $('nav-trait').onclick=e=>{e.preventDefault();alert("Page Traitement (à développer).");};
+  $('nav-logs').onclick=e=>{e.preventDefault();setActive('nav-logs');showPage('logs');renderLogs();};
+  $('logout').onclick=e=>{e.preventDefault();location="index.html";};
+
+  // Tiles
+  $('tile-operators').onclick=()=>{setActive('nav-settings');showPage('operators');};
+  $('tile-profiles').onclick =()=>{setActive('nav-settings');showPage('profiles');};
+  $('tile-refs').onclick     =()=>{setActive('nav-settings');showPage('refs');};
+  $('tile-theme').onclick    =()=>{setActive('nav-settings');showPage('theme');};
+  $('tile-logs').onclick     =()=>{setActive('nav-logs');showPage('logs');renderLogs();};
+  $('tile-appcfg').onclick   =()=>{setActive('nav-settings');showPage('appcfg');};
+})();
+
+/* ===== INIT DOM ===== */
 document.addEventListener('DOMContentLoaded',()=>{
   // defaults
   if(loadProfiles().length===0) saveProfiles(DEFAULT_PROFILES.slice());
-  saveRefs(loadRefs()); // ensure structure
+  saveRefs(loadRefs()); // ensure keys
 
-  // wire profiles
+  // accordions
+  document.querySelectorAll('.acc-hd').forEach(h=>{
+    h.addEventListener('click',()=>{
+      const acc=h.parentElement;
+      acc.classList.toggle('open');
+    });
+  });
+
+  // profiles
   $('btnProfileAdd').onclick=()=>toggleProfileForm(true);
   $('profileCancel').onclick=()=>toggleProfileForm(false);
   $('profileConfirm').onclick=profileAdd;
 
-  // wire farms
+  // farms
   $('btnFarmAdd').onclick=()=>toggleFarmForm(true);
   $('farmCancel').onclick=()=>toggleFarmForm(false);
   $('farmConfirm').onclick=farmAdd;
   $('farmEditCancel').onclick=farmCloseModal;
   $('farmEditSave').onclick=farmSaveEdit;
 
-  // wire ops
+  // ops
   $('btnOpAdd').onclick=()=>{toggleOpForm(true);opRefreshProfiles();opRefreshFarms();};
   $('opCancel').onclick=()=>toggleOpForm(false);
   $('opConfirm').onclick=opAdd;
@@ -1219,11 +1424,12 @@ document.addEventListener('DOMContentLoaded',()=>{
 
   // refs
   document.querySelectorAll('#refsHome .tile').forEach(t=>{
-    t.onclick=()=>refsOpen(t.dataset.ref);
+    t.addEventListener('click',()=>refsOpen(t.dataset.ref));
   });
   $('refsAddBtn').onclick=()=>toggleRefsForm(true);
   $('refsCancel').onclick=()=>toggleRefsForm(false);
   $('refsConfirm').onclick=refsAdd;
+  $('refsHint').onclick=toggleRefsHint;
 
   // app cfg
   $('appcfgSaveBtn').onclick=appcfgSave;
@@ -1232,19 +1438,52 @@ document.addEventListener('DOMContentLoaded',()=>{
     const c=String(Math.floor(100000+Math.random()*900000));
     $('sec-code').disabled=false;$('sec-code').value=c;$('sec-code').disabled=true;
   };
-  document.querySelectorAll('.acc-hd').forEach(btn=>{
-    btn.addEventListener('click',()=>{
-      const acc=btn.parentElement;acc.classList.toggle('open');
-    });
-  });
-
   wireBrandingFiles();
   wireBrandingClear();
+
+  // theme ui
+  applyTheme();
+  const t=getTheme();
+  if($('theme-select')) $('theme-select').value=t.mode;
+  if($('theme-bg-url') && t.bg) $('theme-bg-url').value=t.bg;
+  $('themeBtn').onclick=()=>{cycleTheme();if($('theme-select'))$('theme-select').value=getTheme().mode;};
+  $('theme-select').onchange=()=>{
+    const th=getTheme();
+    th.mode=$('theme-select').value;
+    saveTheme(th);applyTheme();
+    logAction('THÈME','Mode choisi: '+th.mode);
+  };
+  $('themeApplyBg').onclick=()=>{
+    const th=getTheme();
+    const u=$('theme-bg-url').value.trim();
+    if(u && !acceptImgUrl(u)){alert("ليكن الرابط صورة صالحة.");return;}
+    th.bg=u||null;saveTheme(th);applyTheme();
+    logAction('THÈME','Fond modifié');
+  };
+  $('themeClearBg').onclick=()=>{
+    const th=getTheme();th.bg=null;saveTheme(th);applyTheme();
+    if($('theme-bg-url'))$('theme-bg-url').value='';
+    logAction('THÈME','Fond supprimé');
+  };
+
+  // logs UI
+  $('logsRefresh').onclick=renderLogs;
+  $('logsClear').onclick=()=>{
+    if(!confirm("Vider le journal local ?"))return;
+    saveLogs([]);renderLogs();
+  };
+  $('logBtn').onclick=()=>{showPage('logs');renderLogs();};
+
+  // branding + cfg
   appcfgFillForm();
   applyBranding();
+
+  // core lists
   renderProfiles();
   renderFarms();
   renderOps();
+
+  // setup banner
   setupInit();
 });
 </script>
