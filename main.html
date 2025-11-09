@@ -84,6 +84,7 @@ main.content{padding:16px}
 }
 .card h2{margin-bottom:6px;font-size:18px}
 .card p{font-size:13px;color:var(--muted)}
+.hint{font-size:11px;color:#9ca3af;margin-top:2px}
 
 /* Setup banner */
 .setup-banner{
@@ -179,7 +180,6 @@ main.content{padding:16px}
 }
 .combo-item{padding:5px 7px;font-size:11px;cursor:pointer;border-bottom:1px solid #111827}
 .combo-item:hover{background:#111827}
-.combo-item.muted{color:#6b7280;cursor:default}
 
 /* Modals */
 .modal-wrap{position:fixed;inset:0;display:none;place-items:center;z-index:60}
@@ -196,7 +196,33 @@ main.content{padding:16px}
 }
 .modal h3{margin-bottom:4px;font-size:14px}
 .right{display:flex;justify-content:flex-end;gap:6px;margin-top:6px}
-.hint{font-size:11px;color:#9ca3af;margin-top:2px}
+
+/* TOAST (رسائل التطبيق) */
+#toast{
+  position:fixed;
+  left:50%;
+  bottom:18px;
+  transform:translateX(-50%);
+  min-width:200px;
+  max-width:90vw;
+  padding:8px 12px;
+  border-radius:10px;
+  font-size:12px;
+  display:none;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  z-index:80;
+  box-shadow:0 12px 24px rgba(0,0,0,.5);
+}
+#toast.show{display:flex;}
+#toast.success{background:#16a34a;color:#ecfdf5;border:1px solid #22c55e;}
+#toast.error{background:#7f1d1d;color:#fee2e2;border:1px solid #ef4444;}
+#toast.info{background:#111827;color:#e5e7eb;border:1px solid #4b5563;}
+#toast button{
+  background:transparent;border:none;color:inherit;
+  cursor:pointer;font-size:14px;line-height:1;
+}
 </style>
 </head>
 <body>
@@ -284,10 +310,10 @@ main.content{padding:16px}
     <div id="profilesList" class="list"></div>
   </section>
 
-  <!-- Droits d’accès (عرض بسيط) -->
+  <!-- Droits d’accès -->
   <section id="page-rights" class="card hidden">
     <h2>Droit d’accès</h2>
-    <p class="hint">تمهيد فقط لربط الأدوار بالصلاحيات. يمكن تطويره لاحقاً حسب حاجتك.</p>
+    <p class="hint">تمهيد بسيط لربط الأدوار بالصلاحيات، يمكن توسيعه لاحقاً.</p>
     <div class="list">
       <div class="item"><div class="meta"><b>Admin:</b> Accès complet à tous les modules.</div></div>
       <div class="item"><div class="meta"><b>Magasinier:</b> Stock, Référentiels liés.</div></div>
@@ -369,12 +395,12 @@ main.content{padding:16px}
     </div>
   </section>
 
-  <!-- Réglages de l’application (Branding + Libellés + Sécurité) -->
+  <!-- Réglages de l’application -->
   <section id="page-appcfg" class="card hidden">
     <h2>Réglages de l’application</h2>
-    <p class="hint">هنا تتحكم في: اسم التطبيق، النصوص، اللوغو، الخلفيات، وأمان الحساب.</p>
+    <p class="hint">تحكم في: اسم التطبيق، النصوص، اللوغو، الخلفيات، وأمان الحساب.</p>
 
-    <!-- 1) Libellés Navigation -->
+    <!-- 1) Libellés -->
     <div id="acc-nav" class="accordion acc">
       <button class="acc-hd" onclick="toggleAcc('acc-nav')">
         1) Libellés Navigation
@@ -391,7 +417,7 @@ main.content{padding:16px}
       </div>
     </div>
 
-    <!-- 2) Tuiles Paramètres -->
+    <!-- 2) Tiles -->
     <div id="acc-tiles" class="accordion acc">
       <button class="acc-hd" onclick="toggleAcc('acc-tiles')">
         2) Tuiles Paramètres
@@ -477,7 +503,6 @@ main.content{padding:16px}
             <input id="cfg-zoom-y" type="range" min="50" max="150" value="100" class="input">
           </div>
         </div>
-        <p class="hint">كل هذه الإعدادات تُحفظ محلياً في المتصفح (localStorage).</p>
       </div>
     </div>
 
@@ -531,6 +556,12 @@ main.content{padding:16px}
   </div>
 </div>
 
+<!-- Toast -->
+<div id="toast" class="info">
+  <span id="toast-msg"></span>
+  <button onclick="hideToast()">✕</button>
+</div>
+
 <script>
 /* KEYS */
 const LS_PROFILES='ab_profiles';
@@ -567,12 +598,30 @@ function g(id){return document.getElementById(id)}
 function loadJSON(k,def){try{return JSON.parse(localStorage.getItem(k)||JSON.stringify(def))}catch{return def}}
 function saveJSON(k,v){localStorage.setItem(k,JSON.stringify(v))}
 
+/* Toast helpers */
+let toastTimer=null;
+function showToast(msg,type='info'){
+  const box=g('toast'), span=g('toast-msg');
+  if(!box||!span) return alert(msg); // fallback
+  span.textContent=msg;
+  box.classList.remove('info','success','error');
+  box.classList.add(type);
+  box.classList.add('show');
+  if(toastTimer) clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>{box.classList.remove('show')},3000);
+}
+function hideToast(){
+  const box=g('toast');
+  if(box) box.classList.remove('show');
+  if(toastTimer) clearTimeout(toastTimer);
+}
+
 /* GUARD */
 (function guard(){
   let ops=[];
   try{ops=JSON.parse(localStorage.getItem(LS_OPERATORS)||"[]");}catch{}
   if(!SETUP_ON && ops.length===0){
-    alert("لا يمكن الدخول بدون مستخدم. رجوع إلى صفحة الدخول.");
+    showToast("لا يمكن الدخول بدون مستخدم. رجوع إلى صفحة الدخول.","error");
     location="index.html";
   }
 })();
@@ -615,8 +664,8 @@ function goSettings(){setActiveLink(g('nav-settings'));showPage('settings')}
 /* NAV */
 g('nav-home').onclick=e=>{e.preventDefault();setActiveLink(g('nav-home'));showPage('home')}
 g('nav-settings').onclick=e=>{e.preventDefault();setActiveLink(g('nav-settings'));showPage('settings')}
-g('nav-irrig').onclick=e=>{e.preventDefault();alert("Module Irrigation (لاحقاً).")}
-g('nav-trait').onclick=e=>{e.preventDefault();alert("Module Traitement (لاحقاً).")}
+g('nav-irrig').onclick=e=>{e.preventDefault();showToast("Module Irrigation (لاحقاً).","info")}
+g('nav-trait').onclick=e=>{e.preventDefault();showToast("Module Traitement (لاحقاً).","info")}
 g('nav-logout').onclick=e=>{e.preventDefault();location="index.html"}
 
 /* APP CONFIG / BRANDING */
@@ -629,12 +678,16 @@ function appcfgLoad(){
     appBgColor: stored.appBgColor || APP_DEFAULT.appBgColor
   };
 }
-function loadImgs(){
-  return loadJSON(LS_IMG,{badge:null,loginBg:null,logo:null,appBg:null});
-}
+function loadImgs(){return loadJSON(LS_IMG,{badge:null,loginBg:null,logo:null,appBg:null});}
 function saveImgs(o){saveJSON(LS_IMG,o)}
 function loadZoom(){return loadJSON(LS_ZOOM,{x:100,y:100})}
 function saveZoom(z){saveJSON(LS_ZOOM,z)}
+
+/* قبول data:image و الروابط العادية */
+function isImgUrl(u){
+  if(/^data:image\//i.test(u)) return true;
+  return /^https?:\/\//i.test(u) && /\.(png|gif|jpe?g)(\?|#|$)/i.test(u);
+}
 
 function applyBackground(){
   const cfg=appcfgLoad();
@@ -654,10 +707,10 @@ function appcfgApply(){
   const imgs=loadImgs();
 
   document.title = c.appTitle + " - Dashboard";
-
   const titleEl=g('appTitleTop');
   if(imgs.logo){
-    titleEl.innerHTML = `<img src="${imgs.logo}" style="height:22px;border-radius:6px;vertical-align:middle">`;
+    const zoom=loadZoom();
+    titleEl.innerHTML = `<img src="${imgs.logo}" style="height:22px;border-radius:6px;vertical-align:middle;transform:scale(${zoom.x/100},${zoom.y/100});transform-origin:left center;">`;
   }else{
     titleEl.textContent = c.appTitle;
   }
@@ -678,7 +731,7 @@ function appcfgApply(){
   else badge.classList.add('hidden');
 
   const ops = loadJSON(LS_OPERATORS,[]);
-  if(ops.length===0) g('firstRunHint').classList.remove('hidden'); else g('firstRunHint').classList.add('hidden');
+  g('firstRunHint').classList.toggle('hidden',ops.length>0);
 
   applyBackground();
 }
@@ -721,16 +774,15 @@ function appcfgFillForm(){
   g('cfg-zoom-y').value = zoom.y;
 }
 
-function isImgUrl(u){return /^https?:\/\//.test(u) && /\.(png|gif|jpe?g)(\?|#|$)/i.test(u)}
+/* Files → base64 */
 function fileToDataURL(file,cb){
   const r=new FileReader();
   r.onload=()=>cb(r.result);
   r.readAsDataURL(file);
 }
 
-/* file inputs */
-['cfg-badge-file','cfg-loginbg-file','cfg-logo-file','cfg-appbg-file']
-.forEach(id=>{
+/* Inputs fichiers */
+['cfg-badge-file','cfg-loginbg-file','cfg-logo-file','cfg-appbg-file'].forEach(id=>{
   const el=g(id); if(!el)return;
   el.addEventListener('change',e=>{
     const f=e.target.files[0]; if(!f)return;
@@ -742,7 +794,7 @@ function fileToDataURL(file,cb){
       if(id==='cfg-appbg-file') imgs.appBg=data;
       saveImgs(imgs);
       appcfgApply();
-      alert('Image enregistrée ✅');
+      showToast('تم حفظ الصورة ✅','success');
     });
   });
 });
@@ -753,64 +805,54 @@ function appcfgSave(){
   const sec = loadJSON(LS_SEC,{});
   const zoom = loadZoom();
 
-  // Titre
   const t=g('cfg-app-title').value.trim();
   cfg.appTitle = t || APP_DEFAULT.appTitle;
 
-  // Logo URL
   const logoUrl=g('cfg-logo-url').value.trim();
   if(logoUrl){
-    if(!isImgUrl(logoUrl)) return alert('Logo URL غير صالح');
+    if(!isImgUrl(logoUrl)) return showToast('Logo URL غير صالح','error');
     imgs.logo=logoUrl;
   }
 
-  // Nav
   cfg.nav.home = g('cfg-nav-home').value.trim()||APP_DEFAULT.nav.home;
   cfg.nav.irrig = g('cfg-nav-irrig').value.trim()||APP_DEFAULT.nav.irrig;
   cfg.nav.trait = g('cfg-nav-trait').value.trim()||APP_DEFAULT.nav.trait;
   cfg.nav.settings = g('cfg-nav-settings').value.trim()||APP_DEFAULT.nav.settings;
   cfg.nav.logout = g('cfg-nav-logout').value.trim()||APP_DEFAULT.nav.logout;
 
-  // Tiles
   cfg.tiles.operators = g('cfg-tile-operators').value.trim()||APP_DEFAULT.tiles.operators;
   cfg.tiles.profiles = g('cfg-tile-profiles').value.trim()||APP_DEFAULT.tiles.profiles;
   cfg.tiles.rights = g('cfg-tile-rights').value.trim()||APP_DEFAULT.tiles.rights;
   cfg.tiles.refs = g('cfg-tile-refs').value.trim()||APP_DEFAULT.tiles.refs;
   cfg.tiles.appcfg = g('cfg-tile-appcfg').value.trim()||APP_DEFAULT.tiles.appcfg;
 
-  // Sécurité
   sec.email = g('sec-email').value.trim();
   sec.phone = g('sec-phone').value.trim();
   sec.question = g('sec-question').value.trim();
   const ans = g('sec-answer').value.trim();
   if(ans) sec.answerHash = hashLite(ans.toLowerCase());
 
-  // Badge
   const badgeUrl=g('cfg-badge-url').value.trim();
   if(badgeUrl){
-    if(!isImgUrl(badgeUrl)) return alert('Badge URL غير صالح');
+    if(!isImgUrl(badgeUrl)) return showToast('Badge URL غير صالح','error');
     imgs.badge=badgeUrl;
   }
 
-  // Login bg
   const loginBgUrl=g('cfg-loginbg-url').value.trim();
   if(loginBgUrl){
-    if(!isImgUrl(loginBgUrl)) return alert('Login bg URL غير صالح');
+    if(!isImgUrl(loginBgUrl)) return showToast('Login background URL غير صالح','error');
     imgs.loginBg=loginBgUrl;
   }
 
-  // App bg
   const appBgUrl=g('cfg-appbg-url').value.trim();
   if(appBgUrl){
-    if(!isImgUrl(appBgUrl)) return alert('App bg URL غير صالح');
+    if(!isImgUrl(appBgUrl)) return showToast('Fond dashboard URL غير صالح','error');
     imgs.appBg=appBgUrl;
   }
 
-  // Colors
   const colEl=g('cfg-appbg-color');
   if(colEl && colEl.value) cfg.appBgColor = colEl.value;
 
-  // Zoom
   zoom.x = parseInt(g('cfg-zoom-x').value||'100',10);
   zoom.y = parseInt(g('cfg-zoom-y').value||'100',10);
 
@@ -821,7 +863,7 @@ function appcfgSave(){
 
   appcfgApply();
   appcfgFillForm();
-  alert('تم الحفظ ✅');
+  showToast('تم الحفظ بنجاح ✅','success');
 }
 
 function appcfgReset(){
@@ -831,7 +873,7 @@ function appcfgReset(){
   localStorage.removeItem(LS_ZOOM);
   appcfgApply();
   appcfgFillForm();
-  alert('تمت إعادة الإعدادات الافتراضية ✅');
+  showToast('تمت إعادة الإعدادات الافتراضية ✅','success');
 }
 
 /* SECURITY */
@@ -842,17 +884,16 @@ function secGenCode(){
   sec.recoveryCode = code;
   saveJSON(LS_SEC,sec);
   g('sec-code').value = String(code);
-  alert('Code généré: '+code);
+  showToast('Code généré: '+code,'success');
 }
 
-/* SETUP BANNER */
+/* SETUP */
 function showSetupBanner(){
-  if(SETUP_ON) g('setupBanner').classList.remove('hidden');
-  else g('setupBanner').classList.add('hidden');
+  g('setupBanner').classList.toggle('hidden',!SETUP_ON);
 }
 function disableSetup(){
   localStorage.removeItem('ab_setup');
-  alert('Setup Mode تم إيقافه.');
+  showToast('Setup Mode تم إيقافه.','success');
   location.reload();
 }
 
@@ -879,15 +920,16 @@ function renderProfiles(){
 function toggleProfileForm(show){g('profileForm').classList.toggle('hidden',!show)}
 function addProfile(){
   const name=g('profileName').value.trim();
-  if(!name) return;
+  if(!name) return showToast('Nom du profil obligatoire','error');
   const list=getProfiles();
-  if(list.includes(name)) return alert('Profil existe déjà');
+  if(list.includes(name)) return showToast('Profil existe déjà','error');
   list.push(name);
   saveJSON(LS_PROFILES,list);
   g('profileName').value='';
   toggleProfileForm(false);
   renderProfiles();
   fillProfilesSelects();
+  showToast('Profil ajouté','success');
 }
 function delProfile(i){
   const list=getProfiles();
@@ -931,12 +973,13 @@ function farmAdd(){
     manager:g('farm_manager').value.trim(),
     phone:g('farm_phone').value.trim()
   };
-  if(!f.name) return alert('Nom de la ferme obligatoire');
+  if(!f.name) return showToast('Nom de la ferme obligatoire','error');
   const list=getFarms();list.push(f);saveJSON(LS_FARMS,list);
   ['farm_name','farm_area','farm_company','farm_location','farm_manager','farm_phone'].forEach(id=>g(id).value='');
   farmToggleForm(false);
   renderFarms();
   fillFarmsCombo();
+  showToast('Ferme ajoutée','success');
 }
 function farmDelete(i){
   const list=getFarms();
@@ -1001,15 +1044,16 @@ function opAdd(){
   const p=g('op_password').value.trim();
   const prof=g('op_profile').value;
   const ferme=g('op_ferme_input').value.trim();
-  if(!u||!p) return alert('Username + password');
+  if(!u||!p) return showToast('Username + password obligatoires','error');
   const ops=getOperators();
   if(ops.some(o=>o.username.toLowerCase()===u.toLowerCase()))
-    return alert('Utilisateur existe déjà');
+    return showToast('Utilisateur existe déjà','error');
   ops.push({username:u,password:p,profile:prof,ferme});
   saveOperators(ops);
   ['op_username','op_password','op_ferme_input'].forEach(id=>g(id).value='');
   opToggleForm(false);
   renderOperators();
+  showToast('Opérateur ajouté','success');
 }
 function opDelete(i){
   const ops=getOperators();
@@ -1038,6 +1082,7 @@ function opSaveEdit(){
   saveOperators(ops);
   opCloseModal();
   renderOperators();
+  showToast('Opérateur modifié','success');
 }
 
 /* REFS */
@@ -1075,16 +1120,17 @@ function refsToggleForm(show){g('refsAddForm').classList.toggle('hidden',!show)}
 function refsAdd(){
   if(!currentRefCat)return;
   const val=g('refsInput').value.trim();
-  if(!val) return;
+  if(!val) return showToast('Valeur vide','error');
   const all=getRefs();
   const list=all[currentRefCat]||[];
-  if(list.includes(val)) return alert('Existe déjà');
+  if(list.includes(val)) return showToast('Existe déjà','error');
   list.push(val);
   all[currentRefCat]=list;
   saveRefs(all);
   g('refsInput').value='';
   refsToggleForm(false);
   refsRender();
+  showToast('Ajouté','success');
 }
 function refsDelete(i){
   if(!currentRefCat)return;
@@ -1100,8 +1146,7 @@ function refsDelete(i){
 /* ACCORDION */
 function toggleAcc(id){
   const acc=g(id);
-  if(!acc) return;
-  acc.classList.toggle('open');
+  if(acc) acc.classList.toggle('open');
 }
 
 /* INIT */
