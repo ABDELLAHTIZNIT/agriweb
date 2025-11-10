@@ -255,6 +255,34 @@ main.content{padding:16px}
   background:transparent;border:none;color:inherit;
   cursor:pointer;font-size:14px;line-height:1;
 }
+
+/* Suivi irrigation */
+.suivi-filters{
+  display:flex;flex-wrap:wrap;
+  gap:8px;margin:8px 0;
+}
+.suivi-filters select{min-width:120px}
+.actions-bar{
+  display:flex;flex-wrap:wrap;
+  gap:6px;margin-top:6px;margin-bottom:4px;
+}
+.table-wrap{margin-top:6px;overflow-x:auto;}
+table.irr{
+  width:100%;border-collapse:collapse;
+  font-size:9px;
+}
+table.irr th,table.irr td{
+  border:1px solid #111827;
+  padding:4px 3px;
+  text-align:center;
+  white-space:nowrap;
+}
+table.irr th{
+  background:#020817;
+  color:#9ca3af;
+  font-weight:600;
+}
+table.irr tr:nth-child(even){background:#020817;}
 </style>
 </head>
 <body>
@@ -273,6 +301,7 @@ main.content{padding:16px}
 <aside id="sidebar" class="sidebar">
   <a href="#" id="nav-home" class="active"><span class="emoji">🏠</span><span id="lbl-nav-home">Accueil</span></a>
   <a href="#" id="nav-irrig"><span class="emoji">🌿</span><span id="lbl-nav-irrig">Irrigation</span></a>
+  <a href="#" id="nav-suivi"><span class="emoji">📊</span><span>Suivi irrigation</span></a>
   <a href="#" id="nav-trait"><span class="emoji">💧</span><span id="lbl-nav-trait">Traitement</span></a>
   <a href="#" id="nav-settings"><span class="emoji">⚙️</span><span id="lbl-nav-settings">Paramètres</span></a>
   <a href="#" id="nav-logout"><span class="emoji">🚪</span><span id="lbl-nav-logout">Logout</span></a>
@@ -298,12 +327,11 @@ main.content{padding:16px}
       🔐 لا يوجد أي مستخدم بعد. اذهب إلى <b>Paramètres → Opérateurs</b> وأضف أول مستخدم.
     </div>
 
-    <!-- QUICK IRRIGATION MODULES -->
     <div class="home-grid">
       <div class="home-card" onclick="homeShortcut('parcelles')">
         <div class="icon">📍</div>
         <strong>Parcelles</strong>
-        <span>تعريف القطع المسقية وربطها بالضّيعات.</span>
+        <span>تعريف القطع المسقية وربطها بالضيعات.</span>
       </div>
       <div class="home-card" onclick="homeShortcut('planning')">
         <div class="icon">📅</div>
@@ -335,15 +363,60 @@ main.content{padding:16px}
         <strong>Historique</strong>
         <span>سجل عمليات السقي السابقة.</span>
       </div>
-      <div class="home-card" onclick="homeShortcut('meteo')">
-        <div class="icon">☀️</div>
-        <strong>Météo & ETc</strong>
-        <span>ربط قرار السقي بالأحوال الجوية (فكرة مستقبلية).</span>
+      <div class="home-card" onclick="showPage('suivi')">
+        <div class="icon">📊</div>
+        <strong>Suivi irrigation</strong>
+        <span>إدخال وتتبع كل تفاصيل الري لكل Bras.</span>
       </div>
     </div>
   </section>
 
-  <!-- Paramètres (menu tuiles) -->
+  <!-- Suivi irrigation -->
+  <section id="page-suivi" class="card hidden">
+    <h2>Suivi irrigation</h2>
+    <p class="hint">اختر الضيعة ثم secteur / bloc / parcelle / point، ثم أضف قياساتك في الجدول.</p>
+
+    <div class="suivi-filters">
+      <select id="irr-farm" class="input"></select>
+      <select id="irr-secteur" class="input"></select>
+      <select id="irr-bloc" class="input"></select>
+      <select id="irr-parcelle" class="input"></select>
+      <select id="irr-point" class="input"></select>
+    </div>
+
+    <div class="actions-bar">
+      <button class="btn" onclick="irrOpenAdd()">Ajouter</button>
+      <button class="btn" onclick="irrShare()">Partager</button>
+      <button class="btn" onclick="irrExportCSV()">Exporter Excel</button>
+      <button class="btn" onclick="irrExportPDF()">Exporter PDF</button>
+    </div>
+
+    <div class="table-wrap">
+      <table id="irr-table" class="irr">
+        <thead>
+          <tr>
+            <th>Serre</th>
+            <th>Tours / Heures</th>
+            <th>Durée (min)</th>
+            <th>Temps repos</th>
+            <th>V apport</th>
+            <th>EC apport</th>
+            <th>pH apport</th>
+            <th>V drainage</th>
+            <th>EC drainage</th>
+            <th>pH drainage</th>
+            <th>% drainage</th>
+            <th>Consomation/bras</th>
+            <th>Localisation</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="irr-body"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Paramètres (menu) -->
   <section id="page-settings" class="card hidden">
     <h2>Paramètres</h2>
     <p class="hint">اختر القسم الذي تريد إدارته.</p>
@@ -493,7 +566,7 @@ main.content{padding:16px}
       </div>
     </div>
 
-    <!-- 2) Tiles -->
+    <!-- 2) Tuiles -->
     <div id="acc-tiles" class="accordion acc">
       <button class="acc-hd" onclick="toggleAcc('acc-tiles')">
         2) Tuiles Paramètres
@@ -632,6 +705,36 @@ main.content{padding:16px}
   </div>
 </div>
 
+<div id="irrModal" class="modal-wrap">
+  <div class="modal-bg" onclick="irrClose()"></div>
+  <div class="modal">
+    <h3 id="irrModalTitle">Ajouter enregistrement</h3>
+    <div class="grid">
+      <div><label class="label">Ferme</label><input id="irr-farm-input" class="input" readonly></div>
+      <div><label class="label">Secteur</label><input id="irr-secteur-input" class="input" readonly></div>
+      <div><label class="label">Bloc</label><input id="irr-bloc-input" class="input" readonly></div>
+      <div><label class="label">Parcelle</label><input id="irr-parcelle-input" class="input" readonly></div>
+      <div><label class="label">Point</label><input id="irr-point-input" class="input" readonly></div>
+      <div><label class="label">Serre</label><input id="irr-serre" class="input"></div>
+      <div><label class="label">Tours / Heures</label><input id="irr-toursHours" class="input"></div>
+      <div><label class="label">Durée (min)</label><input id="irr-duree" class="input"></div>
+      <div><label class="label">Temps repos</label><input id="irr-repos" class="input"></div>
+      <div><label class="label">V apport</label><input id="irr-vApport" class="input"></div>
+      <div><label class="label">EC apport</label><input id="irr-ecApport" class="input"></div>
+      <div><label class="label">pH apport</label><input id="irr-phApport" class="input"></div>
+      <div><label class="label">V drainage</label><input id="irr-vDrain" class="input"></div>
+      <div><label class="label">EC drainage</label><input id="irr-ecDrain" class="input"></div>
+      <div><label class="label">pH drainage</label><input id="irr-phDrain" class="input"></div>
+      <div><label class="label">% drainage</label><input id="irr-pctDrain" class="input"></div>
+      <div><label class="label">Consomation/bras</label><input id="irr-consoBras" class="input"></div>
+    </div>
+    <div class="right">
+      <button class="btn danger" onclick="irrClose()">Annuler</button>
+      <button class="btn" onclick="irrSave()">Enregistrer</button>
+    </div>
+  </div>
+</div>
+
 <!-- Toast -->
 <div id="toast" class="info">
   <span id="toast-msg"></span>
@@ -648,6 +751,7 @@ const LS_APP='ab_appcfg';
 const LS_IMG='ab_appimg';
 const LS_SEC='ab_security';
 const LS_ZOOM='ab_zoom';
+const LS_IRR='ab_irr_suivi';
 const SETUP_ON = localStorage.getItem('ab_setup') === '1';
 
 const DEFAULT_PROFILES=["Admin","Magasinier","Pointeur","Directeur"];
@@ -674,11 +778,11 @@ function g(id){return document.getElementById(id)}
 function loadJSON(k,def){try{return JSON.parse(localStorage.getItem(k)||JSON.stringify(def))}catch{return def}}
 function saveJSON(k,v){localStorage.setItem(k,JSON.stringify(v))}
 
-/* Toast helpers */
+/* Toast */
 let toastTimer=null;
 function showToast(msg,type='info'){
   const box=g('toast'), span=g('toast-msg');
-  if(!box||!span) return alert(msg);
+  if(!box||!span){alert(msg);return;}
   span.textContent=msg;
   box.classList.remove('info','success','error');
   box.classList.add(type);
@@ -692,17 +796,16 @@ function hideToast(){
   if(toastTimer) clearTimeout(toastTimer);
 }
 
-/* home shortcuts (placeholder logic) */
+/* home shortcuts (placeholder) */
 function homeShortcut(key){
   const messages={
     parcelles:"إدارة القطع سيتم ربطها لاحقاً مع référentiels.",
-    planning:"تخطيط دورات السقي : ميزة مستقبلية، يمكنك حالياً استعمال Référentiels + ملاحظات.",
-    humidite:"تسجيل ملاحظات رطوبة التربة لكل قطعة (سيتم تطوير واجهة خاصة).",
-    eau:"تتبع استهلاك المياه حسب العدادات والضيعات (فكرة مفعّلة لاحقاً).",
-    fertil:"تدوين برامج الأسمدة مع السقي (fertigation).",
+    planning:"تخطيط دورات السقي : ميزة مستقبلية.",
+    humidite:"تسجيل ملاحظات رطوبة التربة لكل قطعة.",
+    eau:"تتبع استهلاك المياه حسب العدادات.",
+    fertil:"تدوين برامج الأسمدة مع السقي.",
     alertes:"تنبيهات عند تأخر السقي أو تجاوز الكميات.",
-    hist:"عرض تاريخ جميع عمليات السقي.",
-    meteo:"ربط قرار السقي بالطقس ومعامل ETc."
+    hist:"عرض تاريخ جميع عمليات السقي."
   };
   showToast(messages[key]||"Module en préparation.",'info');
 }
@@ -731,6 +834,7 @@ function setActiveLink(el){
 /* PAGES */
 const pages={
   home:g('page-home'),
+  suivi:g('page-suivi'),
   settings:g('page-settings'),
   profiles:g('page-profiles'),
   rights:g('page-rights'),
@@ -755,7 +859,8 @@ function goSettings(){setActiveLink(g('nav-settings'));showPage('settings')}
 /* NAV */
 g('nav-home').onclick=e=>{e.preventDefault();setActiveLink(g('nav-home'));showPage('home')}
 g('nav-settings').onclick=e=>{e.preventDefault();setActiveLink(g('nav-settings'));showPage('settings')}
-g('nav-irrig').onclick=e=>{e.preventDefault();showPage('home');showToast("استعمل كروت Accueil للوصول لوظائف السقي.","info")}
+g('nav-irrig').onclick=e=>{e.preventDefault();showPage('home');showToast("استعمل كروت Accueil أو Suivi irrigation.","info")}
+g('nav-suivi').onclick=e=>{e.preventDefault();setActiveLink(g('nav-suivi'));showPage('suivi')}
 g('nav-trait').onclick=e=>{e.preventDefault();showToast("Module Traitement (لاحقاً).","info")}
 g('nav-logout').onclick=e=>{e.preventDefault();location="index.html"}
 
@@ -773,12 +878,10 @@ function loadImgs(){return loadJSON(LS_IMG,{badge:null,loginBg:null,logo:null,ap
 function saveImgs(o){saveJSON(LS_IMG,o)}
 function loadZoom(){return loadJSON(LS_ZOOM,{x:100,y:100})}
 function saveZoom(z){saveJSON(LS_ZOOM,z)}
-
 function isImgUrl(u){
   if(/^data:image\//i.test(u)) return true;
   return /^https?:\/\//i.test(u) && /\.(png|gif|jpe?g)(\?|#|$)/i.test(u);
 }
-
 function applyBackground(){
   const cfg=appcfgLoad();
   const imgs=loadImgs();
@@ -791,11 +894,9 @@ function applyBackground(){
     document.body.style.backgroundColor=cfg.appBgColor || APP_DEFAULT.appBgColor;
   }
 }
-
 function appcfgApply(){
   const c=appcfgLoad();
   const imgs=loadImgs();
-
   document.title = c.appTitle + " - Dashboard";
   const titleEl=g('appTitleTop');
   if(imgs.logo){
@@ -804,74 +905,57 @@ function appcfgApply(){
   }else{
     titleEl.textContent = c.appTitle;
   }
-
   g('lbl-nav-home').textContent = c.nav.home;
   g('lbl-nav-irrig').textContent = c.nav.irrig;
   g('lbl-nav-trait').textContent = c.nav.trait;
   g('lbl-nav-settings').textContent = c.nav.settings;
   g('lbl-nav-logout').textContent = c.nav.logout;
-
   g('lbl-tile-operators').textContent = c.tiles.operators;
   g('lbl-tile-profiles').textContent = c.tiles.profiles;
   g('lbl-tile-refs').textContent = c.tiles.refs;
   g('lbl-tile-appcfg').textContent = c.tiles.appcfg;
-
   const badge=g('appBadgeImg');
   if(imgs.badge){badge.src=imgs.badge;badge.classList.remove('hidden');}
   else badge.classList.add('hidden');
-
   const ops = loadJSON(LS_OPERATORS,[]);
   g('firstRunHint').classList.toggle('hidden',ops.length>0);
-
   applyBackground();
 }
-
 function appcfgFillForm(){
   const c=appcfgLoad();
   const imgs=loadImgs();
   const sec = loadJSON(LS_SEC,{});
   const zoom = loadZoom();
-
   g('cfg-app-title').value = c.appTitle;
-
   g('cfg-nav-home').value = c.nav.home;
   g('cfg-nav-irrig').value = c.nav.irrig;
   g('cfg-nav-trait').value = c.nav.trait;
   g('cfg-nav-settings').value = c.nav.settings;
   g('cfg-nav-logout').value = c.nav.logout;
-
   g('cfg-tile-operators').value = c.tiles.operators;
   g('cfg-tile-profiles').value = c.tiles.profiles;
   g('cfg-tile-rights').value = c.tiles.rights || "Droit d’accès";
   g('cfg-tile-refs').value = c.tiles.refs;
   g('cfg-tile-appcfg').value = c.tiles.appcfg;
-
   g('sec-email').value = sec.email||"";
   g('sec-phone').value = sec.phone||"";
   g('sec-question').value = sec.question||"";
   g('sec-code').value = sec.recoveryCode?String(sec.recoveryCode):"";
-
   g('cfg-logo-url').value = imgs.logo||"";
   g('cfg-badge-url').value= imgs.badge||"";
   g('cfg-loginbg-url').value = imgs.loginBg||"";
   g('cfg-appbg-url').value = imgs.appBg||"";
-
   if(g('cfg-appbg-color') && c.appBgColor){
     g('cfg-appbg-color').value = c.appBgColor;
   }
-
   g('cfg-zoom-x').value = zoom.x;
   g('cfg-zoom-y').value = zoom.y;
 }
-
-/* Files → base64 */
 function fileToDataURL(file,cb){
   const r=new FileReader();
   r.onload=()=>cb(r.result);
   r.readAsDataURL(file);
 }
-
-/* file inputs */
 ['cfg-badge-file','cfg-loginbg-file','cfg-logo-file','cfg-appbg-file'].forEach(id=>{
   const el=g(id); if(!el)return;
   el.addEventListener('change',e=>{
@@ -888,74 +972,60 @@ function fileToDataURL(file,cb){
     });
   });
 });
-
 function appcfgSave(){
   const cfg=appcfgLoad();
   const imgs=loadImgs();
   const sec = loadJSON(LS_SEC,{});
   const zoom = loadZoom();
-
   const t=g('cfg-app-title').value.trim();
   cfg.appTitle = t || APP_DEFAULT.appTitle;
-
   const logoUrl=g('cfg-logo-url').value.trim();
   if(logoUrl){
     if(!isImgUrl(logoUrl)) return showToast('Logo URL غير صالح','error');
     imgs.logo=logoUrl;
   }
-
   cfg.nav.home = g('cfg-nav-home').value.trim()||APP_DEFAULT.nav.home;
   cfg.nav.irrig = g('cfg-nav-irrig').value.trim()||APP_DEFAULT.nav.irrig;
   cfg.nav.trait = g('cfg-nav-trait').value.trim()||APP_DEFAULT.nav.trait;
   cfg.nav.settings = g('cfg-nav-settings').value.trim()||APP_DEFAULT.nav.settings;
   cfg.nav.logout = g('cfg-nav-logout').value.trim()||APP_DEFAULT.nav.logout;
-
   cfg.tiles.operators = g('cfg-tile-operators').value.trim()||APP_DEFAULT.tiles.operators;
   cfg.tiles.profiles = g('cfg-tile-profiles').value.trim()||APP_DEFAULT.tiles.profiles;
-  cfg.tiles.rights = g('cfg-tile-rights').value.trim()||APP_DEFAULT.tiles.rights;
+  cfg.tiles.rights = g('cfg-tile-rights').value.trim()||"Droit d’accès";
   cfg.tiles.refs = g('cfg-tile-refs').value.trim()||APP_DEFAULT.tiles.refs;
   cfg.tiles.appcfg = g('cfg-tile-appcfg').value.trim()||APP_DEFAULT.tiles.appcfg;
-
   sec.email = g('sec-email').value.trim();
   sec.phone = g('sec-phone').value.trim();
   sec.question = g('sec-question').value.trim();
   const ans = g('sec-answer').value.trim();
   if(ans) sec.answerHash = hashLite(ans.toLowerCase());
-
   const badgeUrl=g('cfg-badge-url').value.trim();
   if(badgeUrl){
     if(!isImgUrl(badgeUrl)) return showToast('Badge URL غير صالح','error');
     imgs.badge=badgeUrl;
   }
-
   const loginBgUrl=g('cfg-loginbg-url').value.trim();
   if(loginBgUrl){
     if(!isImgUrl(loginBgUrl)) return showToast('Login background URL غير صالح','error');
     imgs.loginBg=loginBgUrl;
   }
-
   const appBgUrl=g('cfg-appbg-url').value.trim();
   if(appBgUrl){
     if(!isImgUrl(appBgUrl)) return showToast('Fond dashboard URL غير صالح','error');
     imgs.appBg=appBgUrl;
   }
-
   const colEl=g('cfg-appbg-color');
   if(colEl && colEl.value) cfg.appBgColor = colEl.value;
-
   zoom.x = parseInt(g('cfg-zoom-x').value||'100',10);
   zoom.y = parseInt(g('cfg-zoom-y').value||'100',10);
-
   saveJSON(LS_SEC,sec);
   saveImgs(imgs);
   saveJSON(LS_APP,cfg);
   saveZoom(zoom);
-
   appcfgApply();
   appcfgFillForm();
   showToast('تم الحفظ بنجاح ✅','success');
 }
-
 function appcfgReset(){
   localStorage.removeItem(LS_APP);
   localStorage.removeItem(LS_IMG);
@@ -1069,22 +1139,24 @@ function farmAdd(){
   farmToggleForm(false);
   renderFarms();
   fillFarmsCombo();
+  irrInitFilters();
   showToast('Ferme ajoutée','success');
 }
 function farmDelete(i){
   const list=getFarms();
   if(!confirm('Supprimer cette ferme ?'))return;
   list.splice(i,1);saveJSON(LS_FARMS,list);
-  renderFarms();fillFarmsCombo();
+  renderFarms();
+  fillFarmsCombo();
+  irrInitFilters();
 }
 function farmCloseModal(){g('farmModal').classList.remove('show')}
-function farmSaveEdit(){/* placeholder future */}
+function farmSaveEdit(){}
 
 /* OPERATORS */
 let editOpIndex=null;
 function getOperators(){return loadJSON(LS_OPERATORS,[])}
 function saveOperators(list){saveJSON(LS_OPERATORS,list)}
-
 function fillProfilesSelects(){
   const profs=getProfiles();
   const selAdd=g('op_profile');
@@ -1241,6 +1313,216 @@ function toggleAcc(id){
   if(acc) acc.classList.toggle('open');
 }
 
+/* Suivi irrigation logic */
+function getIrr(){return loadJSON(LS_IRR,[])}
+function saveIrr(list){saveJSON(LS_IRR,list)}
+
+function irrInitFilters(){
+  const farms=getFarms();
+  const selF=g('irr-farm');
+  if(selF){
+    selF.innerHTML='<option value="">Ferme</option>'+farms.map(f=>`<option>${f.name}</option>`).join('');
+  }
+  const refs=getRefs();
+  const secs=refs.secteurs||[];
+  const parc=refs.parcelles||[];
+  if(g('irr-secteur'))
+    g('irr-secteur').innerHTML='<option value="">Secteur</option>'+secs.map(s=>`<option>${s}</option>`).join('');
+  if(g('irr-bloc'))
+    g('irr-bloc').innerHTML='<option value="">Bloc</option>'+parc.map(b=>`<option>${b}</option>`).join('');
+  if(g('irr-parcelle'))
+    g('irr-parcelle').innerHTML='<option value="">Parcelle</option>'+parc.map(p=>`<option>${p}</option>`).join('');
+  const pointSel=g('irr-point');
+  if(pointSel){
+    pointSel.innerHTML='<option value="">Point</option>';
+    for(let i=1;i<=20;i++) pointSel.innerHTML+=`<option>${i}</option>`;
+  }
+}
+
+['irr-farm','irr-secteur','irr-bloc','irr-parcelle','irr-point'].forEach(id=>{
+  document.addEventListener('change',e=>{
+    if(e.target && e.target.id===id) irrFilterChanged();
+  });
+});
+
+function irrFilterChanged(){
+  renderIrrTable();
+}
+
+function renderIrrTable(){
+  const list=getIrr();
+  const f=g('irr-farm').value;
+  const s=g('irr-secteur').value;
+  const b=g('irr-bloc').value;
+  const pa=g('irr-parcelle').value;
+  const pt=g('irr-point').value;
+  const tbody=g('irr-body');
+  if(!tbody) return;
+  tbody.innerHTML='';
+  const filtered=list.filter(r=>
+     (!f||r.farm===f)&&
+     (!s||r.secteur===s)&&
+     (!b||r.bloc===b)&&
+     (!pa||r.parcelle===pa)&&
+     (!pt||String(r.point)===pt)
+  );
+  if(!filtered.length){
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td colspan="14" style="text-align:center;color:#6b7280">لا توجد بيانات بعد. استعمل زر Ajouter.</td>`;
+    tbody.appendChild(tr);
+    return;
+  }
+  filtered.forEach(r=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
+      <td>${r.serre||''}</td>
+      <td>${r.toursHours||''}</td>
+      <td>${r.duree||''}</td>
+      <td>${r.repos||''}</td>
+      <td>${r.vApport||''}</td>
+      <td>${r.ecApport||''}</td>
+      <td>${r.phApport||''}</td>
+      <td>${r.vDrain||''}</td>
+      <td>${r.ecDrain||''}</td>
+      <td>${r.phDrain||''}</td>
+      <td>${r.pctDrain||''}</td>
+      <td>${r.consoBras||''}</td>
+      <td>${r.farm||''}/${r.secteur||''}/${r.bloc||''}/${r.parcelle||''}/P${r.point||''}</td>
+      <td>
+        <button class="btn" onclick="irrEdit('${r.id}')">✏️</button>
+        <button class="btn danger" onclick="irrDelete('${r.id}')">🗑️</button>
+      </td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+let irrEditId=null;
+function irrOpenAdd(){
+  const f=g('irr-farm').value;
+  if(!f) return showToast('اختر Ferme أولا','error');
+  irrEditId=null;
+  g('irrModalTitle').textContent='Ajouter enregistrement';
+  g('irr-farm-input').value=f;
+  g('irr-secteur-input').value=g('irr-secteur').value;
+  g('irr-bloc-input').value=g('irr-bloc').value;
+  g('irr-parcelle-input').value=g('irr-parcelle').value;
+  g('irr-point-input').value=g('irr-point').value;
+  ['irr-serre','irr-toursHours','irr-duree','irr-repos','irr-vApport','irr-ecApport','irr-phApport','irr-vDrain','irr-ecDrain','irr-phDrain','irr-pctDrain','irr-consoBras']
+    .forEach(id=>{if(g(id))g(id).value='';});
+  g('irrModal').classList.add('show');
+}
+function irrEdit(id){
+  const list=getIrr();
+  const r=list.find(x=>x.id===id);
+  if(!r) return;
+  irrEditId=id;
+  g('irrModalTitle').textContent='Modifier enregistrement';
+  g('irr-farm-input').value=r.farm||'';
+  g('irr-secteur-input').value=r.secteur||'';
+  g('irr-bloc-input').value=r.bloc||'';
+  g('irr-parcelle-input').value=r.parcelle||'';
+  g('irr-point-input').value=r.point||'';
+  g('irr-serre').value=r.serre||'';
+  g('irr-toursHours').value=r.toursHours||'';
+  g('irr-duree').value=r.duree||'';
+  g('irr-repos').value=r.repos||'';
+  g('irr-vApport').value=r.vApport||'';
+  g('irr-ecApport').value=r.ecApport||'';
+  g('irr-phApport').value=r.phApport||'';
+  g('irr-vDrain').value=r.vDrain||'';
+  g('irr-ecDrain').value=r.ecDrain||'';
+  g('irr-phDrain').value=r.phDrain||'';
+  g('irr-pctDrain').value=r.pctDrain||'';
+  g('irr-consoBras').value=r.consoBras||'';
+  g('irrModal').classList.add('show');
+}
+function irrClose(){
+  g('irrModal').classList.remove('show');
+  irrEditId=null;
+}
+function irrSave(){
+  const f=g('irr-farm-input').value.trim();
+  if(!f) return showToast('Ferme obligatoire','error');
+  const data={
+    id: irrEditId || ('irr_'+Date.now()+Math.random().toString(16).slice(2)),
+    farm:f,
+    secteur:g('irr-secteur-input').value.trim(),
+    bloc:g('irr-bloc-input').value.trim(),
+    parcelle:g('irr-parcelle-input').value.trim(),
+    point:g('irr-point-input').value.trim(),
+    serre:g('irr-serre').value.trim(),
+    toursHours:g('irr-toursHours').value.trim(),
+    duree:g('irr-duree').value.trim(),
+    repos:g('irr-repos').value.trim(),
+    vApport:g('irr-vApport').value.trim(),
+    ecApport:g('irr-ecApport').value.trim(),
+    phApport:g('irr-phApport').value.trim(),
+    vDrain:g('irr-vDrain').value.trim(),
+    ecDrain:g('irr-ecDrain').value.trim(),
+    phDrain:g('irr-phDrain').value.trim(),
+    pctDrain:g('irr-pctDrain').value.trim(),
+    consoBras:g('irr-consoBras').value.trim()
+  };
+  let list=getIrr();
+  const idx=list.findIndex(x=>x.id===data.id);
+  if(idx>=0) list[idx]=data; else list.push(data);
+  saveIrr(list);
+  irrClose();
+  renderIrrTable();
+  showToast('تم حفظ السطر','success');
+}
+function irrDelete(id){
+  let list=getIrr();
+  list=list.filter(x=>x.id!==id);
+  saveIrr(list);
+  renderIrrTable();
+  showToast('تم حذف السطر','success');
+}
+function irrExportCSV(){
+  const list=getIrr();
+  if(!list.length) return showToast('لا توجد بيانات للتصدير','error');
+  let csv='Serre,Tours/Heures,Durée(min),Temps repos,V apport,EC apport,pH apport,V drainage,EC drainage,pH drainage,% drainage,Consomation/bras,Ferme,Secteur,Bloc,Parcelle,Point\n';
+  list.forEach(r=>{
+    csv+=[
+      r.serre||'',r.toursHours||'',r.duree||'',r.repos||'',
+      r.vApport||'',r.ecApport||'',r.phApport||'',
+      r.vDrain||'',r.ecDrain||'',r.phDrain||'',
+      r.pctDrain||'',r.consoBras||'',
+      r.farm||'',r.secteur||'',r.bloc||'',r.parcelle||'',r.point||''
+    ].map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')+'\n';
+  });
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download='suivi_irrigation.csv';
+  document.body.appendChild(a);a.click();a.remove();
+  URL.revokeObjectURL(url);
+  showToast('تم تحميل ملف Excel/CSV','success');
+}
+function irrExportPDF(){
+  const list=getIrr();
+  if(!list.length) return showToast('لا توجد بيانات','error');
+  const w=window.open('','_blank');
+  if(!w) return showToast('المتصفح منع النافذة المنبثقة','error');
+  w.document.write('<html><head><title>Suivi irrigation</title><style>table{border-collapse:collapse;font-size:10px}td,th{border:1px solid #444;padding:3px 4px;text-align:center}</style></head><body>');
+  w.document.write('<h3>Suivi irrigation</h3>');
+  w.document.write(g('irr-table').outerHTML);
+  w.document.write('</body></html>');
+  w.document.close();
+  w.focus();
+  w.print();
+}
+function irrShare(){
+  const list=getIrr();
+  if(!list.length) return showToast('لا توجد بيانات للمشاركة','error');
+  let txt='Suivi irrigation:\n';
+  list.forEach(r=>{
+    txt+=`${r.farm||''}/${r.parcelle||''}/P${r.point||''} - V apport ${r.vApport||''} - V drainage ${r.vDrain||''}\n`;
+  });
+  const url='https://wa.me/?text='+encodeURIComponent(txt);
+  window.open(url,'_blank');
+}
+
 /* INIT */
 document.addEventListener('DOMContentLoaded',()=>{
   if(!loadJSON(LS_PROFILES,[]).length) saveJSON(LS_PROFILES,DEFAULT_PROFILES);
@@ -1251,6 +1533,8 @@ document.addEventListener('DOMContentLoaded',()=>{
   renderOperators();
   fillProfilesSelects();
   fillFarmsCombo();
+  irrInitFilters();
+  renderIrrTable();
   showSetupBanner();
   showPage('home');
 });
