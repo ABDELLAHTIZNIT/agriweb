@@ -7,7 +7,6 @@
 <style>
 :root{
   --bg:#0f172a;
-  --panel:#0b1220;
   --text:#e2e8f0;
   --accent:#22c55e;
   --muted:#9ca3af;
@@ -16,7 +15,7 @@
 /* RESET */
 *{box-sizing:border-box;margin:0;padding:0}
 
-/* BODY = الخلفية (كتشد من Branding) */
+/* BODY = الخلفية كتبدل من الإعدادات */
 body{
   min-height:100vh;
   display:grid;
@@ -32,7 +31,6 @@ body{
 /* الكارت العامة */
 .card{
   width:min(420px,100%);
-  padding:0;
 }
 
 /* اللوغو + العنوان */
@@ -47,6 +45,7 @@ body{
   max-height:40px;
   max-width:220px;
   object-fit:contain;
+  transition:transform .25s ease;
 }
 #appTitle{
   font-size:22px;
@@ -56,16 +55,14 @@ body{
   text-shadow:0 3px 10px rgba(0,0,0,.9);
 }
 
-/* صندوق الحقول: دابا شفاف تماما بلا خلفية */
+/* الحقول: مباشرة فوق الخلفية */
 .form-wrap{
   width:100%;
-  padding:18px 16px 14px;
-  border-radius:18px;
-  background:transparent;              /* <== هنا التغيير */
-  box-shadow:none;                     /* بلا ظل غامق */
+  padding:6px 2px 0;
+  background:transparent;
 }
 
-/* رسالة لا يوجد مستخدم */
+/* لا يوجد مستخدم */
 #noOpsHint{
   margin:0 0 8px;
   font-size:10px;
@@ -76,7 +73,6 @@ body{
   color:#fde68a;
 }
 
-/* labels + inputs */
 label{
   display:block;
   margin:6px 0 3px;
@@ -95,7 +91,9 @@ label{
 }
 .field{position:relative}
 .eye{
-  position:absolute;right:9px;top:50%;
+  position:absolute;
+  right:9px;
+  top:50%;
   transform:translateY(-50%);
   cursor:pointer;
   font-size:16px;
@@ -135,6 +133,8 @@ label{
 }
 #forgotLink:hover{text-decoration:underline}
 
+.hidden{display:none!important}
+
 /* Modal recovery */
 .modal-wrap{position:fixed;inset:0;display:none;place-items:center;z-index:60}
 .modal-wrap.show{display:grid}
@@ -164,7 +164,6 @@ label{
   color:#020817;
   border-color:var(--accent);
 }
-.hidden{display:none!important}
 </style>
 </head>
 <body>
@@ -179,8 +178,8 @@ label{
 
   <div class="form-wrap">
     <div id="noOpsHint" class="hidden">
-      لا يوجد أي مستخدم مُسجّل. يمكنك استعمال <b>Setup (no login)</b> مؤقتاً
-      ثم الذهاب إلى <b>Paramètres → Opérateurs</b> لإضافة أول مستخدم.
+      لا يوجد أي مستخدم مُسجّل. استعمل <b>Setup (no login)</b> مؤقتاً
+      ثم أضف مستخدم من <b>Paramètres → Opérateurs</b>.
     </div>
 
     <label>Username</label>
@@ -226,7 +225,7 @@ label{
 
     <div class="small" style="margin-top:8px" id="recoveryContact"></div>
 
-    <div class="right" style="margin-top:8px">
+    <div style="text-align:right;margin-top:8px">
       <button class="btn secondary" onclick="closeRecovery()">Fermer</button>
     </div>
   </div>
@@ -237,36 +236,40 @@ const LS_APP='ab_appcfg';
 const LS_IMG='ab_appimg';
 const LS_SEC='ab_security';
 const LS_OPERATORS='ab_operators';
+const LS_ZOOM='ab_zoom';
 
-function loadJSON(key,def){try{return JSON.parse(localStorage.getItem(key)||JSON.stringify(def))}catch{return def}}
-function saveJSON(key,val){localStorage.setItem(key,JSON.stringify(val))}
+function loadJSON(k,def){try{return JSON.parse(localStorage.getItem(k)||JSON.stringify(def))}catch{return def}}
 
 function loadCfg(){
   const base={appTitle:"AB AGRIWEB"};
-  try{
-    const raw=JSON.parse(localStorage.getItem(LS_APP)||'{}');
-    return Object.assign(base,raw);
-  }catch{return base}
+  const raw=loadJSON(LS_APP,{});
+  return Object.assign(base,raw);
 }
 function loadImgs(){
   return loadJSON(LS_IMG,{logo:null,loginBg:null});
 }
 function loadSec(){return loadJSON(LS_SEC,{})}
 function loadOps(){return loadJSON(LS_OPERATORS,[])}
+function loadZoom(){return loadJSON(LS_ZOOM,{x:100,y:100})}
 
 function applyBranding(){
   const cfg=loadCfg();
   const imgs=loadImgs();
+  const zoom=loadZoom();
 
   document.title = cfg.appTitle || 'AB AGRIWEB';
+
   const titleEl=document.getElementById('appTitle');
+  const logoWrap=document.getElementById('loginLogoWrap');
+  const logoImg=document.getElementById('loginLogoImg');
 
   if(imgs.logo){
-    document.getElementById('loginLogoWrap').classList.remove('hidden');
-    document.getElementById('loginLogoImg').src=imgs.logo;
-    titleEl.textContent = cfg.appTitle || 'AB AGRIWEB';
+    logoWrap.classList.remove('hidden');
+    logoImg.src=imgs.logo;
+    logoImg.style.transform=`scale(${zoom.x/100},${zoom.y/100})`;
+    titleEl.textContent = cfg.appTitle || '';
   }else{
-    document.getElementById('loginLogoWrap').classList.add('hidden');
+    logoWrap.classList.add('hidden');
     titleEl.textContent = cfg.appTitle || 'AB AGRIWEB';
   }
 
