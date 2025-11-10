@@ -247,6 +247,13 @@ th{
   top:0;
 }
 
+/* Selected row & row actions */
+tr.selected{background:#111827;}
+#sv_row_actions{
+  margin-top:4px;
+  justify-content:flex-end;
+}
+
 /* Modal add suivi */
 .modal-full{
   position:fixed;
@@ -267,10 +274,11 @@ th{
   font-size:11px;
 }
 .modal-card h3{margin-bottom:6px;font-size:14px}
-.modal-card .row{gap:4px}
-.modal-card input{
-  padding:5px 6px;
-  font-size:10px;
+.modal-card p.muted{font-size:10px}
+.modal-card .row{gap:6px;margin-top:6px}
+.modal-card .input{
+  padding:7px 8px;
+  font-size:11px;
 }
 
 .range-row{display:flex;align-items:center;gap:8px;margin-top:4px}
@@ -370,7 +378,7 @@ th{
     <div class="list" id="prList"></div>
   </section>
 
-  <!-- Mot de passe admin (placeholder بسيط) -->
+  <!-- Mot de passe admin -->
   <section id="page-pwd" class="card hidden">
     <h2>Mot de passe admin</h2>
     <p class="muted">يمكنك هنا تغيير كلمة مرور الحساب الرئيسي (محفوظة محليًا).</p>
@@ -506,12 +514,16 @@ th{
     <select id="sv_pt" class="input" onchange="svReloadTable()"></select>
 
     <div class="row" style="margin-top:8px;gap:6px">
+      <button class="btn small" onclick="svShowIrrigation()">Irrigation</button>
       <button class="btn small" onclick="svShowAdd()">Ajouter</button>
-      <button class="btn small" onclick="svSetMode('edit')">Modifier</button>
-      <button class="btn small danger" onclick="svSetMode('delete')">Supprimer</button>
       <button class="btn small" onclick="svShare()">Partager</button>
       <button class="btn small" onclick="svExportCSV()">Exporter Excel</button>
       <button class="btn small" onclick="svPrint()">Exporter PDF</button>
+    </div>
+
+    <div id="sv_row_actions" class="row hidden">
+      <button class="btn small" onclick="svEditSelected()">Modifier</button>
+      <button class="btn small danger" onclick="svDeleteSelected()">Supprimer</button>
     </div>
 
     <div class="table-wrap">
@@ -543,20 +555,19 @@ th{
 <div id="sv_modal" class="modal-full hidden">
   <div class="modal-card">
     <h3>Ajouter une mesure d'irrigation</h3>
-    <p class="muted" style="margin-bottom:4px">إملأ الحقول ثم اضغط ✓ للحفظ أو ✕ للإلغاء.</p>
+    <p class="muted">إملأ الحقول ثم اضغط ✓ للحفظ أو ✕ للإلغاء.</p>
     <div class="row">
-      <input id="sv_tours" placeholder="Tours / Heures">
-      <input id="sv_duree" placeholder="Durée (min)">
-      <input id="sv_repos" placeholder="Temps repos">
-      <input id="sv_vapp" placeholder="V apport">
-      <input id="sv_ecapp" placeholder="EC apport">
+      <input id="sv_tours" class="input" placeholder="Tours / Heures">
+      <input id="sv_duree" class="input" placeholder="Durée (min)">
+      <input id="sv_repos" class="input" placeholder="Temps repos">
+      <input id="sv_vapp" class="input" placeholder="V apport">
+      <input id="sv_ecapp" class="input" placeholder="EC apport">
     </div>
-    <div class="row" style="margin-top:4px">
-      <input id="sv_phapp" placeholder="pH apport">
-      <input id="sv_vdr" placeholder="V drainage">
-      <input id="sv_ecdr" placeholder="EC drainage">
-      <input id="sv_phdr" placeholder="pH drainage">
-      <input id="sv_pctdr" placeholder="% drainage">
+    <div class="row">
+      <input id="sv_phapp" class="input" placeholder="pH apport">
+      <input id="sv_vdr" class="input" placeholder="V drainage">
+      <input id="sv_ecdr" class="input" placeholder="EC drainage">
+      <input id="sv_phdr" class="input" placeholder="pH drainage">
     </div>
     <div class="row" style="justify-content:flex-end;margin-top:6px">
       <button class="btn small" onclick="svSaveNew()">✓</button>
@@ -663,10 +674,11 @@ function scDel(i){
   const arr=scLoad(); if(!confirm('Supprimer cette société وكل شيء تابع لها ؟'))return;
   const id=arr[i].id;
   arr.splice(i,1); scSave(arr);
-  // delete farms + cascade
   let farms=rfLoadFarms().filter(f=>f.socId!==id);
   lsSet(LS_FARMS,farms);
-  // cascade باقي المستويات يديروها rfRenderAll
+  lsSet(LS_SECT, rfLoadSecteurs().filter(s=>farms.some(f=>f.id===s.farmId)));
+  lsSet(LS_PARC, rfLoadParcelles().filter(p=>farms.some(f=>f.id===p.farmId)));
+  lsSet(LS_POINT, rfLoadPoints().filter(pt=>farms.some(f=>f.id===pt.farmId)));
   rfRenderAll(); scRender();
 }
 
@@ -732,7 +744,6 @@ function rfRenderSecteurs(){
       <div class="actions"><button class="btn small danger" onclick="rfDelSecteur(${i})">🗑️</button></div>
     </div>`;
   }).join('') || '<div class="item"><span>Aucun secteur.</span></div>';
-  // fill parcelle form & suivi filters
   const opts=arr.map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
   const sPar=$('rf_par_sec'); if(sPar) sPar.innerHTML='<option value="">--</option>'+opts;
 }
@@ -754,7 +765,6 @@ function rfAddParcelle(){
   if(!sectId || !name) return toast('اختر secteur واسم parcelle');
   const arr=rfLoadParcelles();
   if(arr.some(p=>p.name===name && p.sectId===sectId)) return toast('Parcelle موجودة');
-  // farmId من secteur
   const sec=rfLoadSecteurs().find(s=>s.id===sectId);
   const farmId=sec?sec.farmId:0;
   arr.push({id:Date.now(),name,sectId,farmId});
@@ -771,7 +781,6 @@ function rfRenderParcelles(){
       <div class="actions"><button class="btn small danger" onclick="rfDelParcelle(${i})">🗑️</button></div>
     </div>`;
   }).join('') || '<div class="item"><span>Aucune parcelle.</span></div>';
-  // fill point form
   const opts=arr.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
   const sPtPar=$('rf_pt_par'); if(sPtPar) sPtPar.innerHTML='<option value="">--</option>'+opts;
 }
@@ -943,10 +952,12 @@ function brandingReset(){
 }
 
 /* ====== Suivi irrigation ====== */
-let svMode='';
+let svSelected={key:null,index:null};
+
 function svKey(fId,sId,pId,ptId){return [fId,sId,pId,ptId].join('|');}
 function svLoad(){return lsGet(LS_SUIVI,{});}
 function svSave(o){lsSet(LS_SUIVI,o);}
+
 function svFillFarm(){
   const s=$('sv_farm'); if(!s)return;
   const farms=rfLoadFarms();
@@ -993,6 +1004,10 @@ function svGetCurrentKey(){
   if(!fId||!sId||!pId||!ptId) return null;
   return svKey(fId,sId,pId,ptId);
 }
+function svShowIrrigation(){
+  svClearSelection();
+  toast('Tableau irrigation actif');
+}
 function svShowAdd(){
   if(!svGetCurrentKey()) return toast('اختر Ferme / Secteur / Parcelle / Point أولا');
   $('sv_modal').classList.remove('hidden');
@@ -1012,14 +1027,13 @@ function svSaveNew(){
     phapp:$('sv_phapp').value.trim(),
     vdr:$('sv_vdr').value.trim(),
     ecdr:$('sv_ecdr').value.trim(),
-    phdr:$('sv_phdr').value.trim(),
-    pctdr:$('sv_pctdr').value.trim()
+    phdr:$('sv_phdr').value.trim()
+    // pctdr يظل فارغ حالياً
   };
   const store=svLoad();
   store[key]=store[key]||[];
   store[key].push(row);
-  svSave(store);
-  ['sv_tours','sv_duree','sv_repos','sv_vapp','sv_ecapp','sv_phapp','sv_vdr','sv_ecdr','sv_phdr','sv_pctdr']
+  ['sv_tours','sv_duree','sv_repos','sv_vapp','sv_ecapp','sv_phapp','sv_vdr','sv_ecdr','sv_phdr']
     .forEach(id=>$(id).value='');
   svHideAdd();
   svReloadTable();
@@ -1029,6 +1043,7 @@ function svReloadTable(){
   const key=svGetCurrentKey();
   const tbody=$('sv_table').querySelector('tbody');
   tbody.innerHTML='';
+  svClearSelection();
   if(!key) return;
   const store=svLoad();
   const rows=store[key]||[];
@@ -1053,35 +1068,52 @@ function svReloadTable(){
     tbody.appendChild(tr);
   });
 }
-function svSetMode(m){
-  svMode = (svMode===m)? '' : m;
-  toast(svMode ? `وضع ${svMode}` : 'وضع عادي');
+function svClearSelection(){
+  svSelected={key:null,index:null};
+  document.querySelectorAll('#sv_table tbody tr').forEach(tr=>tr.classList.remove('selected'));
+  $('sv_row_actions').classList.add('hidden');
 }
 function svOnRowClick(tr){
   const key=svGetCurrentKey(); if(!key) return;
-  const store=svLoad(); const rows=store[key]||[];
   const idx=parseInt(tr.dataset.index);
-  const r=rows[idx];
-  if(svMode==='delete'){
-    if(!confirm('Supprimer cette ligne ?')) return;
-    rows.splice(idx,1); store[key]=rows; svSave(store); svReloadTable(); toast('تم الحذف');
-  }else if(svMode==='edit'){
-    const nv=prompt('Modifier (séparé par ;)',[
-      r.tours,r.duree,r.repos,r.vapp,r.ecapp,r.phapp,r.vdr,r.ecdr,r.phdr,r.pctdr
-    ].join(';'));
-    if(nv==null) return;
-    const p=nv.split(';');
-    if(p.length>=10){
-      [r.tours,r.duree,r.repos,r.vapp,r.ecapp,r.phapp,r.vdr,r.ecdr,r.phdr,r.pctdr]=p;
-      store[key]=rows; svSave(store); svReloadTable(); toast('تم التعديل');
-    }else toast('صيغة غير صحيحة');
-  }
+  svSelected={key,index:idx};
+  document.querySelectorAll('#sv_table tbody tr').forEach(r=>r.classList.remove('selected'));
+  tr.classList.add('selected');
+  $('sv_row_actions').classList.remove('hidden');
+}
+function svEditSelected(){
+  const {key,index}=svSelected;
+  if(key===null) return toast('اختر سطر للتعديل');
+  const store=svLoad(); const rows=store[key]||[];
+  const r=rows[index]; if(!r) return;
+  const nv=prompt(
+    'Modifier (sépare par ;) :\nTours;Durée;Repos;V apport;EC apport;pH apport;V drainage;EC drainage;pH drainage',
+    [r.tours,r.duree,r.repos,r.vapp,r.ecapp,r.phapp,r.vdr,r.ecdr,r.phdr].join(';')
+  );
+  if(nv==null) return;
+  const p=nv.split(';');
+  if(p.length>=9){
+    [r.tours,r.duree,r.repos,r.vapp,r.ecapp,r.phapp,r.vdr,r.ecdr,r.phdr]=p;
+    store[key]=rows; svSave(store); svReloadTable(); toast('تم التعديل');
+  }else toast('صيغة غير صحيحة');
+}
+function svDeleteSelected(){
+  const {key,index}=svSelected;
+  if(key===null) return toast('اختر سطر للحذف');
+  const store=svLoad(); const rows=store[key]||[];
+  if(!rows[index]) return;
+  if(!confirm('Supprimer cette ligne ?')) return;
+  rows.splice(index,1);
+  store[key]=rows; svSave(store);
+  svReloadTable();
+  toast('تم الحذف');
 }
 function svShare(){
   const key=svGetCurrentKey(); if(!key) return toast('اختر Point');
   const store=svLoad(); const rows=store[key]||[];
   if(!rows.length) return toast('لا توجد بيانات');
-  const txt=rows.map((r,i)=>`${i+1}) ${r.tours} | ${r.duree} | ${r.vapp} | ${r.vdr} ...`).join('\n');
+  const ptName=$('sv_pt').options[$('sv_pt').selectedIndex]?.text||'';
+  const txt=rows.map((r,i)=>`${i+1}) ${ptName} | ${r.tours} | ${r.duree} | ${r.vapp} | ${r.vdr}`).join('\n');
   if(navigator.share){
     navigator.share({text:txt}).catch(()=>{});
   }else if(navigator.clipboard){
@@ -1099,7 +1131,7 @@ function svExportCSV(){
   const lines=[header.join(',')];
   rows.forEach(r=>{
     lines.push([
-      ptName,r.tours,r.duree,r.repos,r.vapp,r.ecapp,r.phapp,r.vdr,r.ecdr,r.phdr,r.pctdr
+      ptName,r.tours,r.duree,r.repos,r.vapp,r.ecapp,r.phapp,r.vdr,r.ecdr,r.phdr,r.pctdr||''
     ].map(x=>`"${(x||'').replace(/"/g,'""')}"`).join(','));
   });
   const blob=new Blob([lines.join('\n')],{type:'text/csv'});
