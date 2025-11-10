@@ -25,8 +25,6 @@ body{
   background:radial-gradient(circle at top,#0f172a,#020817);
   color:var(--text);
   min-height:100vh;
-  padding:0;
-  margin:0;
   overflow-x:hidden;
 }
 .hidden{display:none!important}
@@ -227,9 +225,7 @@ body{
 .item b{color:var(--text)}
 .actions{display:flex;gap:4px}
 
-/* Suivi irrigation */
-.suivi-header{margin-bottom:10px}
-.select-row{margin:4px 0}
+/* Suivi irrigation table */
 .table-wrap{
   margin-top:10px;
   overflow-x:auto;
@@ -250,26 +246,33 @@ th{
   position:sticky;
   top:0;
 }
-.tr-active{outline:2px solid var(--accent)}
 
-/* Add form inline */
-.suivi-add{
-  margin-top:8px;
-  padding:8px;
-  border-radius:12px;
-  background:#020817;
-  border:1px dashed #374151;
-  display:grid;
-  gap:6px;
-  font-size:10px;
+/* Modal add suivi */
+.modal-full{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.7);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:3000;
 }
-.suivi-add .row{gap:4px}
-.suivi-add input{
+.modal-full.hidden{display:none}
+.modal-card{
+  background:#020817;
+  padding:12px;
+  border-radius:16px;
+  width:min(520px,92vw);
+  box-shadow:var(--shadow);
+  font-size:11px;
+}
+.modal-card h3{margin-bottom:6px;font-size:14px}
+.modal-card .row{gap:4px}
+.modal-card input{
   padding:5px 6px;
   font-size:10px;
 }
 
-/* Branding sliders */
 .range-row{display:flex;align-items:center;gap:8px;margin-top:4px}
 .range-row input[type=range]{flex:1}
 .range-row span{font-size:10px;color:var(--muted)}
@@ -300,13 +303,13 @@ th{
   <!-- Accueil -->
   <section id="page-home" class="card">
     <h2>Bienvenue 👋</h2>
-    <p class="muted">هذه هي لوحة التحكم الخاصة بـ <b>AB AGRIWEB</b>. استعمل القائمة العلوية للدخول إلى الإعدادات أو Suivi irrigation.</p>
+    <p class="muted">هذه هي لوحة التحكم الخاصة بـ <b>AB AGRIWEB</b>. استعمل القائمة للدخول إلى Paramètres أو Suivi irrigation.</p>
   </section>
 
   <!-- Paramètres hub -->
   <section id="page-settings" class="card hidden">
     <h2>Paramètres</h2>
-    <p class="muted">اختر ما تريد تهيئته.</p>
+    <p class="muted">كل إعدادات التطبيق مجمّعة هنا.</p>
     <div class="tiles">
       <div class="tile" onclick="showPage('operators')">
         <div class="ico">👥</div><span class="lbl">Gestion des utilisateurs</span>
@@ -315,9 +318,12 @@ th{
         <div class="ico">🧩</div><span class="lbl">Profils</span>
       </div>
       <div class="tile" onclick="showPage('refs')">
-        <div class="ico">📚</div><span class="lbl">Référentiels (Ferme / Secteur / Parcelle / Point)</span>
+        <div class="ico">📚</div><span class="lbl">Référentiels (Société / Ferme / Secteur / Parcelle / Point)</span>
       </div>
-      <div class="tile" onclick="alert('Module Droits d’accès à compléter لاحقًا.')">
+      <div class="tile" onclick="showPage('pwd')">
+        <div class="ico">🔑</div><span class="lbl">Mot de passe (admin)</span>
+      </div>
+      <div class="tile" onclick="alert('Droits d’accès: منظم صلاحيات متقدّم يمكنك إكماله لاحقًا.')">
         <div class="ico">🛡️</div><span class="lbl">Droits d’accès</span>
       </div>
       <div class="tile" onclick="showPage('branding')">
@@ -326,7 +332,7 @@ th{
     </div>
   </section>
 
-  <!-- Operators -->
+  <!-- Gestion utilisateurs -->
   <section id="page-operators" class="card hidden">
     <h2>Gestion des utilisateurs</h2>
     <div class="row" style="margin-top:6px">
@@ -351,7 +357,7 @@ th{
     <div class="list" id="opList"></div>
   </section>
 
-  <!-- Profiles -->
+  <!-- Profils -->
   <section id="page-profiles" class="card hidden">
     <h2>Profils</h2>
     <div class="row" style="margin-top:6px">
@@ -364,15 +370,41 @@ th{
     <div class="list" id="prList"></div>
   </section>
 
+  <!-- Mot de passe admin (placeholder بسيط) -->
+  <section id="page-pwd" class="card hidden">
+    <h2>Mot de passe admin</h2>
+    <p class="muted">يمكنك هنا تغيير كلمة مرور الحساب الرئيسي (محفوظة محليًا).</p>
+    <div class="row" style="margin-top:6px">
+      <div style="flex:1 1 150px">
+        <div class="label">Nouveau mot de passe</div>
+        <input id="pwd_new" type="password" class="input">
+      </div>
+      <button class="btn" onclick="pwdSave()">Enregistrer</button>
+    </div>
+  </section>
+
   <!-- Référentiels -->
   <section id="page-refs" class="card hidden">
     <h2>Référentiels</h2>
-    <p class="muted">هيكلة الضيعات لاستعمالها في Suivi irrigation.</p>
+    <p class="muted">ترتيب Société ⟶ Ferme ⟶ Secteur ⟶ Parcelle ⟶ Point لاستعمالها في Suivi irrigation.</p>
 
-    <!-- Ferme -->
+    <!-- Sociétés -->
+    <div class="card" style="margin-bottom:8px">
+      <h3 style="font-size:14px">Sociétés</h3>
+      <div class="row" style="margin-top:4px">
+        <div class="label">Nom société</div>
+        <input id="sc_name" class="input">
+        <button class="btn small" onclick="scAdd()">+</button>
+      </div>
+      <div class="list" id="scList"></div>
+    </div>
+
+    <!-- Fermes -->
     <div class="card" style="margin-bottom:8px">
       <h3 style="font-size:14px">Fermes</h3>
       <div class="row" style="margin-top:4px">
+        <div class="label">Société</div>
+        <select id="rf_farm_soc" class="input"></select>
         <div class="label">Nom ferme</div>
         <input id="rf_farm_name" class="input">
         <button class="btn small" onclick="rfAddFarm()">+</button>
@@ -380,7 +412,7 @@ th{
       <div class="list" id="rfFarmList"></div>
     </div>
 
-    <!-- Secteur -->
+    <!-- Secteurs -->
     <div class="card" style="margin-bottom:8px">
       <h3 style="font-size:14px">Secteurs</h3>
       <div class="row" style="margin-top:4px">
@@ -393,12 +425,10 @@ th{
       <div class="list" id="rfSecList"></div>
     </div>
 
-    <!-- Parcelle -->
+    <!-- Parcelles -->
     <div class="card" style="margin-bottom:8px">
       <h3 style="font-size:14px">Parcelles</h3>
       <div class="row" style="margin-top:4px">
-        <div class="label">Ferme</div>
-        <select id="rf_par_farm" class="input"></select>
         <div class="label">Secteur</div>
         <select id="rf_par_sec" class="input"></select>
         <div class="label">Nom parcelle</div>
@@ -408,17 +438,13 @@ th{
       <div class="list" id="rfParList"></div>
     </div>
 
-    <!-- Point -->
+    <!-- Points -->
     <div class="card">
       <h3 style="font-size:14px">Points</h3>
       <div class="row" style="margin-top:4px">
-        <div class="label">Ferme</div>
-        <select id="rf_pt_farm" class="input"></select>
-        <div class="label">Secteur</div>
-        <select id="rf_pt_sec" class="input"></select>
         <div class="label">Parcelle</div>
         <select id="rf_pt_par" class="input"></select>
-        <div class="label">Point</div>
+        <div class="label">Nom point</div>
         <input id="rf_pt_name" class="input">
         <button class="btn small" onclick="rfAddPoint()">+</button>
       </div>
@@ -439,11 +465,11 @@ th{
     <input id="br_badge_url" class="input" placeholder="URL (png/gif)">
     <input id="br_badge_file" type="file" accept="image/png,image/gif" class="input">
 
-    <div class="label" style="margin-top:8px">Login background (خلفية شاشة الدخول)</div>
+    <div class="label" style="margin-top:8px">Login background</div>
     <input id="br_loginbg_url" class="input" placeholder="URL (jpg/png/gif)">
     <input id="br_loginbg_file" type="file" accept="image/*" class="input">
 
-    <div class="label" style="margin-top:8px">Fond dashboard (خلفية داخلية)</div>
+    <div class="label" style="margin-top:8px">Fond dashboard (intérieur)</div>
     <input id="br_dashbg_url" class="input" placeholder="URL (jpg/png/gif)">
     <input id="br_dashbg_file" type="file" accept="image/*" class="input">
 
@@ -464,27 +490,20 @@ th{
 
   <!-- Suivi irrigation -->
   <section id="page-suivi" class="card hidden">
-    <div class="suivi-header">
-      <h2>Suivi irrigation</h2>
-      <p class="muted">اختر الضيعة ثم secteur / parcelle / point ثم أضف القياسات في الجدول.</p>
-    </div>
+    <h2>Suivi irrigation</h2>
+    <p class="muted">اختر Société / Ferme / Secteur / Parcelle / Point ثم أضف القياسات.</p>
 
-    <div class="select-row">
-      <div class="label">Ferme</div>
-      <select id="sv_farm" class="input" onchange="svOnFarm()"></select>
-    </div>
-    <div class="select-row">
-      <div class="label">Secteur</div>
-      <select id="sv_sec" class="input" onchange="svOnSec()"></select>
-    </div>
-    <div class="select-row">
-      <div class="label">Parcelle</div>
-      <select id="sv_par" class="input" onchange="svOnPar()"></select>
-    </div>
-    <div class="select-row">
-      <div class="label">Point</div>
-      <select id="sv_pt" class="input" onchange="svReloadTable()"></select>
-    </div>
+    <div class="label">Ferme</div>
+    <select id="sv_farm" class="input" onchange="svOnFarm()"></select>
+
+    <div class="label" style="margin-top:4px">Secteur</div>
+    <select id="sv_sec" class="input" onchange="svOnSec()"></select>
+
+    <div class="label" style="margin-top:4px">Parcelle</div>
+    <select id="sv_par" class="input" onchange="svOnPar()"></select>
+
+    <div class="label" style="margin-top:4px">Point</div>
+    <select id="sv_pt" class="input" onchange="svReloadTable()"></select>
 
     <div class="row" style="margin-top:8px;gap:6px">
       <button class="btn small" onclick="svShowAdd()">Ajouter</button>
@@ -495,33 +514,12 @@ th{
       <button class="btn small" onclick="svPrint()">Exporter PDF</button>
     </div>
 
-    <div id="sv_add_wrap" class="suivi-add hidden">
-      <div class="row">
-        <input id="sv_tours" placeholder="Tours / Heures">
-        <input id="sv_duree" placeholder="Durée (min)">
-        <input id="sv_repos" placeholder="Temps repos">
-        <input id="sv_vapp" placeholder="V apport">
-        <input id="sv_ecapp" placeholder="EC apport">
-      </div>
-      <div class="row">
-        <input id="sv_phapp" placeholder="pH apport">
-        <input id="sv_vdr" placeholder="V drainage">
-        <input id="sv_ecdr" placeholder="EC drainage">
-        <input id="sv_phdr" placeholder="pH drainage">
-        <input id="sv_pctdr" placeholder="% drainage">
-      </div>
-      <div class="row" style="justify-content:flex-end">
-        <button class="btn small" onclick="svSaveNew()">✓</button>
-        <button class="btn small danger" onclick="svHideAdd()">✕</button>
-      </div>
-    </div>
-
     <div class="table-wrap">
       <table id="sv_table">
         <thead>
           <tr>
             <th>#</th>
-            <th>Serre / Point</th>
+            <th>Point</th>
             <th>Tours / Heures</th>
             <th>Durée (min)</th>
             <th>Temps repos</th>
@@ -541,19 +539,48 @@ th{
 
 </main>
 
+<!-- Modal إضافة قياسات -->
+<div id="sv_modal" class="modal-full hidden">
+  <div class="modal-card">
+    <h3>Ajouter une mesure d'irrigation</h3>
+    <p class="muted" style="margin-bottom:4px">إملأ الحقول ثم اضغط ✓ للحفظ أو ✕ للإلغاء.</p>
+    <div class="row">
+      <input id="sv_tours" placeholder="Tours / Heures">
+      <input id="sv_duree" placeholder="Durée (min)">
+      <input id="sv_repos" placeholder="Temps repos">
+      <input id="sv_vapp" placeholder="V apport">
+      <input id="sv_ecapp" placeholder="EC apport">
+    </div>
+    <div class="row" style="margin-top:4px">
+      <input id="sv_phapp" placeholder="pH apport">
+      <input id="sv_vdr" placeholder="V drainage">
+      <input id="sv_ecdr" placeholder="EC drainage">
+      <input id="sv_phdr" placeholder="pH drainage">
+      <input id="sv_pctdr" placeholder="% drainage">
+    </div>
+    <div class="row" style="justify-content:flex-end;margin-top:6px">
+      <button class="btn small" onclick="svSaveNew()">✓</button>
+      <button class="btn small danger" onclick="svHideAdd()">✕</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast-wrap hidden" id="toast"><div class="toast" id="toast-msg"></div></div>
 
 <script>
-/* ========== Helpers ========== */
+/* ====== KEYS ====== */
 const LS_PROFILES='ab_profiles';
 const LS_OPERATORS='ab_operators';
+const LS_SOC='ab_societes';
 const LS_FARMS='ab_farms';
 const LS_SECT='ab_secteurs';
 const LS_PARC='ab_parcelles';
 const LS_POINT='ab_points';
 const LS_SUIVI='ab_suivi_irrig';
 const LS_BRAND='ab_branding';
+const LS_ADMIN_PWD='ab_admin_pwd';
 
+/* ====== Helpers ====== */
 function $(id){return document.getElementById(id)}
 function toast(msg){
   const w=$('toast'),m=$('toast-msg');
@@ -566,78 +593,116 @@ function toggleMenu(){ $('sidebar').classList.contains('active')?closeMenu():ope
 function navTo(e,page){e.preventDefault();setActiveNav(e.currentTarget);showPage(page);closeMenu();}
 function setActiveNav(el){document.querySelectorAll('.sidebar a').forEach(a=>a.classList.remove('active'));el.classList.add('active');}
 function showPage(page){
-  ['home','settings','operators','profiles','refs','branding','suivi'].forEach(p=>{
+  ['home','settings','operators','profiles','refs','branding','suivi','pwd'].forEach(p=>{
     const el=$('page-'+p); if(el) el.classList.add('hidden');
   });
   const t=$('page-'+page); if(t) t.classList.remove('hidden');
 }
-
-/* Logout to index.html */
 function logout(e){e.preventDefault();window.location.href='index.html';}
 
-/* ========== Storage helpers ========== */
 function lsGet(k,def){try{const v=JSON.parse(localStorage.getItem(k));return v||def;}catch{return def;}}
 function lsSet(k,v){localStorage.setItem(k,JSON.stringify(v));}
 
-/* ========== Profiles ========== */
+/* ====== Profils ====== */
 function prLoad(){return lsGet(LS_PROFILES,["Admin"]);}
 function prSave(a){lsSet(LS_PROFILES,a);}
 function prRender(){
-  const list=$('prList');const arr=prLoad();
-  list.innerHTML=arr.map((n,i)=>`<div class="item">
-    <div><b>${n}</b></div>
-    <div class="actions">
-      <button class="btn small" onclick="prEdit(${i})">✏️</button>
-      <button class="btn small danger" onclick="prDel(${i})">🗑️</button>
-    </div>
-  </div>`).join('')||'<div class="item"><span>Aucun profil.</span></div>';
-  // fill select
-  const sel=$('op_profile'); if(sel){sel.innerHTML=arr.map(n=>`<option>${n}</option>`).join('');}
+  const arr=prLoad();
+  const list=$('prList');
+  list.innerHTML=arr.map((n,i)=>`
+    <div class="item">
+      <div><b>${n}</b></div>
+      <div class="actions">
+        <button class="btn small" onclick="prEdit(${i})">✏️</button>
+        <button class="btn small danger" onclick="prDel(${i})">🗑️</button>
+      </div>
+    </div>`).join('') || '<div class="item"><span>Aucun profil.</span></div>';
+  const sel=$('op_profile'); if(sel) sel.innerHTML=arr.map(n=>`<option>${n}</option>`).join('');
 }
 function prAdd(){
-  const v=$('pr_name').value.trim(); if(!v)return toast('أدخل اسم profil');
-  const arr=prLoad(); if(arr.includes(v))return toast('Profil موجود');
-  arr.push(v);prSave(arr);$('pr_name').value='';prRender();toast('تم الإضافة');
+  const v=$('pr_name').value.trim();
+  if(!v) return toast('أدخل اسم profil');
+  const arr=prLoad();
+  if(arr.includes(v)) return toast('Profil موجود');
+  arr.push(v); prSave(arr); $('pr_name').value=''; prRender(); toast('تم الإضافة');
 }
 function prEdit(i){
-  const arr=prLoad();const nv=prompt('Modifier profil',arr[i]);if(!nv)return;
-  arr[i]=nv.trim();prSave(arr);prRender();
+  const arr=prLoad(); const nv=prompt('Modifier profil',arr[i]); if(!nv) return;
+  arr[i]=nv.trim(); prSave(arr); prRender();
 }
 function prDel(i){
-  const arr=prLoad();if(!confirm('Supprimer profil ?'))return;
-  arr.splice(i,1);prSave(arr);prRender();
+  const arr=prLoad(); if(!confirm('Supprimer profil ?'))return;
+  arr.splice(i,1); prSave(arr); prRender();
 }
 
-/* ========== Fermes / Secteurs / Parcelles / Points ========== */
+/* ====== Sociétés ====== */
+function scLoad(){return lsGet(LS_SOC,[]);}
+function scSave(a){lsSet(LS_SOC,a);}
+function scAdd(){
+  const name=$('sc_name').value.trim();
+  if(!name) return toast('Nom société ?');
+  const arr=scLoad();
+  if(arr.some(s=>s.name===name)) return toast('Société موجودة');
+  arr.push({id:Date.now(),name});
+  scSave(arr); $('sc_name').value=''; scRender(); rfRenderAll(); toast('تم إضافة société');
+}
+function scRender(){
+  const arr=scLoad();
+  $('scList').innerHTML=arr.map((s,i)=>`
+    <div class="item">
+      <div><b>${s.name}</b></div>
+      <div class="actions">
+        <button class="btn small danger" onclick="scDel(${i})">🗑️</button>
+      </div>
+    </div>`).join('') || '<div class="item"><span>Aucune société.</span></div>';
+  const opts=arr.map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
+  const sel=$('rf_farm_soc');
+  if(sel) sel.innerHTML='<option value="">--</option>'+opts;
+}
+function scDel(i){
+  const arr=scLoad(); if(!confirm('Supprimer cette société وكل شيء تابع لها ؟'))return;
+  const id=arr[i].id;
+  arr.splice(i,1); scSave(arr);
+  // delete farms + cascade
+  let farms=rfLoadFarms().filter(f=>f.socId!==id);
+  lsSet(LS_FARMS,farms);
+  // cascade باقي المستويات يديروها rfRenderAll
+  rfRenderAll(); scRender();
+}
+
+/* ====== Fermes / Secteurs / Parcelles / Points ====== */
 function rfLoadFarms(){return lsGet(LS_FARMS,[]);}
 function rfSaveFarms(a){lsSet(LS_FARMS,a);}
+
 function rfAddFarm(){
+  const socId=parseInt($('rf_farm_soc').value||0);
   const name=$('rf_farm_name').value.trim();
-  if(!name)return toast('Nom ferme ?');
+  if(!socId || !name) return toast('اختر société واسم ferme');
   const arr=rfLoadFarms();
-  if(arr.some(f=>f.name===name))return toast('Ferme موجودة');
-  arr.push({id:Date.now(),name});
-  rfSaveFarms(arr);$('rf_farm_name').value='';rfRenderAll();toast('تم إضافة ferme');
+  if(arr.some(f=>f.name===name && f.socId===socId)) return toast('Ferme موجودة');
+  arr.push({id:Date.now(),name,socId});
+  rfSaveFarms(arr); $('rf_farm_name').value=''; rfRenderAll(); toast('تم إضافة ferme');
 }
 function rfRenderFarms(){
-  const arr=rfLoadFarms();const list=$('rfFarmList');
-  list.innerHTML=arr.map((f,i)=>`<div class="item">
-    <div><b>${f.name}</b></div>
-    <div class="actions">
-      <button class="btn small danger" onclick="rfDelFarm(${i})">🗑️</button>
-    </div>
-  </div>`).join('')||'<div class="item"><span>Aucune ferme.</span></div>';
-  // fill selects
+  const socs=scLoad();
+  const arr=rfLoadFarms();
+  const list=$('rfFarmList');
+  list.innerHTML=arr.map((f,i)=>{
+    const s=socs.find(x=>x.id===f.socId);
+    return `<div class="item">
+      <div><b>${f.name}</b> <span>(${s?s.name:''})</span></div>
+      <div class="actions"><button class="btn small danger" onclick="rfDelFarm(${i})">🗑️</button></div>
+    </div>`;
+  }).join('') || '<div class="item"><span>Aucune ferme.</span></div>';
   const opts=arr.map(f=>`<option value="${f.id}">${f.name}</option>`).join('');
-  ['rf_sec_farm','rf_par_farm','rf_pt_farm','sv_farm','op_farm'].forEach(id=>{
-    const s=$(id);if(s){s.innerHTML='<option value="">--</option>'+opts;}
+  ['rf_sec_farm','sv_farm','op_farm'].forEach(id=>{
+    const s=$(id); if(s) s.innerHTML='<option value="">--</option>'+opts;
   });
 }
 function rfDelFarm(i){
-  const arr=rfLoadFarms();if(!confirm('Supprimer ferme ?'))return;
+  const arr=rfLoadFarms(); if(!confirm('Supprimer ferme وكل ما يتبعها ؟'))return;
   const id=arr[i].id;
-  arr.splice(i,1);rfSaveFarms(arr);
-  // also remove sectors/parcelles/points liés
+  arr.splice(i,1); rfSaveFarms(arr);
   lsSet(LS_SECT, rfLoadSecteurs().filter(s=>s.farmId!==id));
   lsSet(LS_PARC, rfLoadParcelles().filter(p=>p.farmId!==id));
   lsSet(LS_POINT, rfLoadPoints().filter(p=>p.farmId!==id));
@@ -650,11 +715,11 @@ function rfSaveSecteurs(a){lsSet(LS_SECT,a);}
 function rfAddSecteur(){
   const farmId=parseInt($('rf_sec_farm').value||0);
   const name=$('rf_sec_name').value.trim();
-  if(!farmId||!name)return toast('اختر ferme واسم secteur');
+  if(!farmId || !name) return toast('اختر ferme واسم secteur');
   const arr=rfLoadSecteurs();
-  if(arr.some(s=>s.name===name && s.farmId===farmId))return toast('Secteur موجود');
+  if(arr.some(s=>s.name===name && s.farmId===farmId)) return toast('Secteur موجود');
   arr.push({id:Date.now(),farmId,name});
-  rfSaveSecteurs(arr);$('rf_sec_name').value='';rfRenderAll();toast('تم إضافة secteur');
+  rfSaveSecteurs(arr); $('rf_sec_name').value=''; rfRenderAll(); toast('تم إضافة secteur');
 }
 function rfRenderSecteurs(){
   const farms=rfLoadFarms();
@@ -666,13 +731,15 @@ function rfRenderSecteurs(){
       <div><b>${s.name}</b> <span>(${f?f.name:''})</span></div>
       <div class="actions"><button class="btn small danger" onclick="rfDelSecteur(${i})">🗑️</button></div>
     </div>`;
-  }).join('')||'<div class="item"><span>Aucun secteur.</span></div>';
+  }).join('') || '<div class="item"><span>Aucun secteur.</span></div>';
+  // fill parcelle form & suivi filters
+  const opts=arr.map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
+  const sPar=$('rf_par_sec'); if(sPar) sPar.innerHTML='<option value="">--</option>'+opts;
 }
 function rfDelSecteur(i){
-  const arr=rfLoadSecteurs();if(!confirm('Supprimer secteur ?'))return;
+  const arr=rfLoadSecteurs(); if(!confirm('Supprimer secteur وكل ما تحته ؟'))return;
   const id=arr[i].id;
-  arr.splice(i,1);rfSaveSecteurs(arr);
-  // remove parcelles & points liés
+  arr.splice(i,1); rfSaveSecteurs(arr);
   lsSet(LS_PARC, rfLoadParcelles().filter(p=>p.sectId!==id));
   lsSet(LS_POINT, rfLoadPoints().filter(p=>p.sectId!==id));
   rfRenderAll();
@@ -681,41 +748,37 @@ function rfDelSecteur(i){
 /* Parcelles */
 function rfLoadParcelles(){return lsGet(LS_PARC,[]);}
 function rfSaveParcelles(a){lsSet(LS_PARC,a);}
-function rfUpdateParSecOptions(){
-  const farmId=parseInt($('rf_par_farm').value||0);
-  const secs=rfLoadSecteurs().filter(s=>!farmId || s.farmId===farmId);
-  const s=$('rf_par_sec');
-  if(s)s.innerHTML='<option value="">--</option>'+secs.map(x=>`<option value="${x.id}">${x.name}</option>`).join('');
-}
-$('rf_par_farm') && $('rf_par_farm').addEventListener('change',rfUpdateParSecOptions);
 function rfAddParcelle(){
-  const farmId=parseInt($('rf_par_farm').value||0);
   const sectId=parseInt($('rf_par_sec').value||0);
   const name=$('rf_par_name').value.trim();
-  if(!farmId||!sectId||!name)return toast('أكمل Ferme/Secteur/Parcelle');
+  if(!sectId || !name) return toast('اختر secteur واسم parcelle');
   const arr=rfLoadParcelles();
-  if(arr.some(p=>p.name===name && p.sectId===sectId))return toast('Parcelle موجودة');
-  arr.push({id:Date.now(),farmId,sectId,name});
-  rfSaveParcelles(arr);$('rf_par_name').value='';rfRenderAll();toast('تم إضافة parcelle');
+  if(arr.some(p=>p.name===name && p.sectId===sectId)) return toast('Parcelle موجودة');
+  // farmId من secteur
+  const sec=rfLoadSecteurs().find(s=>s.id===sectId);
+  const farmId=sec?sec.farmId:0;
+  arr.push({id:Date.now(),name,sectId,farmId});
+  rfSaveParcelles(arr); $('rf_par_name').value=''; rfRenderAll(); toast('تم إضافة parcelle');
 }
 function rfRenderParcelles(){
-  const farms=rfLoadFarms();
   const secs=rfLoadSecteurs();
   const arr=rfLoadParcelles();
   const list=$('rfParList');
   list.innerHTML=arr.map((p,i)=>{
-    const f=farms.find(x=>x.id===p.farmId);
     const s=secs.find(x=>x.id===p.sectId);
     return `<div class="item">
-      <div><b>${p.name}</b> <span>(${f?f.name:''} / ${s?s.name:''})</span></div>
+      <div><b>${p.name}</b> <span>(${s?s.name:''})</span></div>
       <div class="actions"><button class="btn small danger" onclick="rfDelParcelle(${i})">🗑️</button></div>
     </div>`;
-  }).join('')||'<div class="item"><span>Aucune parcelle.</span></div>';
+  }).join('') || '<div class="item"><span>Aucune parcelle.</span></div>';
+  // fill point form
+  const opts=arr.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
+  const sPtPar=$('rf_pt_par'); if(sPtPar) sPtPar.innerHTML='<option value="">--</option>'+opts;
 }
 function rfDelParcelle(i){
-  const arr=rfLoadParcelles();if(!confirm('Supprimer parcelle ?'))return;
+  const arr=rfLoadParcelles(); if(!confirm('Supprimer parcelle وكل points ديالها ؟'))return;
   const id=arr[i].id;
-  arr.splice(i,1);rfSaveParcelles(arr);
+  arr.splice(i,1); rfSaveParcelles(arr);
   lsSet(LS_POINT, rfLoadPoints().filter(p=>p.parId!==id));
   rfRenderAll();
 }
@@ -723,31 +786,22 @@ function rfDelParcelle(i){
 /* Points */
 function rfLoadPoints(){return lsGet(LS_POINT,[]);}
 function rfSavePoints(a){lsSet(LS_POINT,a);}
-function rfUpdatePtSecPar(){
-  const farmId=parseInt($('rf_pt_farm').value||0);
-  const secs=rfLoadSecteurs().filter(s=>!farmId || s.farmId===farmId);
-  $('rf_pt_sec').innerHTML='<option value="">--</option>'+secs.map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
-  $('rf_pt_par').innerHTML='<option value="">--</option>';
-}
-$('rf_pt_farm') && $('rf_pt_farm').addEventListener('change',rfUpdatePtSecPar);
-$('rf_pt_sec') && $('rf_pt_sec').addEventListener('change',()=>{
-  const farmId=parseInt($('rf_pt_farm').value||0);
-  const sectId=parseInt($('rf_pt_sec').value||0);
-  const pars=rfLoadParcelles().filter(p=>
-    (!farmId || p.farmId===farmId) && (!sectId || p.sectId===sectId)
-  );
-  $('rf_pt_par').innerHTML='<option value="">--</option>'+pars.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
-});
 function rfAddPoint(){
-  const farmId=parseInt($('rf_pt_farm').value||0);
-  const sectId=parseInt($('rf_pt_sec').value||0);
   const parId=parseInt($('rf_pt_par').value||0);
   const name=$('rf_pt_name').value.trim();
-  if(!farmId||!sectId||!parId||!name)return toast('أكمل الإختيار');
+  if(!parId || !name) return toast('اختر parcelle واسم point');
+  const parc=rfLoadParcelles().find(p=>p.id===parId);
+  if(!parc) return toast('Parcelle غير موجودة');
   const arr=rfLoadPoints();
-  if(arr.some(p=>p.name===name && p.parId===parId))return toast('Point موجود');
-  arr.push({id:Date.now(),farmId,sectId,parId,name});
-  rfSavePoints(arr);$('rf_pt_name').value='';rfRenderAll();toast('تم إضافة point');
+  if(arr.some(p=>p.name===name && p.parId===parId)) return toast('Point موجود');
+  arr.push({
+    id:Date.now(),
+    name,
+    parId,
+    sectId:parc.sectId,
+    farmId:parc.farmId
+  });
+  rfSavePoints(arr); $('rf_pt_name').value=''; rfRenderAll(); toast('تم إضافة point');
 }
 function rfRenderPoints(){
   const farms=rfLoadFarms(),secs=rfLoadSecteurs(),pars=rfLoadParcelles();
@@ -761,13 +815,15 @@ function rfRenderPoints(){
       <div><b>${p.name}</b> <span>(${f?f.name:''} / ${s?s.name:''} / ${pr?pr.name:''})</span></div>
       <div class="actions"><button class="btn small danger" onclick="rfDelPoint(${i})">🗑️</button></div>
     </div>`;
-  }).join('')||'<div class="item"><span>Aucun point.</span></div>';
+  }).join('') || '<div class="item"><span>Aucun point.</span></div>';
 }
 function rfDelPoint(i){
-  const arr=rfLoadPoints();if(!confirm('Supprimer point ?'))return;
-  arr.splice(i,1);rfSavePoints(arr);rfRenderAll();
+  const arr=rfLoadPoints(); if(!confirm('Supprimer point ?'))return;
+  arr.splice(i,1); rfSavePoints(arr); rfRenderAll();
 }
+
 function rfRenderAll(){
+  scRender();
   rfRenderFarms();
   rfRenderSecteurs();
   rfRenderParcelles();
@@ -775,7 +831,7 @@ function rfRenderAll(){
   svFillFarm();
 }
 
-/* ========== Operators ========== */
+/* ====== Operators ====== */
 function opLoad(){return lsGet(LS_OPERATORS,[]);}
 function opSave(a){lsSet(LS_OPERATORS,a);}
 function opAdd(){
@@ -783,42 +839,60 @@ function opAdd(){
   const p=$('op_pass').value.trim();
   const profile=$('op_profile').value.trim();
   const farmId=parseInt($('op_farm').value||0);
-  if(!u||!p||!profile||!farmId)return toast('أكمل بيانات المستخدم');
+  if(!u||!p||!profile||!farmId) return toast('أكمل بيانات المستخدم');
   const arr=opLoad();
-  if(arr.some(x=>x.username.toLowerCase()===u.toLowerCase()))return toast('User موجود');
+  if(arr.some(x=>x.username.toLowerCase()===u.toLowerCase())) return toast('User موجود');
   arr.push({username:u,password:p,profile,farmId});
-  opSave(arr);$('op_user').value='';$('op_pass').value='';opRender();toast('تم إضافة المستخدم');
+  opSave(arr);
+  $('op_user').value='';$('op_pass').value='';
+  opRender(); toast('تم إضافة المستخدم');
 }
 function opRender(){
-  const list=$('opList');const arr=opLoad();const farms=rfLoadFarms();
+  const arr=opLoad();
+  const farms=rfLoadFarms();
+  const list=$('opList');
   list.innerHTML=arr.map((u,i)=>{
     const f=farms.find(x=>x.id===u.farmId);
     return `<div class="item">
       <div><b>${u.username}</b> <span>${u.profile}</span> <span>${f?f.name:''}</span></div>
       <div class="actions"><button class="btn small danger" onclick="opDel(${i})">🗑️</button></div>
     </div>`;
-  }).join('')||'<div class="item"><span>Aucun utilisateur.</span></div>';
+  }).join('') || '<div class="item"><span>Aucun utilisateur.</span></div>';
 }
 function opDel(i){
-  const arr=opLoad();if(!confirm('Supprimer utilisateur ?'))return;
-  arr.splice(i,1);opSave(arr);opRender();
+  const arr=opLoad(); if(!confirm('Supprimer utilisateur ?'))return;
+  arr.splice(i,1); opSave(arr); opRender();
 }
 
-/* ========== Branding & Thème ========== */
+/* ====== Mot de passe admin ====== */
+function pwdSave(){
+  const v=$('pwd_new').value.trim();
+  if(!v) return toast('أدخل كلمة مرور');
+  lsSet(LS_ADMIN_PWD,{pwd:v});
+  $('pwd_new').value='';
+  toast('تم حفظ كلمة المرور (محليًا)');
+}
+
+/* ====== Branding ====== */
 function readFileAsDataURL(file,cb){
   const r=new FileReader();r.onload=()=>cb(r.result);r.readAsDataURL(file);
 }
 function brandLoad(){return lsGet(LS_BRAND,{
   logo:null,badge:null,loginBg:null,dashBg:null,dashColor:"#020817",zoom:{x:100,y:100}
 });}
-function brandSave(cfg){lsSet(LS_BRAND,cfg);}
+function brandSave(c){lsSet(LS_BRAND,c);}
 function applyBrand(){
   const c=brandLoad();
-  // badge top-right
   if(c.badge){$('brandBadge').src=c.badge;$('brandBadge').classList.remove('hidden');}
   else $('brandBadge').classList.add('hidden');
-  // app title maybe from logo handled in index.html
-  document.body.style.backgroundColor=c.dashColor||'#020817';
+  if(c.dashBg){
+    document.body.style.backgroundImage=`url('${c.dashBg}')`;
+    document.body.style.backgroundSize='cover';
+    document.body.style.backgroundAttachment='fixed';
+  }else{
+    document.body.style.backgroundImage='';
+    document.body.style.backgroundColor=c.dashColor||'#020817';
+  }
 }
 function brandingInitForm(){
   const c=brandLoad();
@@ -830,56 +904,53 @@ function brandingInitForm(){
   $('br_zoom_x').value=c.zoom?.x||100;
   $('br_zoom_y').value=c.zoom?.y||100;
 }
-function brandingSave(){
-  const c=brandLoad();
-  const urlLogo=$('br_logo_url').value.trim();
-  const urlBadge=$('br_badge_url').value.trim();
-  const urlLoginBg=$('br_loginbg_url').value.trim();
-  const urlDashBg=$('br_dashbg_url').value.trim();
-  if(urlLogo && !/\.(png|gif)(\?|#|$)/i.test(urlLogo) && !urlLogo.startsWith('data:')) return toast('Logo URL غير صالح');
-  c.logo=urlLogo||c.logo;
-  if(urlBadge && !/\.(png|gif)(\?|#|$)/i.test(urlBadge) && !urlBadge.startsWith('data:')) return toast('Badge URL غير صالح');
-  c.badge=urlBadge||c.badge;
-  if(urlLoginBg && !urlLoginBg.startsWith('data:')) c.loginBg=urlLoginBg;
-  if(urlDashBg && !urlDashBg.startsWith('data:')) c.dashBg=urlDashBg;
-  c.dashColor=$('br_dash_color').value||'#020817';
-  c.zoom={x:parseInt($('br_zoom_x').value||100),y:parseInt($('br_zoom_y').value||100)};
-  brandSave(c);
-  applyBrand();
-  toast('تم الحفظ ✅');
-}
-function brandingReset(){
-  localStorage.removeItem(LS_BRAND);
-  brandingInitForm();applyBrand();
-  toast('رجعنا للإعدادات الافتراضية');
-}
-
-/* handle file inputs */
 ['br_logo_file','br_badge_file','br_loginbg_file','br_dashbg_file'].forEach(id=>{
   const el=$(id); if(!el)return;
   el.addEventListener('change',e=>{
     const f=e.target.files[0]; if(!f)return;
-    readFileAsDataURL(f,(data)=>{
+    readFileAsDataURL(f,data=>{
       const c=brandLoad();
       if(id==='br_logo_file') c.logo=data;
       if(id==='br_badge_file') c.badge=data;
       if(id==='br_loginbg_file') c.loginBg=data;
       if(id==='br_dashbg_file') c.dashBg=data;
-      brandSave(c);applyBrand();toast('تم تحديث الصورة');
+      brandSave(c); applyBrand(); toast('تم تحديث الصورة');
     });
   });
 });
+function brandingSave(){
+  const c=brandLoad();
+  const dz=(id)=>$(id).value.trim();
+  const lg=dz('br_logo_url'), bd=dz('br_badge_url'),
+        lbg=dz('br_loginbg_url'), dbg=dz('br_dashbg_url');
+  if(lg && !lg.startsWith('data:') && !/\.(png|gif)(\?|#|$)/i.test(lg)) return toast('Logo URL غير صالح');
+  if(bd && !bd.startsWith('data:') && !/\.(png|gif)(\?|#|$)/i.test(bd)) return toast('Badge URL غير صالح');
+  c.logo = lg || c.logo;
+  c.badge = bd || c.badge;
+  c.loginBg = lbg || c.loginBg;
+  c.dashBg = dbg || c.dashBg;
+  c.dashColor = $('br_dash_color').value || '#020817';
+  c.zoom = {
+    x:parseInt($('br_zoom_x').value||100),
+    y:parseInt($('br_zoom_y').value||100)
+  };
+  brandSave(c); applyBrand(); toast('تم الحفظ ✅');
+}
+function brandingReset(){
+  localStorage.removeItem(LS_BRAND);
+  brandingInitForm(); applyBrand();
+  toast('رجعنا للإعدادات الافتراضية');
+}
 
-/* ========== Suivi irrigation ========== */
-let svMode=''; // '', 'edit', 'delete'
+/* ====== Suivi irrigation ====== */
+let svMode='';
 function svKey(fId,sId,pId,ptId){return [fId,sId,pId,ptId].join('|');}
 function svLoad(){return lsGet(LS_SUIVI,{});}
-function svSave(obj){lsSet(LS_SUIVI,obj);}
+function svSave(o){lsSet(LS_SUIVI,o);}
 function svFillFarm(){
-  const farmSel=$('sv_farm');
-  if(!farmSel)return;
+  const s=$('sv_farm'); if(!s)return;
   const farms=rfLoadFarms();
-  farmSel.innerHTML='<option value="">-- اختر ferme --</option>'+
+  s.innerHTML='<option value="">-- Ferme --</option>'+
     farms.map(f=>`<option value="${f.id}">${f.name}</option>`).join('');
   svOnFarm();
 }
@@ -896,7 +967,7 @@ function svOnSec(){
   const fId=parseInt($('sv_farm').value||0);
   const sId=parseInt($('sv_sec').value||0);
   const pars=rfLoadParcelles().filter(p=>
-    (!fId||p.farmId===fId)&&(!sId||p.sectId===sId)
+    (!fId || p.farmId===fId) && (!sId || p.sectId===sId)
   );
   $('sv_par').innerHTML='<option value="">-- Parcelle --</option>'+
     pars.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
@@ -908,25 +979,30 @@ function svOnPar(){
   const sId=parseInt($('sv_sec').value||0);
   const pId=parseInt($('sv_par').value||0);
   const pts=rfLoadPoints().filter(pt=>
-    (!fId||pt.farmId===fId)&&(!sId||pt.sectId===sId)&&(!pId||pt.parId===pId)
+    (!fId || pt.farmId===fId) && (!sId || pt.sectId===sId) && (!pId || pt.parId===pId)
   );
   $('sv_pt').innerHTML='<option value="">-- Point --</option>'+
     pts.map(pt=>`<option value="${pt.id}">${pt.name}</option>`).join('');
   svReloadTable();
 }
-function svShowAdd(){$('sv_add_wrap').classList.remove('hidden');}
-function svHideAdd(){$('sv_add_wrap').classList.add('hidden');}
 function svGetCurrentKey(){
   const fId=parseInt($('sv_farm').value||0);
   const sId=parseInt($('sv_sec').value||0);
   const pId=parseInt($('sv_par').value||0);
   const ptId=parseInt($('sv_pt').value||0);
-  if(!fId||!sId||!pId||!ptId){return null;}
+  if(!fId||!sId||!pId||!ptId) return null;
   return svKey(fId,sId,pId,ptId);
+}
+function svShowAdd(){
+  if(!svGetCurrentKey()) return toast('اختر Ferme / Secteur / Parcelle / Point أولا');
+  $('sv_modal').classList.remove('hidden');
+}
+function svHideAdd(){
+  $('sv_modal').classList.add('hidden');
 }
 function svSaveNew(){
   const key=svGetCurrentKey();
-  if(!key)return toast('اختر Ferme / Secteur / Parcelle / Point أولا');
+  if(!key) {toast('اختر Ferme / Secteur / Parcelle / Point أولا');return;}
   const row={
     tours:$('sv_tours').value.trim(),
     duree:$('sv_duree').value.trim(),
@@ -943,7 +1019,8 @@ function svSaveNew(){
   store[key]=store[key]||[];
   store[key].push(row);
   svSave(store);
-  ['sv_tours','sv_duree','sv_repos','sv_vapp','sv_ecapp','sv_phapp','sv_vdr','sv_ecdr','sv_phdr','sv_pctdr'].forEach(id=>$(id).value='');
+  ['sv_tours','sv_duree','sv_repos','sv_vapp','sv_ecapp','sv_phapp','sv_vdr','sv_ecdr','sv_phdr','sv_pctdr']
+    .forEach(id=>$(id).value='');
   svHideAdd();
   svReloadTable();
   toast('تمت إضافة السطر');
@@ -952,11 +1029,10 @@ function svReloadTable(){
   const key=svGetCurrentKey();
   const tbody=$('sv_table').querySelector('tbody');
   tbody.innerHTML='';
-  if(!key)return;
+  if(!key) return;
   const store=svLoad();
   const rows=store[key]||[];
-  const ptSel=$('sv_pt');
-  const ptName=ptSel.options[ptSel.selectedIndex]?.text||'';
+  const ptName=$('sv_pt').options[$('sv_pt').selectedIndex]?.text||'';
   rows.forEach((r,i)=>{
     const tr=document.createElement('tr');
     tr.dataset.index=i;
@@ -978,48 +1054,47 @@ function svReloadTable(){
   });
 }
 function svSetMode(m){
-  svMode=(svMode===m)?'':m;
-  toast(svMode?`وضع ${svMode}`:'وضع عادي');
+  svMode = (svMode===m)? '' : m;
+  toast(svMode ? `وضع ${svMode}` : 'وضع عادي');
 }
 function svOnRowClick(tr){
-  const key=svGetCurrentKey(); if(!key)return;
+  const key=svGetCurrentKey(); if(!key) return;
   const store=svLoad(); const rows=store[key]||[];
   const idx=parseInt(tr.dataset.index);
+  const r=rows[idx];
   if(svMode==='delete'){
-    if(!confirm('Supprimer cette ligne ?'))return;
+    if(!confirm('Supprimer cette ligne ?')) return;
     rows.splice(idx,1); store[key]=rows; svSave(store); svReloadTable(); toast('تم الحذف');
   }else if(svMode==='edit'){
-    const r=rows[idx];
-    const nv=prompt('Modifier (séparé par ;)', [
+    const nv=prompt('Modifier (séparé par ;)',[
       r.tours,r.duree,r.repos,r.vapp,r.ecapp,r.phapp,r.vdr,r.ecdr,r.phdr,r.pctdr
     ].join(';'));
-    if(nv==null)return;
-    const parts=nv.split(';');
-    if(parts.length>=10){
-      [r.tours,r.duree,r.repos,r.vapp,r.ecapp,r.phapp,r.vdr,r.ecdr,r.phdr,r.pctdr]=parts;
+    if(nv==null) return;
+    const p=nv.split(';');
+    if(p.length>=10){
+      [r.tours,r.duree,r.repos,r.vapp,r.ecapp,r.phapp,r.vdr,r.ecdr,r.phdr,r.pctdr]=p;
       store[key]=rows; svSave(store); svReloadTable(); toast('تم التعديل');
-    }else{
-      toast('صيغة غير صحيحة');
-    }
+    }else toast('صيغة غير صحيحة');
   }
 }
 function svShare(){
-  const key=svGetCurrentKey(); if(!key)return toast('اختر Point');
+  const key=svGetCurrentKey(); if(!key) return toast('اختر Point');
   const store=svLoad(); const rows=store[key]||[];
-  if(!rows.length)return toast('لا توجد بيانات');
+  if(!rows.length) return toast('لا توجد بيانات');
   const txt=rows.map((r,i)=>`${i+1}) ${r.tours} | ${r.duree} | ${r.vapp} | ${r.vdr} ...`).join('\n');
   if(navigator.share){
     navigator.share({text:txt}).catch(()=>{});
+  }else if(navigator.clipboard){
+    navigator.clipboard.writeText(txt); toast('تم نسخ البيانات، يمكنك لصقها في WhatsApp أو Gmail');
   }else{
-    navigator.clipboard && navigator.clipboard.writeText(txt);
-    toast('تم نسخ البيانات، يمكنك لصقها في WhatsApp أو Gmail');
+    toast('شارك يدويًا: نسخ غير مدعوم في هذا المتصفح');
   }
 }
 function svExportCSV(){
-  const key=svGetCurrentKey(); if(!key)return toast('اختر Point');
+  const key=svGetCurrentKey(); if(!key) return toast('اختر Point');
   const store=svLoad(); const rows=store[key]||[];
-  if(!rows.length)return toast('لا توجد بيانات');
-  const header=['Serre/Point','Tours/Heures','Duree(min)','Temps repos','V apport','EC apport','pH apport','V drainage','EC drainage','pH drainage','% drainage'];
+  if(!rows.length) return toast('لا توجد بيانات');
+  const header=['Point','Tours/Heures','Duree(min)','Temps repos','V apport','EC apport','pH apport','V drainage','EC drainage','pH drainage','% drainage'];
   const ptName=$('sv_pt').options[$('sv_pt').selectedIndex].text;
   const lines=[header.join(',')];
   rows.forEach(r=>{
@@ -1033,11 +1108,9 @@ function svExportCSV(){
   a.href=url;a.download='suivi_irrigation.csv';a.click();
   URL.revokeObjectURL(url);
 }
-function svPrint(){
-  window.print();
-}
+function svPrint(){window.print();}
 
-/* ========== INIT ========== */
+/* ====== INIT ====== */
 (function init(){
   applyBrand();
   rfRenderAll();
