@@ -980,6 +980,16 @@ function rfDelPoint(i){
   const arr=rfLoadPoints();if(!confirm('Supprimer point ?'))return;
   arr.splice(i,1);rfSavePoints(arr);rfRenderAll();
 }
+/* RÉFÉRENTIELS - RENDER ALL */
+function rfRenderAll() {
+  // afficher toutes les listes (société, ferme, secteur, parcelle, point)
+  scRender();        // Sociétés
+  rfRenderFarms();   // Fermes
+  rfRenderSecteurs();// Secteurs
+  rfRenderParcelles();// Parcelles
+  rfRenderPoints();  // Points
+  svFillFarm();      // Recharge aussi les sélecteurs dans Suivi irrigation
+}
 
 /* Operators */
 function opLoad(){return lsGet(LS_OPERATORS,[]);}
