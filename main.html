@@ -226,9 +226,9 @@ body{
 .item b{color:var(--text)}
 .actions{display:flex;gap:4px}
 
-/* Suivi irrigation table */
+/* Suivi irrigation table (in modal) */
 .table-wrap{
-  margin-top:10px;
+  margin-top:6px;
   overflow-x:auto;
 }
 table{
@@ -255,7 +255,7 @@ tr.selected{background:#111827;}
   justify-content:flex-end;
 }
 
-/* Modal add suivi */
+/* Modal full */
 .modal-full{
   position:fixed;
   inset:0;
@@ -408,7 +408,7 @@ tr.selected{background:#111827;}
   <!-- Référentiels -->
   <section id="page-refs" class="card hidden">
     <h2>Référentiels</h2>
-    <p class="muted">ترتيب Société ⟶ Ferme ⟶ Secteur ⟶ Parcelle ⟶ Point لاستعمالها في Suivi irrigation.</p>
+    <p class="muted">Société ⟶ Ferme ⟶ Secteur ⟶ Parcelle ⟶ Point لاستعمالها في Suivi irrigation.</p>
 
     <!-- Sociétés -->
     <div class="card" style="margin-bottom:8px">
@@ -576,10 +576,10 @@ tr.selected{background:#111827;}
     </div>
   </section>
 
-  <!-- Suivi irrigation -->
+  <!-- Suivi irrigation (selectors + buttons فقط) -->
   <section id="page-suivi" class="card hidden">
     <h2>Suivi irrigation</h2>
-    <p class="muted">اختر Ferme / Secteur / Parcelle / Point، من بعد استعمل زر Irrigation لإظهار الجدول.</p>
+    <p class="muted">اختر Ferme / Secteur / Parcelle / Point، ثم اضغط زر <b>Irrigation</b> لإظهار جدول القياسات.</p>
 
     <div class="label">Ferme</div>
     <select id="sv_farm" class="input" onchange="svOnFarm()"></select>
@@ -600,39 +600,11 @@ tr.selected{background:#111827;}
       <button class="btn small" onclick="svExportCSV()">Exporter Excel</button>
       <button class="btn small" onclick="svPrint()">Exporter PDF</button>
     </div>
-
-    <div id="sv_row_actions" class="row hidden">
-      <button class="btn small" onclick="svEditSelected()">Modifier</button>
-      <button class="btn small danger" onclick="svDeleteSelected()">Supprimer</button>
-    </div>
-
-    <!-- الجدول مخفي حتى نضغط Irrigation -->
-    <div id="sv_table_wrap" class="table-wrap hidden">
-      <table id="sv_table">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Point</th>
-            <th>Tours / Heures</th>
-            <th>Durée (min)</th>
-            <th>Temps repos</th>
-            <th>V apport</th>
-            <th>EC apport</th>
-            <th>pH apport</th>
-            <th>V drainage</th>
-            <th>EC drainage</th>
-            <th>pH drainage</th>
-            <th>% drainage</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </div>
   </section>
 
 </main>
 
-<!-- Modal إضافة قياسات -->
+<!-- Modal: Ajouter mesure -->
 <div id="sv_modal" class="modal-full hidden">
   <div class="modal-card">
     <h3>Ajouter une mesure d'irrigation</h3>
@@ -653,6 +625,42 @@ tr.selected{background:#111827;}
     <div class="row" style="justify-content:flex-end;margin-top:6px">
       <button class="btn small" onclick="svSaveNew()">✓</button>
       <button class="btn small danger" onclick="svHideAdd()">✕</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Tableau irrigation -->
+<div id="sv_table_modal" class="modal-full hidden">
+  <div class="modal-card" style="max-height:90vh;overflow:hidden;display:flex;flex-direction:column;">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;">
+      <h3 style="margin:0">Irrigation - Tableau</h3>
+      <button class="btn small danger" onclick="svHideTableModal()">✕</button>
+    </div>
+    <p class="muted">القياسات المسجّلة لـ Point المحدد.</p>
+    <div class="table-wrap" style="flex:1;overflow:auto;margin-top:4px">
+      <table id="sv_table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Point</th>
+            <th>Tours / Heures</th>
+            <th>Durée (min)</th>
+            <th>Temps repos</th>
+            <th>V apport</th>
+            <th>EC apport</th>
+            <th>pH apport</th>
+            <th>V drainage</th>
+            <th>EC drainage</th>
+            <th>pH drainage</th>
+            <th>% drainage</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div id="sv_row_actions" class="row hidden">
+      <button class="btn small" onclick="svEditSelected()">Modifier</button>
+      <button class="btn small danger" onclick="svDeleteSelected()">Supprimer</button>
     </div>
   </div>
 </div>
@@ -700,12 +708,7 @@ function lsSet(k,v){localStorage.setItem(k,JSON.stringify(v));}
 function textDefault(){
   return {
     appTitle:'AB AGRIWEB',
-    nav:{
-      home:'Accueil',
-      settings:'Paramètres',
-      suivi:'Suivi irrigation',
-      logout:'Logout'
-    },
+    nav:{home:'Accueil',settings:'Paramètres',suivi:'Suivi irrigation',logout:'Logout'},
     tiles:{
       operators:'Gestion des utilisateurs',
       profiles:'Profils',
@@ -729,65 +732,56 @@ function textLoad(){
 function textSave(cfg){lsSet(LS_TEXT,cfg);}
 function applyTexts(){
   const cfg=textLoad();
-  document.title = (cfg.appTitle||'AB AGRIWEB')+' - Dashboard';
-  $('appTitleTop').textContent = cfg.appTitle||'AB AGRIWEB';
-  const appNameEl=$('homeAppName'); if(appNameEl) appNameEl.textContent=cfg.appTitle||'AB AGRIWEB';
-
-  $('lbl-nav-home').textContent = cfg.nav.home;
-  $('lbl-nav-settings').textContent = cfg.nav.settings;
-  $('lbl-nav-suivi').textContent = cfg.nav.suivi;
-  $('lbl-nav-logout').textContent = cfg.nav.logout;
-
-  $('lbl-tile-operators').textContent = cfg.tiles.operators;
-  $('lbl-tile-profiles').textContent = cfg.tiles.profiles;
-  $('lbl-tile-refs').textContent = cfg.tiles.refs;
-  $('lbl-tile-pwd').textContent = cfg.tiles.pwd;
-  $('lbl-tile-rights').textContent = cfg.tiles.rights;
-  $('lbl-tile-branding').textContent = cfg.tiles.branding;
-  $('lbl-tile-texts').textContent = cfg.tiles.texts;
+  document.title=(cfg.appTitle||'AB AGRIWEB')+' - Dashboard';
+  $('appTitleTop').textContent=cfg.appTitle||'AB AGRIWEB';
+  $('homeAppName').textContent=cfg.appTitle||'AB AGRIWEB';
+  $('lbl-nav-home').textContent=cfg.nav.home;
+  $('lbl-nav-settings').textContent=cfg.nav.settings;
+  $('lbl-nav-suivi').textContent=cfg.nav.suivi;
+  $('lbl-nav-logout').textContent=cfg.nav.logout;
+  $('lbl-tile-operators').textContent=cfg.tiles.operators;
+  $('lbl-tile-profiles').textContent=cfg.tiles.profiles;
+  $('lbl-tile-refs').textContent=cfg.tiles.refs;
+  $('lbl-tile-pwd').textContent=cfg.tiles.pwd;
+  $('lbl-tile-rights').textContent=cfg.tiles.rights;
+  $('lbl-tile-branding').textContent=cfg.tiles.branding;
+  $('lbl-tile-texts').textContent=cfg.tiles.texts;
 }
 function textsInitForm(){
   const cfg=textLoad();
-  $('txt_appTitle').value = cfg.appTitle||'';
-  $('txt_nav_home').value = cfg.nav.home||'';
-  $('txt_nav_settings').value = cfg.nav.settings||'';
-  $('txt_nav_suivi').value = cfg.nav.suivi||'';
-  $('txt_nav_logout').value = cfg.nav.logout||'';
-
-  $('txt_tile_operators').value = cfg.tiles.operators||'';
-  $('txt_tile_profiles').value = cfg.tiles.profiles||'';
-  $('txt_tile_refs').value = cfg.tiles.refs||'';
-  $('txt_tile_pwd').value = cfg.tiles.pwd||'';
-  $('txt_tile_rights').value = cfg.tiles.rights||'';
-  $('txt_tile_branding').value = cfg.tiles.branding||'';
-  $('txt_tile_texts').value = cfg.tiles.texts||'';
+  $('txt_appTitle').value=cfg.appTitle||'';
+  $('txt_nav_home').value=cfg.nav.home||'';
+  $('txt_nav_settings').value=cfg.nav.settings||'';
+  $('txt_nav_suivi').value=cfg.nav.suivi||'';
+  $('txt_nav_logout').value=cfg.nav.logout||'';
+  $('txt_tile_operators').value=cfg.tiles.operators||'';
+  $('txt_tile_profiles').value=cfg.tiles.profiles||'';
+  $('txt_tile_refs').value=cfg.tiles.refs||'';
+  $('txt_tile_pwd').value=cfg.tiles.pwd||'';
+  $('txt_tile_rights').value=cfg.tiles.rights||'';
+  $('txt_tile_branding').value=cfg.tiles.branding||'';
+  $('txt_tile_texts').value=cfg.tiles.texts||'';
 }
 function textsSave(){
   const base=textDefault();
   const cfg=textLoad();
-  cfg.appTitle = $('txt_appTitle').value.trim() || base.appTitle;
-  cfg.nav.home = $('txt_nav_home').value.trim() || base.nav.home;
-  cfg.nav.settings = $('txt_nav_settings').value.trim() || base.nav.settings;
-  cfg.nav.suivi = $('txt_nav_suivi').value.trim() || base.nav.suivi;
-  cfg.nav.logout = $('txt_nav_logout').value.trim() || base.nav.logout;
-
-  cfg.tiles.operators = $('txt_tile_operators').value.trim() || base.tiles.operators;
-  cfg.tiles.profiles = $('txt_tile_profiles').value.trim() || base.tiles.profiles;
-  cfg.tiles.refs = $('txt_tile_refs').value.trim() || base.tiles.refs;
-  cfg.tiles.pwd = $('txt_tile_pwd').value.trim() || base.tiles.pwd;
-  cfg.tiles.rights = $('txt_tile_rights').value.trim() || base.tiles.rights;
-  cfg.tiles.branding = $('txt_tile_branding').value.trim() || base.tiles.branding;
-  cfg.tiles.texts = $('txt_tile_texts').value.trim() || base.tiles.texts;
-
-  textSave(cfg);
-  applyTexts();
-  toast('تم حفظ النصوص ✅');
+  cfg.appTitle=$('txt_appTitle').value.trim()||base.appTitle;
+  cfg.nav.home=$('txt_nav_home').value.trim()||base.nav.home;
+  cfg.nav.settings=$('txt_nav_settings').value.trim()||base.nav.settings;
+  cfg.nav.suivi=$('txt_nav_suivi').value.trim()||base.nav.suivi;
+  cfg.nav.logout=$('txt_nav_logout').value.trim()||base.nav.logout;
+  cfg.tiles.operators=$('txt_tile_operators').value.trim()||base.tiles.operators;
+  cfg.tiles.profiles=$('txt_tile_profiles').value.trim()||base.tiles.profiles;
+  cfg.tiles.refs=$('txt_tile_refs').value.trim()||base.tiles.refs;
+  cfg.tiles.pwd=$('txt_tile_pwd').value.trim()||base.tiles.pwd;
+  cfg.tiles.rights=$('txt_tile_rights').value.trim()||base.tiles.rights;
+  cfg.tiles.branding=$('txt_tile_branding').value.trim()||base.tiles.branding;
+  cfg.tiles.texts=$('txt_tile_texts').value.trim()||base.tiles.texts;
+  textSave(cfg);applyTexts();toast('تم حفظ النصوص ✅');
 }
 function textsReset(){
   localStorage.removeItem(LS_TEXT);
-  textsInitForm();
-  applyTexts();
-  toast('تمت إعادة الأسماء الافتراضية');
+  textsInitForm();applyTexts();toast('تمت إعادة الأسماء الافتراضية');
 }
 
 /* ====== Profils ====== */
@@ -804,25 +798,25 @@ function prRender(){
         <button class="btn small danger" onclick="prDel(${i})">🗑️</button>
       </div>
     </div>`).join('') || '<div class="item"><span>Aucun profil.</span></div>';
-  const sel=$('op_profile'); if(sel) sel.innerHTML=arr.map(n=>`<option>${n}</option>`).join('');
+  $('op_profile').innerHTML=arr.map(n=>`<option>${n}</option>`).join('');
 }
 function prAdd(){
   const v=$('pr_name').value.trim();
   if(!v) return toast('أدخل اسم profil');
   const arr=prLoad();
   if(arr.includes(v)) return toast('Profil موجود');
-  arr.push(v); prSave(arr); $('pr_name').value=''; prRender(); toast('تم الإضافة');
+  arr.push(v);prSave(arr);$('pr_name').value='';prRender();toast('تم الإضافة');
 }
 function prEdit(i){
-  const arr=prLoad(); const nv=prompt('Modifier profil',arr[i]); if(!nv) return;
-  arr[i]=nv.trim(); prSave(arr); prRender();
+  const arr=prLoad();const nv=prompt('Modifier profil',arr[i]);if(!nv)return;
+  arr[i]=nv.trim();prSave(arr);prRender();
 }
 function prDel(i){
-  const arr=prLoad(); if(!confirm('Supprimer profil ?'))return;
-  arr.splice(i,1); prSave(arr); prRender();
+  const arr=prLoad();if(!confirm('Supprimer profil ?'))return;
+  arr.splice(i,1);prSave(arr);prRender();
 }
 
-/* ====== Sociétés ====== */
+/* ====== Sociétés / Fermes / Secteurs / Parcelles / Points ====== */
 function scLoad(){return lsGet(LS_SOC,[]);}
 function scSave(a){lsSet(LS_SOC,a);}
 function scAdd(){
@@ -831,51 +825,43 @@ function scAdd(){
   const arr=scLoad();
   if(arr.some(s=>s.name===name)) return toast('Société موجودة');
   arr.push({id:Date.now(),name});
-  scSave(arr); $('sc_name').value=''; scRender(); rfRenderAll(); toast('تم إضافة société');
+  scSave(arr);$('sc_name').value='';scRender();rfRenderAll();toast('تم إضافة société');
 }
 function scRender(){
   const arr=scLoad();
   $('scList').innerHTML=arr.map((s,i)=>`
     <div class="item">
       <div><b>${s.name}</b></div>
-      <div class="actions">
-        <button class="btn small danger" onclick="scDel(${i})">🗑️</button>
-      </div>
+      <div class="actions"><button class="btn small danger" onclick="scDel(${i})">🗑️</button></div>
     </div>`).join('') || '<div class="item"><span>Aucune société.</span></div>';
   const opts=arr.map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
-  const sel=$('rf_farm_soc');
-  if(sel) sel.innerHTML='<option value="">--</option>'+opts;
+  $('rf_farm_soc').innerHTML='<option value="">--</option>'+opts;
 }
 function scDel(i){
-  const arr=scLoad(); if(!confirm('Supprimer cette société وكل شيء تابع لها ؟'))return;
+  const arr=scLoad();if(!confirm('Supprimer cette société وكل شيء تابع لها ؟'))return;
   const id=arr[i].id;
-  arr.splice(i,1); scSave(arr);
-  let farms=rfLoadFarms().filter(f=>f.socId!==id);
-  lsSet(LS_FARMS,farms);
-  lsSet(LS_SECT, rfLoadSecteurs().filter(s=>farms.some(f=>f.id===s.farmId)));
-  lsSet(LS_PARC, rfLoadParcelles().filter(p=>farms.some(f=>f.id===p.farmId)));
-  lsSet(LS_POINT, rfLoadPoints().filter(pt=>farms.some(f=>f.id===pt.farmId)));
-  rfRenderAll(); scRender();
+  arr.splice(i,1);scSave(arr);
+  let farms=rfLoadFarms().filter(f=>f.socId!==id);lsSet(LS_FARMS,farms);
+  lsSet(LS_SECT,rfLoadSecteurs().filter(s=>farms.some(f=>f.id===s.farmId)));
+  lsSet(LS_PARC,rfLoadParcelles().filter(p=>farms.some(f=>f.id===p.farmId)));
+  lsSet(LS_POINT,rfLoadPoints().filter(pt=>farms.some(f=>f.id===pt.farmId)));
+  rfRenderAll();scRender();
 }
 
-/* ====== Fermes / Secteurs / Parcelles / Points ====== */
 function rfLoadFarms(){return lsGet(LS_FARMS,[]);}
 function rfSaveFarms(a){lsSet(LS_FARMS,a);}
-
 function rfAddFarm(){
   const socId=parseInt($('rf_farm_soc').value||0);
   const name=$('rf_farm_name').value.trim();
-  if(!socId || !name) return toast('اختر société واسم ferme');
+  if(!socId||!name) return toast('اختر société واسم ferme');
   const arr=rfLoadFarms();
-  if(arr.some(f=>f.name===name && f.socId===socId)) return toast('Ferme موجودة');
+  if(arr.some(f=>f.name===name&&f.socId===socId)) return toast('Ferme موجودة');
   arr.push({id:Date.now(),name,socId});
-  rfSaveFarms(arr); $('rf_farm_name').value=''; rfRenderAll(); toast('تم إضافة ferme');
+  rfSaveFarms(arr);$('rf_farm_name').value='';rfRenderAll();toast('تم إضافة ferme');
 }
 function rfRenderFarms(){
-  const socs=scLoad();
-  const arr=rfLoadFarms();
-  const list=$('rfFarmList');
-  list.innerHTML=arr.map((f,i)=>{
+  const socs=scLoad();const arr=rfLoadFarms();
+  $('rfFarmList').innerHTML=arr.map((f,i)=>{
     const s=socs.find(x=>x.id===f.socId);
     return `<div class="item">
       <div><b>${f.name}</b> <span>(${s?s.name:''})</span></div>
@@ -883,37 +869,31 @@ function rfRenderFarms(){
     </div>`;
   }).join('') || '<div class="item"><span>Aucune ferme.</span></div>';
   const opts=arr.map(f=>`<option value="${f.id}">${f.name}</option>`).join('');
-  ['rf_sec_farm','sv_farm','op_farm'].forEach(id=>{
-    const s=$(id); if(s) s.innerHTML='<option value="">--</option>'+opts;
-  });
+  ['rf_sec_farm','sv_farm','op_farm'].forEach(id=>{const s=$(id);if(s)s.innerHTML='<option value="">--</option>'+opts;});
 }
 function rfDelFarm(i){
-  const arr=rfLoadFarms(); if(!confirm('Supprimer ferme وكل ما يتبعها ؟'))return;
-  const id=arr[i].id;
-  arr.splice(i,1); rfSaveFarms(arr);
-  lsSet(LS_SECT, rfLoadSecteurs().filter(s=>s.farmId!==id));
-  lsSet(LS_PARC, rfLoadParcelles().filter(p=>p.farmId!==id));
-  lsSet(LS_POINT, rfLoadPoints().filter(p=>p.farmId!==id));
+  const arr=rfLoadFarms();if(!confirm('Supprimer ferme وكل ما يتبعها ؟'))return;
+  const id=arr[i].id;arr.splice(i,1);rfSaveFarms(arr);
+  lsSet(LS_SECT,rfLoadSecteurs().filter(s=>s.farmId!==id));
+  lsSet(LS_PARC,rfLoadParcelles().filter(p=>p.farmId!==id));
+  lsSet(LS_POINT,rfLoadPoints().filter(p=>p.farmId!==id));
   rfRenderAll();
 }
 
-/* Secteurs */
 function rfLoadSecteurs(){return lsGet(LS_SECT,[]);}
 function rfSaveSecteurs(a){lsSet(LS_SECT,a);}
 function rfAddSecteur(){
   const farmId=parseInt($('rf_sec_farm').value||0);
   const name=$('rf_sec_name').value.trim();
-  if(!farmId || !name) return toast('اختر ferme واسم secteur');
+  if(!farmId||!name) return toast('اختر ferme واسم secteur');
   const arr=rfLoadSecteurs();
-  if(arr.some(s=>s.name===name && s.farmId===farmId)) return toast('Secteur موجود');
+  if(arr.some(s=>s.name===name&&s.farmId===farmId)) return toast('Secteur موجود');
   arr.push({id:Date.now(),farmId,name});
-  rfSaveSecteurs(arr); $('rf_sec_name').value=''; rfRenderAll(); toast('تم إضافة secteur');
+  rfSaveSecteurs(arr);$('rf_sec_name').value='';rfRenderAll();toast('تم إضافة secteur');
 }
 function rfRenderSecteurs(){
-  const farms=rfLoadFarms();
-  const arr=rfLoadSecteurs();
-  const list=$('rfSecList');
-  list.innerHTML=arr.map((s,i)=>{
+  const farms=rfLoadFarms();const arr=rfLoadSecteurs();
+  $('rfSecList').innerHTML=arr.map((s,i)=>{
     const f=farms.find(x=>x.id===s.farmId);
     return `<div class="item">
       <div><b>${s.name}</b> <span>(${f?f.name:''})</span></div>
@@ -921,36 +901,33 @@ function rfRenderSecteurs(){
     </div>`;
   }).join('') || '<div class="item"><span>Aucun secteur.</span></div>';
   const opts=arr.map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
-  const sPar=$('rf_par_sec'); if(sPar) sPar.innerHTML='<option value="">--</option>'+opts;
+  $('rf_par_sec').innerHTML='<option value="">--</option>'+opts;
 }
+
 function rfDelSecteur(i){
-  const arr=rfLoadSecteurs(); if(!confirm('Supprimer secteur وكل ما تحته ؟'))return;
-  const id=arr[i].id;
-  arr.splice(i,1); rfSaveSecteurs(arr);
-  lsSet(LS_PARC, rfLoadParcelles().filter(p=>p.sectId!==id));
-  lsSet(LS_POINT, rfLoadPoints().filter(p=>p.sectId!==id));
+  const arr=rfLoadSecteurs();if(!confirm('Supprimer secteur وكل ما تحته ؟'))return;
+  const id=arr[i].id;arr.splice(i,1);rfSaveSecteurs(arr);
+  lsSet(LS_PARC,rfLoadParcelles().filter(p=>p.sectId!==id));
+  lsSet(LS_POINT,rfLoadPoints().filter(p=>p.sectId!==id));
   rfRenderAll();
 }
 
-/* Parcelles */
 function rfLoadParcelles(){return lsGet(LS_PARC,[]);}
 function rfSaveParcelles(a){lsSet(LS_PARC,a);}
 function rfAddParcelle(){
   const sectId=parseInt($('rf_par_sec').value||0);
   const name=$('rf_par_name').value.trim();
-  if(!sectId || !name) return toast('اختر secteur واسم parcelle');
+  if(!sectId||!name) return toast('اختر secteur واسم parcelle');
   const arr=rfLoadParcelles();
-  if(arr.some(p=>p.name===name && p.sectId===sectId)) return toast('Parcelle موجودة');
+  if(arr.some(p=>p.name===name&&p.sectId===sectId)) return toast('Parcelle موجودة');
   const sec=rfLoadSecteurs().find(s=>s.id===sectId);
   const farmId=sec?sec.farmId:0;
   arr.push({id:Date.now(),name,sectId,farmId});
-  rfSaveParcelles(arr); $('rf_par_name').value=''; rfRenderAll(); toast('تم إضافة parcelle');
+  rfSaveParcelles(arr);$('rf_par_name').value='';rfRenderAll();toast('تم إضافة parcelle');
 }
 function rfRenderParcelles(){
-  const secs=rfLoadSecteurs();
-  const arr=rfLoadParcelles();
-  const list=$('rfParList');
-  list.innerHTML=arr.map((p,i)=>{
+  const secs=rfLoadSecteurs();const arr=rfLoadParcelles();
+  $('rfParList').innerHTML=arr.map((p,i)=>{
     const s=secs.find(x=>x.id===p.sectId);
     return `<div class="item">
       <div><b>${p.name}</b> <span>(${s?s.name:''})</span></div>
@@ -958,41 +935,32 @@ function rfRenderParcelles(){
     </div>`;
   }).join('') || '<div class="item"><span>Aucune parcelle.</span></div>';
   const opts=arr.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
-  const sPtPar=$('rf_pt_par'); if(sPtPar) sPtPar.innerHTML='<option value="">--</option>'+opts;
+  $('rf_pt_par').innerHTML='<option value="">--</option>'+opts;
 }
 function rfDelParcelle(i){
-  const arr=rfLoadParcelles(); if(!confirm('Supprimer parcelle وكل points ديالها ؟'))return;
-  const id=arr[i].id;
-  arr.splice(i,1); rfSaveParcelles(arr);
-  lsSet(LS_POINT, rfLoadPoints().filter(p=>p.parId!==id));
+  const arr=rfLoadParcelles();if(!confirm('Supprimer parcelle وكل points ديالها ؟'))return;
+  const id=arr[i].id;arr.splice(i,1);rfSaveParcelles(arr);
+  lsSet(LS_POINT,rfLoadPoints().filter(p=>p.parId!==id));
   rfRenderAll();
 }
 
-/* Points */
 function rfLoadPoints(){return lsGet(LS_POINT,[]);}
 function rfSavePoints(a){lsSet(LS_POINT,a);}
 function rfAddPoint(){
   const parId=parseInt($('rf_pt_par').value||0);
   const name=$('rf_pt_name').value.trim();
-  if(!parId || !name) return toast('اختر parcelle واسم point');
+  if(!parId||!name) return toast('اختر parcelle واسم point');
   const parc=rfLoadParcelles().find(p=>p.id===parId);
   if(!parc) return toast('Parcelle غير موجودة');
   const arr=rfLoadPoints();
-  if(arr.some(p=>p.name===name && p.parId===parId)) return toast('Point موجود');
-  arr.push({
-    id:Date.now(),
-    name,
-    parId,
-    sectId:parc.sectId,
-    farmId:parc.farmId
-  });
-  rfSavePoints(arr); $('rf_pt_name').value=''; rfRenderAll(); toast('تم إضافة point');
+  if(arr.some(p=>p.name===name&&p.parId===parId)) return toast('Point موجود');
+  arr.push({id:Date.now(),name,parId,sectId:parc.sectId,farmId:parc.farmId});
+  rfSavePoints(arr);$('rf_pt_name').value='';rfRenderAll();toast('تم إضافة point');
 }
 function rfRenderPoints(){
   const farms=rfLoadFarms(),secs=rfLoadSecteurs(),pars=rfLoadParcelles();
   const arr=rfLoadPoints();
-  const list=$('rfPointList');
-  list.innerHTML=arr.map((p,i)=>{
+  $('rfPointList').innerHTML=arr.map((p,i)=>{
     const f=farms.find(x=>x.id===p.farmId);
     const s=secs.find(x=>x.id===p.sectId);
     const pr=pars.find(x=>x.id===p.parId);
@@ -1003,17 +971,11 @@ function rfRenderPoints(){
   }).join('') || '<div class="item"><span>Aucun point.</span></div>';
 }
 function rfDelPoint(i){
-  const arr=rfLoadPoints(); if(!confirm('Supprimer point ?'))return;
-  arr.splice(i,1); rfSavePoints(arr); rfRenderAll();
+  const arr=rfLoadPoints();if(!confirm('Supprimer point ?'))return;
+  arr.splice(i,1);rfSavePoints(arr);rfRenderAll();
 }
-
 function rfRenderAll(){
-  scRender();
-  rfRenderFarms();
-  rfRenderSecteurs();
-  rfRenderParcelles();
-  rfRenderPoints();
-  svFillFarm();
+  scRender();rfRenderFarms();rfRenderSecteurs();rfRenderParcelles();rfRenderPoints();svFillFarm();
 }
 
 /* ====== Operators ====== */
@@ -1028,15 +990,11 @@ function opAdd(){
   const arr=opLoad();
   if(arr.some(x=>x.username.toLowerCase()===u.toLowerCase())) return toast('User موجود');
   arr.push({username:u,password:p,profile,farmId});
-  opSave(arr);
-  $('op_user').value='';$('op_pass').value='';
-  opRender(); toast('تم إضافة المستخدم');
+  opSave(arr);$('op_user').value='';$('op_pass').value='';opRender();toast('تم إضافة المستخدم');
 }
 function opRender(){
-  const arr=opLoad();
-  const farms=rfLoadFarms();
-  const list=$('opList');
-  list.innerHTML=arr.map((u,i)=>{
+  const arr=opLoad();const farms=rfLoadFarms();
+  $('opList').innerHTML=arr.map((u,i)=>{
     const f=farms.find(x=>x.id===u.farmId);
     return `<div class="item">
       <div><b>${u.username}</b> <span>${u.profile}</span> <span>${f?f.name:''}</span></div>
@@ -1045,26 +1003,23 @@ function opRender(){
   }).join('') || '<div class="item"><span>Aucun utilisateur.</span></div>';
 }
 function opDel(i){
-  const arr=opLoad(); if(!confirm('Supprimer utilisateur ?'))return;
-  arr.splice(i,1); opSave(arr); opRender();
+  const arr=opLoad();if(!confirm('Supprimer utilisateur ?'))return;
+  arr.splice(i,1);opSave(arr);opRender();
 }
 
-/* ====== Mot de passe admin ====== */
+/* ====== Admin password ====== */
 function pwdSave(){
   const v=$('pwd_new').value.trim();
   if(!v) return toast('أدخل كلمة مرور');
   lsSet(LS_ADMIN_PWD,{pwd:v});
-  $('pwd_new').value='';
-  toast('تم حفظ كلمة المرور (محليًا)');
+  $('pwd_new').value='';toast('تم حفظ كلمة المرور (محليًا)');
 }
 
 /* ====== Branding ====== */
 function readFileAsDataURL(file,cb){
   const r=new FileReader();r.onload=()=>cb(r.result);r.readAsDataURL(file);
 }
-function brandLoad(){return lsGet(LS_BRAND,{
-  logo:null,badge:null,loginBg:null,dashBg:null,dashColor:"#020817",zoom:{x:100,y:100}
-});}
+function brandLoad(){return lsGet(LS_BRAND,{logo:null,badge:null,loginBg:null,dashBg:null,dashColor:"#020817",zoom:{x:100,y:100}});}
 function brandSave(c){lsSet(LS_BRAND,c);}
 function applyBrand(){
   const c=brandLoad();
@@ -1090,39 +1045,36 @@ function brandingInitForm(){
   $('br_zoom_y').value=c.zoom?.y||100;
 }
 ['br_logo_file','br_badge_file','br_loginbg_file','br_dashbg_file'].forEach(id=>{
-  const el=$(id); if(!el)return;
+  const el=$(id);if(!el)return;
   el.addEventListener('change',e=>{
-    const f=e.target.files[0]; if(!f)return;
+    const f=e.target.files[0];if(!f)return;
     readFileAsDataURL(f,data=>{
       const c=brandLoad();
-      if(id==='br_logo_file') c.logo=data;
-      if(id==='br_badge_file') c.badge=data;
-      if(id==='br_loginbg_file') c.loginBg=data;
-      if(id==='br_dashbg_file') c.dashBg=data;
-      brandSave(c); applyBrand(); toast('تم تحديث الصورة');
+      if(id==='br_logo_file')c.logo=data;
+      if(id==='br_badge_file')c.badge=data;
+      if(id==='br_loginbg_file')c.loginBg=data;
+      if(id==='br_dashbg_file')c.dashBg=data;
+      brandSave(c);applyBrand();toast('تم تحديث الصورة');
     });
   });
 });
 function brandingSave(){
   const c=brandLoad();
-  const dz=(id)=>$(id).value.trim();
-  const lg=dz('br_logo_url'), bd=dz('br_badge_url'),
-        lbg=dz('br_loginbg_url'), dbg=dz('br_dashbg_url');
-  c.logo = lg || c.logo;
-  c.badge = bd || c.badge;
-  c.loginBg = lbg || c.loginBg;
-  c.dashBg = dbg || c.dashBg;
-  c.dashColor = $('br_dash_color').value || '#020817';
-  c.zoom = {
-    x:parseInt($('br_zoom_x').value||100),
-    y:parseInt($('br_zoom_y').value||100)
-  };
-  brandSave(c); applyBrand(); toast('تم الحفظ ✅');
+  const lg=$('br_logo_url').value.trim();
+  const bd=$('br_badge_url').value.trim();
+  const lbg=$('br_loginbg_url').value.trim();
+  const dbg=$('br_dashbg_url').value.trim();
+  if(lg) c.logo=lg;
+  if(bd) c.badge=bd;
+  if(lbg) c.loginBg=lbg;
+  if(dbg) c.dashBg=dbg;
+  c.dashColor=$('br_dash_color').value||'#020817';
+  c.zoom={x:parseInt($('br_zoom_x').value||100),y:parseInt($('br_zoom_y').value||100)};
+  brandSave(c);applyBrand();toast('تم الحفظ ✅');
 }
 function brandingReset(){
   localStorage.removeItem(LS_BRAND);
-  brandingInitForm(); applyBrand();
-  toast('رجعنا للإعدادات الافتراضية');
+  brandingInitForm();applyBrand();toast('رجعنا للإعدادات الافتراضية');
 }
 
 /* ====== Suivi irrigation ====== */
@@ -1133,50 +1085,38 @@ function svLoad(){return lsGet(LS_SUIVI,{});}
 function svSave(o){lsSet(LS_SUIVI,o);}
 
 function svFillFarm(){
-  const s=$('sv_farm'); if(!s)return;
+  const s=$('sv_farm');if(!s)return;
   const farms=rfLoadFarms();
-  s.innerHTML='<option value="">-- Ferme --</option>'+
-    farms.map(f=>`<option value="${f.id}">${f.name}</option>`).join('');
+  s.innerHTML='<option value="">-- Ferme --</option>'+farms.map(f=>`<option value="${f.id}">${f.name}</option>`).join('');
   svOnFarm();
 }
 function svOnFarm(){
   const fId=parseInt($('sv_farm').value||0);
-  const secs=rfLoadSecteurs().filter(s=>!fId || s.farmId===fId);
-  $('sv_sec').innerHTML='<option value="">-- Secteur --</option>'+
-    secs.map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
+  const secs=rfLoadSecteurs().filter(s=>!fId||s.farmId===fId);
+  $('sv_sec').innerHTML='<option value="">-- Secteur --</option>'+secs.map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
   $('sv_par').innerHTML='<option value="">-- Parcelle --</option>';
   $('sv_pt').innerHTML='<option value="">-- Point --</option>';
-  $('sv_table_wrap').classList.add('hidden');
-  svReloadTable(true);
+  svHideTableModal();svClearSelection();
 }
 function svOnSec(){
   const fId=parseInt($('sv_farm').value||0);
   const sId=parseInt($('sv_sec').value||0);
-  const pars=rfLoadParcelles().filter(p=>
-    (!fId || p.farmId===fId) && (!sId || p.sectId===sId)
-  );
-  $('sv_par').innerHTML='<option value="">-- Parcelle --</option>'+
-    pars.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
+  const pars=rfLoadParcelles().filter(p=>(!fId||p.farmId===fId)&&(!sId||p.sectId===sId));
+  $('sv_par').innerHTML='<option value="">-- Parcelle --</option>'+pars.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
   $('sv_pt').innerHTML='<option value="">-- Point --</option>';
-  $('sv_table_wrap').classList.add('hidden');
-  svReloadTable(true);
+  svHideTableModal();svClearSelection();
 }
 function svOnPar(){
   const fId=parseInt($('sv_farm').value||0);
   const sId=parseInt($('sv_sec').value||0);
   const pId=parseInt($('sv_par').value||0);
   const pts=rfLoadPoints().filter(pt=>
-    (!fId || pt.farmId===fId) && (!sId || pt.sectId===sId) && (!pId || pt.parId===pId)
-  );
-  $('sv_pt').innerHTML='<option value="">-- Point --</option>'+
-    pts.map(pt=>`<option value="${pt.id}">${pt.name}</option>`).join('');
-  $('sv_table_wrap').classList.add('hidden');
-  svReloadTable(true);
+    (!fId||pt.farmId===fId)&&(!sId||pt.sectId===sId)&&(!pId||pt.parId===pId));
+  $('sv_pt').innerHTML='<option value="">-- Point --</option>'+pts.map(pt=>`<option value="${pt.id}">${pt.name}</option>`).join('');
+  svHideTableModal();svClearSelection();
 }
 function svOnPointChange(){
-  // غير الاختيار كيمسح الجدول حتى تضغط Irrigation
-  $('sv_table_wrap').classList.add('hidden');
-  svReloadTable(true);
+  svHideTableModal();svClearSelection();
 }
 function svGetCurrentKey(){
   const fId=parseInt($('sv_farm').value||0);
@@ -1187,26 +1127,21 @@ function svGetCurrentKey(){
   return svKey(fId,sId,pId,ptId);
 }
 
-/* زر Irrigation: يظهر الجدول فقط عند النقر */
+/* Modal tableau */
 function svShowIrrigation(){
   const key=svGetCurrentKey();
-  if(!key){
-    toast('اختر Ferme / Secteur / Parcelle / Point أولا');
-    return;
-  }
-  svReloadTable(false);
-  const store=svLoad();
-  const rows=store[key]||[];
-  $('sv_table_wrap').classList.remove('hidden');
-  if(!rows.length){
-    toast('لا توجد قياسات مسجلة لهذا الـ Point بعد');
-  }else{
-    toast('تم عرض جدول السقي لهذا الـ Point ✅');
-  }
+  if(!key){toast('اختر Ferme / Secteur / Parcelle / Point أولا');return;}
+  svReloadTable();
+  $('sv_table_modal').classList.remove('hidden');
+  const store=svLoad();const rows=store[key]||[];
+  if(!rows.length) toast('لا توجد قياسات بعد لهذا الـ Point');
+  else toast('تم عرض جدول السقي ✅');
 }
-
+function svHideTableModal(){
+  $('sv_table_modal').classList.add('hidden');
+}
 function svShowAdd(){
-  if(!svGetCurrentKey()) return toast('اختر Ferme / Secteur / Parcelle / Point أولا');
+  if(!svGetCurrentKey()){toast('اختر Ferme / Secteur / Parcelle / Point أولا');return;}
   $('sv_modal').classList.remove('hidden');
 }
 function svHideAdd(){
@@ -1214,7 +1149,7 @@ function svHideAdd(){
 }
 function svSaveNew(){
   const key=svGetCurrentKey();
-  if(!key) {toast('اختر Ferme / Secteur / Parcelle / Point أولا');return;}
+  if(!key){toast('اختر Ferme / Secteur / Parcelle / Point أولا');return;}
   const row={
     tours:$('sv_tours').value.trim(),
     duree:$('sv_duree').value.trim(),
@@ -1229,14 +1164,12 @@ function svSaveNew(){
   const store=svLoad();
   store[key]=store[key]||[];
   store[key].push(row);
-  ['sv_tours','sv_duree','sv_repos','sv_vapp','sv_ecapp','sv_phapp','sv_vdr','sv_ecdr','sv_phdr']
-    .forEach(id=>$(id).value='');
+  ['sv_tours','sv_duree','sv_repos','sv_vapp','sv_ecapp','sv_phapp','sv_vdr','sv_ecdr','sv_phdr'].forEach(id=>$(id).value='');
   svHideAdd();
-  svReloadTable(false);
-  $('sv_table_wrap').classList.remove('hidden');
+  svClearSelection();
   toast('تمت إضافة السطر');
 }
-function svReloadTable(clearOnly){
+function svReloadTable(){
   const key=svGetCurrentKey();
   const tbody=$('sv_table').querySelector('tbody');
   tbody.innerHTML='';
@@ -1271,7 +1204,7 @@ function svClearSelection(){
   $('sv_row_actions').classList.add('hidden');
 }
 function svOnRowClick(tr){
-  const key=svGetCurrentKey(); if(!key) return;
+  const key=svGetCurrentKey();if(!key)return;
   const idx=parseInt(tr.dataset.index);
   svSelected={key,index:idx};
   document.querySelectorAll('#sv_table tbody tr').forEach(r=>r.classList.remove('selected'));
@@ -1281,48 +1214,43 @@ function svOnRowClick(tr){
 function svEditSelected(){
   const {key,index}=svSelected;
   if(key===null) return toast('اختر سطر للتعديل');
-  const store=svLoad(); const rows=store[key]||[];
-  const r=rows[index]; if(!r) return;
+  const store=svLoad();const rows=store[key]||[];
+  const r=rows[index];if(!r)return;
   const nv=prompt(
     'Modifier (sépare par ;) :\nTours;Durée;Repos;V apport;EC apport;pH apport;V drainage;EC drainage;pH drainage',
     [r.tours,r.duree,r.repos,r.vapp,r.ecapp,r.phapp,r.vdr,r.ecdr,r.phdr].join(';')
   );
-  if(nv==null) return;
+  if(nv==null)return;
   const p=nv.split(';');
   if(p.length>=9){
     [r.tours,r.duree,r.repos,r.vapp,r.ecapp,r.phapp,r.vdr,r.ecdr,r.phdr]=p;
-    store[key]=rows; svSave(store); svReloadTable(false); toast('تم التعديل');
+    store[key]=rows;svSave(store);svReloadTable();toast('تم التعديل');
   }else toast('صيغة غير صحيحة');
 }
 function svDeleteSelected(){
   const {key,index}=svSelected;
   if(key===null) return toast('اختر سطر للحذف');
-  const store=svLoad(); const rows=store[key]||[];
-  if(!rows[index]) return;
-  if(!confirm('Supprimer cette ligne ?')) return;
-  rows.splice(index,1);
-  store[key]=rows; svSave(store);
-  svReloadTable(false);
-  toast('تم الحذف');
+  const store=svLoad();const rows=store[key]||[];
+  if(!rows[index])return;
+  if(!confirm('Supprimer cette ligne ?'))return;
+  rows.splice(index,1);store[key]=rows;svSave(store);svReloadTable();toast('تم الحذف');
 }
 function svShare(){
-  const key=svGetCurrentKey(); if(!key) return toast('اختر Point');
-  const store=svLoad(); const rows=store[key]||[];
-  if(!rows.length) return toast('لا توجد بيانات');
+  const key=svGetCurrentKey();if(!key)return toast('اختر Point');
+  const store=svLoad();const rows=store[key]||[];
+  if(!rows.length)return toast('لا توجد بيانات');
   const ptName=$('sv_pt').options[$('sv_pt').selectedIndex]?.text||'';
   const txt=rows.map((r,i)=>`${i+1}) ${ptName} | ${r.tours} | ${r.duree} | ${r.vapp} | ${r.vdr}`).join('\n');
   if(navigator.share){
     navigator.share({text:txt}).catch(()=>{});
   }else if(navigator.clipboard){
-    navigator.clipboard.writeText(txt); toast('تم نسخ البيانات، يمكنك لصقها في WhatsApp أو Gmail');
-  }else{
-    toast('شارك يدويًا: نسخ غير مدعوم في هذا المتصفح');
-  }
+    navigator.clipboard.writeText(txt);toast('تم نسخ البيانات، ألصقها في WhatsApp أو Gmail');
+  }else toast('شارك يدويًا');
 }
 function svExportCSV(){
-  const key=svGetCurrentKey(); if(!key) return toast('اختر Point');
-  const store=svLoad(); const rows=store[key]||[];
-  if(!rows.length) return toast('لا توجد بيانات');
+  const key=svGetCurrentKey();if(!key)return toast('اختر Point');
+  const store=svLoad();const rows=store[key]||[];
+  if(!rows.length)return toast('لا توجد بيانات');
   const header=['Point','Tours/Heures','Duree(min)','Temps repos','V apport','EC apport','pH apport','V drainage','EC drainage','pH drainage','% drainage'];
   const ptName=$('sv_pt').options[$('sv_pt').selectedIndex].text;
   const lines=[header.join(',')];
