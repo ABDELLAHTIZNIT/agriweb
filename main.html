@@ -226,7 +226,7 @@ body{
 .item b{color:var(--text)}
 .actions{display:flex;gap:4px}
 
-/* Suivi irrigation table (in modal) */
+/* Table */
 .table-wrap{
   margin-top:6px;
   overflow-x:auto;
@@ -247,19 +247,13 @@ th{
   position:sticky;
   top:0;
 }
-
-/* Selected row & row actions */
 tr.selected{background:#111827;}
-#sv_row_actions{
-  margin-top:4px;
-  justify-content:flex-end;
-}
 
-/* Modal full */
+/* Modals */
 .modal-full{
   position:fixed;
   inset:0;
-  background:rgba(0,0,0,.7);
+  background:rgba(0,0,0,.78);
   display:flex;
   align-items:center;
   justify-content:center;
@@ -282,6 +276,16 @@ tr.selected{background:#111827;}
   font-size:11px;
 }
 
+/* Fullscreen table modal tweaks */
+#sv_table_modal .modal-card{
+  width:96vw;
+  max-width:1100px;
+  height:90vh;
+  display:flex;
+  flex-direction:column;
+}
+
+/* Ranges */
 .range-row{display:flex;align-items:center;gap:8px;margin-top:4px}
 .range-row input[type=range]{flex:1}
 .range-row span{font-size:10px;color:var(--muted)}
@@ -576,7 +580,7 @@ tr.selected{background:#111827;}
     </div>
   </section>
 
-  <!-- Suivi irrigation (selectors + buttons فقط) -->
+  <!-- Suivi irrigation selectors -->
   <section id="page-suivi" class="card hidden">
     <h2>Suivi irrigation</h2>
     <p class="muted">اختر Ferme / Secteur / Parcelle / Point، ثم اضغط زر <b>Irrigation</b> لإظهار جدول القياسات.</p>
@@ -629,15 +633,21 @@ tr.selected{background:#111827;}
   </div>
 </div>
 
-<!-- Modal: Tableau irrigation -->
+<!-- Modal: Tableau irrigation (full screen) -->
 <div id="sv_table_modal" class="modal-full hidden">
-  <div class="modal-card" style="max-height:90vh;overflow:hidden;display:flex;flex-direction:column;">
+  <div class="modal-card">
     <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;">
-      <h3 style="margin:0">Irrigation - Tableau</h3>
-      <button class="btn small danger" onclick="svHideTableModal()">✕</button>
+      <div>
+        <h3 style="margin:0">Irrigation - Tableau</h3>
+        <div id="sv_table_context" class="muted"></div>
+      </div>
+      <div class="row" style="gap:4px;margin-top:0">
+        <button class="btn small" onclick="svExportCSV()">Excel</button>
+        <button class="btn small" onclick="svPrint()">PDF / Imprimer</button>
+        <button class="btn small danger" onclick="svHideTableModal()">✕</button>
+      </div>
     </div>
-    <p class="muted">القياسات المسجّلة لـ Point المحدد.</p>
-    <div class="table-wrap" style="flex:1;overflow:auto;margin-top:4px">
+    <div class="table-wrap" style="flex:1;overflow:auto;margin-top:6px">
       <table id="sv_table">
         <thead>
           <tr>
@@ -658,7 +668,7 @@ tr.selected{background:#111827;}
         <tbody></tbody>
       </table>
     </div>
-    <div id="sv_row_actions" class="row hidden">
+    <div id="sv_row_actions" class="row hidden" style="margin-top:6px;justify-content:flex-end">
       <button class="btn small" onclick="svEditSelected()">Modifier</button>
       <button class="btn small danger" onclick="svDeleteSelected()">Supprimer</button>
     </div>
@@ -668,7 +678,6 @@ tr.selected{background:#111827;}
 <div class="toast-wrap hidden" id="toast"><div class="toast" id="toast-msg"></div></div>
 
 <script>
-/* ====== KEYS ====== */
 const LS_PROFILES='ab_profiles';
 const LS_OPERATORS='ab_operators';
 const LS_SOC='ab_societes';
@@ -681,7 +690,6 @@ const LS_BRAND='ab_branding';
 const LS_ADMIN_PWD='ab_admin_pwd';
 const LS_TEXT='ab_textcfg';
 
-/* ====== Helpers ====== */
 function $(id){return document.getElementById(id)}
 function toast(msg){
   const w=$('toast'),m=$('toast-msg');
@@ -700,11 +708,10 @@ function showPage(page){
   const t=$('page-'+page); if(t) t.classList.remove('hidden');
 }
 function logout(e){e.preventDefault();window.location.href='index.html';}
-
 function lsGet(k,def){try{const v=JSON.parse(localStorage.getItem(k));return v||def;}catch{return def;}}
 function lsSet(k,v){localStorage.setItem(k,JSON.stringify(v));}
 
-/* ====== Texts / labels ====== */
+/* Texts */
 function textDefault(){
   return {
     appTitle:'AB AGRIWEB',
@@ -784,7 +791,7 @@ function textsReset(){
   textsInitForm();applyTexts();toast('تمت إعادة الأسماء الافتراضية');
 }
 
-/* ====== Profils ====== */
+/* Profils */
 function prLoad(){return lsGet(LS_PROFILES,["Admin"]);}
 function prSave(a){lsSet(LS_PROFILES,a);}
 function prRender(){
@@ -816,7 +823,7 @@ function prDel(i){
   arr.splice(i,1);prSave(arr);prRender();
 }
 
-/* ====== Sociétés / Fermes / Secteurs / Parcelles / Points ====== */
+/* Référentiels hierarchy */
 function scLoad(){return lsGet(LS_SOC,[]);}
 function scSave(a){lsSet(LS_SOC,a);}
 function scAdd(){
@@ -903,7 +910,6 @@ function rfRenderSecteurs(){
   const opts=arr.map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
   $('rf_par_sec').innerHTML='<option value="">--</option>'+opts;
 }
-
 function rfDelSecteur(i){
   const arr=rfLoadSecteurs();if(!confirm('Supprimer secteur وكل ما تحته ؟'))return;
   const id=arr[i].id;arr.splice(i,1);rfSaveSecteurs(arr);
@@ -974,11 +980,8 @@ function rfDelPoint(i){
   const arr=rfLoadPoints();if(!confirm('Supprimer point ?'))return;
   arr.splice(i,1);rfSavePoints(arr);rfRenderAll();
 }
-function rfRenderAll(){
-  scRender();rfRenderFarms();rfRenderSecteurs();rfRenderParcelles();rfRenderPoints();svFillFarm();
-}
 
-/* ====== Operators ====== */
+/* Operators */
 function opLoad(){return lsGet(LS_OPERATORS,[]);}
 function opSave(a){lsSet(LS_OPERATORS,a);}
 function opAdd(){
@@ -1007,7 +1010,7 @@ function opDel(i){
   arr.splice(i,1);opSave(arr);opRender();
 }
 
-/* ====== Admin password ====== */
+/* Admin pwd */
 function pwdSave(){
   const v=$('pwd_new').value.trim();
   if(!v) return toast('أدخل كلمة مرور');
@@ -1015,7 +1018,7 @@ function pwdSave(){
   $('pwd_new').value='';toast('تم حفظ كلمة المرور (محليًا)');
 }
 
-/* ====== Branding ====== */
+/* Branding */
 function readFileAsDataURL(file,cb){
   const r=new FileReader();r.onload=()=>cb(r.result);r.readAsDataURL(file);
 }
@@ -1077,7 +1080,7 @@ function brandingReset(){
   brandingInitForm();applyBrand();toast('رجعنا للإعدادات الافتراضية');
 }
 
-/* ====== Suivi irrigation ====== */
+/* Suivi irrigation */
 let svSelected={key:null,index:null};
 
 function svKey(fId,sId,pId,ptId){return [fId,sId,pId,ptId].join('|');}
@@ -1115,9 +1118,7 @@ function svOnPar(){
   $('sv_pt').innerHTML='<option value="">-- Point --</option>'+pts.map(pt=>`<option value="${pt.id}">${pt.name}</option>`).join('');
   svHideTableModal();svClearSelection();
 }
-function svOnPointChange(){
-  svHideTableModal();svClearSelection();
-}
+function svOnPointChange(){svHideTableModal();svClearSelection();}
 function svGetCurrentKey(){
   const fId=parseInt($('sv_farm').value||0);
   const sId=parseInt($('sv_sec').value||0);
@@ -1127,26 +1128,12 @@ function svGetCurrentKey(){
   return svKey(fId,sId,pId,ptId);
 }
 
-/* Modal tableau */
-function svShowIrrigation(){
-  const key=svGetCurrentKey();
-  if(!key){toast('اختر Ferme / Secteur / Parcelle / Point أولا');return;}
-  svReloadTable();
-  $('sv_table_modal').classList.remove('hidden');
-  const store=svLoad();const rows=store[key]||[];
-  if(!rows.length) toast('لا توجد قياسات بعد لهذا الـ Point');
-  else toast('تم عرض جدول السقي ✅');
-}
-function svHideTableModal(){
-  $('sv_table_modal').classList.add('hidden');
-}
+/* Ajouter mesure */
 function svShowAdd(){
   if(!svGetCurrentKey()){toast('اختر Ferme / Secteur / Parcelle / Point أولا');return;}
   $('sv_modal').classList.remove('hidden');
 }
-function svHideAdd(){
-  $('sv_modal').classList.add('hidden');
-}
+function svHideAdd(){$('sv_modal').classList.add('hidden');}
 function svSaveNew(){
   const key=svGetCurrentKey();
   if(!key){toast('اختر Ferme / Secteur / Parcelle / Point أولا');return;}
@@ -1168,6 +1155,25 @@ function svSaveNew(){
   svHideAdd();
   svClearSelection();
   toast('تمت إضافة السطر');
+}
+
+/* Tableau fullscreen */
+function svShowIrrigation(){
+  const key=svGetCurrentKey();
+  if(!key){toast('اختر Ferme / Secteur / Parcelle / Point أولا');return;}
+  svReloadTable();
+  const f=$('sv_farm').selectedOptions[0]?.text||'';
+  const s=$('sv_sec').selectedOptions[0]?.text||'';
+  const p=$('sv_par').selectedOptions[0]?.text||'';
+  const pt=$('sv_pt').selectedOptions[0]?.text||'';
+  $('sv_table_context').textContent=`${f} / ${s} / ${p} / ${pt}`;
+  $('sv_table_modal').classList.remove('hidden');
+  const store=svLoad();const rows=store[key]||[];
+  if(!rows.length) toast('لا توجد قياسات بعد لهذا الـ Point');
+}
+function svHideTableModal(){
+  $('sv_table_modal').classList.add('hidden');
+  svClearSelection();
 }
 function svReloadTable(){
   const key=svGetCurrentKey();
@@ -1265,9 +1271,12 @@ function svExportCSV(){
   a.href=url;a.download='suivi_irrigation.csv';a.click();
   URL.revokeObjectURL(url);
 }
-function svPrint(){window.print();}
+function svPrint(){
+  // بسيط: نستعمل طباعة الصفحة كلها، والـ modal ظاهر
+  window.print();
+}
 
-/* ====== INIT ====== */
+/* INIT */
 (function init(){
   applyBrand();
   rfRenderAll();
@@ -1276,6 +1285,7 @@ function svPrint(){window.print();}
   brandingInitForm();
   textsInitForm();
   applyTexts();
+  svFillFarm();
   showPage('home');
 })();
 </script>
