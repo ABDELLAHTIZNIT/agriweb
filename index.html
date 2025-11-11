@@ -1,13 +1,12 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>AB AGRIWEB - Login</title>
-  <link rel="stylesheet" href="assets/css/base.css" />
+  <link rel="stylesheet" href="assets/css/base.css"/>
 </head>
 <body class="login-body">
-
 <div class="login-wrap">
   <!-- Logo -->
   <div id="loginLogoWrap" class="login-logo-wrap hidden">
@@ -19,27 +18,26 @@
 
   <!-- Hint -->
   <div id="noOpsHint" class="hint hidden">
-    لا يوجد أي مستخدم مسجّل. يمكنك استعمال
-    <b>Setup (no login)</b> للدخول المؤقت ثم إضافة مستخدم من Paramètres.
+    No operator is registered. Use <b>Setup (no login)</b> to enter, then add a user from <b>Settings</b>.
   </div>
 
-  <!-- Form -->
+  <!-- Username -->
   <div class="field">
     <label class="label">Username</label>
-    <input id="u" class="input" placeholder="Enter your username" />
+    <input id="u" class="input" placeholder="Enter your username"/>
   </div>
 
-  <div class="field">
+  <!-- Password -->
+  <div class="field" style="position:relative">
     <label class="label">Password</label>
-    <div class="field">
-      <input id="p" type="password" class="input" placeholder="Enter your password" />
-      <span class="eye" onclick="togglePass()">👁️</span>
-    </div>
+    <input id="p" type="password" class="input" placeholder="Enter your password"/>
+    <span class="eye" onclick="togglePass()">👁️</span>
   </div>
 
-  <button class="btn" id="loginBtn">Se connecter</button>
-  <button class="btn ghost" id="setupBtn"
-          title="دخول مؤقت بدون كلمة السر لإكمال الإعداد">Setup (no login)</button>
+  <button class="btn" id="loginBtn">Login</button>
+  <button class="btn ghost" id="setupBtn" title="Temporary access without password to finish setup">
+    Setup (no login)
+  </button>
   <a href="#" id="forgotLink" class="link">Forgot password?</a>
 </div>
 
@@ -52,28 +50,28 @@
 
     <div class="tabbar">
       <button class="btn small" onclick="switchRecTab('code')">Code</button>
-      <button class="btn small" onclick="switchRecTab('qa')">Question secrète</button>
+      <button class="btn small" onclick="switchRecTab('qa')">Secret question</button>
     </div>
 
     <div id="recTabCode">
       <label class="label">Recovery code (6 digits)</label>
-      <input id="rec_code" class="input" placeholder="Ex: 123456" />
-      <button class="btn" onclick="tryCode()">Vérifier & ouvrir</button>
+      <input id="rec_code" class="input" placeholder="Ex: 123456">
+      <button class="btn" onclick="tryCode()">Verify & open</button>
     </div>
 
     <div id="recTabQA" class="hidden">
       <div id="qa_wrap">
         <label class="label" id="qa_question">Question</label>
-        <input id="qa_answer" class="input" placeholder="Votre réponse" />
-        <button class="btn" onclick="tryQA()">Vérifier & ouvrir</button>
+        <input id="qa_answer" class="input" placeholder="Your answer">
+        <button class="btn" onclick="tryQA()">Verify & open</button>
       </div>
-      <div id="qa_empty" class="small hidden">Question secrète غير مفعّلة.</div>
+      <div id="qa_empty" class="small hidden">Secret question not enabled.</div>
     </div>
 
     <div class="small" id="recoveryContact" style="margin-top:8px"></div>
 
     <div class="right" style="margin-top:10px">
-      <button class="btn ghost" onclick="closeRecovery()">Fermer</button>
+      <button class="btn ghost" onclick="closeRecovery()">Close</button>
     </div>
   </div>
 </div>
@@ -84,126 +82,117 @@ const LS_OPERATORS='ab_operators';
 const LS_SEC='ab_security';
 
 function g(id){return document.getElementById(id);}
+function loadCfg(){try{return JSON.parse(localStorage.getItem(LS_APPCFG)||'{}')}catch{return{}}}
+function loadOps(){try{return JSON.parse(localStorage.getItem(LS_OPERATORS)||'[]')}catch{return[]}}
 
-function loadCfg(){
-  try{return JSON.parse(localStorage.getItem(LS_APPCFG)||'{}')}catch{return{}}
-}
+/* Apply branding on login */
 function applyBranding(){
   const c=loadCfg();
-
-  // Title
   const name=c.appName||'AB AGRIWEB';
-  document.title = name+' - Login';
-  g('appTitle').textContent = name;
+  document.title=name+' - Login';
+  g('appTitle').textContent=name;
 
-  // Logo
-  const logo = c.logo || c.logoUrl || '';
+  const logo=c.logo||c.logoUrl;
   if(logo){
-    g('loginLogoImg').src = logo;
+    g('loginLogoImg').src=logo;
     g('loginLogoWrap').classList.remove('hidden');
-  } else {
+  }else{
     g('loginLogoWrap').classList.add('hidden');
   }
 
-  // Background
-  const bg = c.loginBg || c.loginBgUrl || '';
+  const bg=c.loginBg||c.loginBgUrl;
   if(bg){
-    document.body.style.backgroundImage = `url('${bg}')`;
-    document.body.style.backgroundSize = 'cover';
-    document.body.style.backgroundPosition = 'center';
+    document.body.style.backgroundImage=`url('${bg}')`;
+    document.body.style.backgroundSize='cover';
+    document.body.style.backgroundPosition='center';
   }else{
-    document.body.style.backgroundImage = 'linear-gradient(180deg,#020817,#111827)';
+    document.body.style.backgroundImage='linear-gradient(180deg,#020817,#111827)';
   }
 }
 
+/* Login flow */
 function togglePass(){
   const i=g('p');
-  i.type = i.type==='password' ? 'text' : 'password';
-}
-
-function loadOps(){
-  try{return JSON.parse(localStorage.getItem(LS_OPERATORS)||'[]')}catch{return[]}
+  i.type=i.type==='password'?'text':'password';
 }
 
 function loginFlow(){
-  const ops = loadOps();
-  const u = (g('u').value||'').trim();
-  const p = (g('p').value||'').trim();
+  const ops=loadOps();
+  const u=(g('u').value||'').trim();
+  const p=(g('p').value||'').trim();
 
   if(ops.length===0 && localStorage.getItem('ab_setup')!=='1'){
-    alert('لا يوجد أي مستخدم. استعمل Setup (no login) أو الاسترجاع.');
+    alert('No users found. Use Setup (no login) or recovery.');
     openRecovery();
     return;
   }
-  if(!u || !p){ alert('أدخل اسم المستخدم وكلمة المرور.'); return; }
+  if(!u || !p){ alert('Enter username and password.'); return; }
 
-  const ok = ops.find(x =>
+  const ok=ops.find(x=>
     (x.username||'').toLowerCase()===u.toLowerCase() &&
     (x.password||'')===p
   );
-  if(!ok){ alert('اسم المستخدم أو كلمة المرور غير صحيحة.'); return; }
+  if(!ok){ alert('Invalid username or password.'); return; }
 
   window.location.href='main.html';
 }
 
+/* Recovery */
 function openRecovery(){
-  const sec = (function(){try{return JSON.parse(localStorage.getItem(LS_SEC)||'{}')}catch{return{}}})();
+  let sec={};try{sec=JSON.parse(localStorage.getItem(LS_SEC)||'{}')}catch{}
   const email=sec.email||'', phone=sec.phone||'';
-  const emailHint=email?`Email: ${email.replace(/(.{2}).+(@.+)/,'$1***$2')}`:'Email غير مضبوط';
-  const phoneHint=phone?`Téléphone: ****${phone.slice(-4)}`:'Téléphone غير مضبوط';
-  g('recoveryHints').textContent='استعمل كود الاسترجاع أو السؤال السري إن وُجد.';
+  const emailHint=email?`Email: ${email.replace(/(.{2}).+(@.+)/,'$1***$2')}`:'Email not set';
+  const phoneHint=phone?`Phone: ****${phone.slice(-4)}`:'Phone not set';
+  g('recoveryHints').textContent='Use recovery code or secret question if configured.';
   g('recoveryContact').textContent=`${emailHint} | ${phoneHint}`;
 
-  const hasQ = !!sec.question;
+  const hasQ=!!sec.question;
   g('qa_wrap').classList.toggle('hidden',!hasQ);
   g('qa_empty').classList.toggle('hidden',hasQ);
-  if(hasQ) g('qa_question').textContent = sec.question;
+  if(hasQ) g('qa_question').textContent=sec.question;
 
   switchRecTab('code');
   g('recoveryModal').classList.add('show');
 }
-function closeRecovery(){ g('recoveryModal').classList.remove('show'); }
-
+function closeRecovery(){g('recoveryModal').classList.remove('show');}
 function switchRecTab(tab){
   g('recTabCode').classList.toggle('hidden',tab!=='code');
   g('recTabQA').classList.toggle('hidden',tab!=='qa');
 }
-
 function tryCode(){
   const code=(g('rec_code').value||'').trim();
-  let sec={}; try{sec=JSON.parse(localStorage.getItem(LS_SEC)||'{}')}catch{}
+  let sec={};try{sec=JSON.parse(localStorage.getItem(LS_SEC)||'{}')}catch{}
   if(code && sec.recoveryCode && code===String(sec.recoveryCode)){
     localStorage.setItem('ab_setup','1');
     window.location.href='main.html';
   }else{
-    alert('Code invalide ou غير مضبوط.');
+    alert('Invalid or missing recovery code.');
   }
 }
 function hashLite(s){let h=0;for(let i=0;i<s.length;i++){h=((h<<5)-h)+s.charCodeAt(i);h|=0}return String(h)}
 function tryQA(){
   const ans=(g('qa_answer').value||'').trim().toLowerCase();
-  let sec={}; try{sec=JSON.parse(localStorage.getItem(LS_SEC)||'{}')}catch{}
-  if(!sec.answerHash){ alert('Question secrète غير مفعّلة.'); return; }
+  let sec={};try{sec=JSON.parse(localStorage.getItem(LS_SEC)||'{}')}catch{}
+  if(!sec.answerHash){ alert('Secret question not configured.'); return; }
   if(hashLite(ans)===sec.answerHash){
     localStorage.setItem('ab_setup','1');
     window.location.href='main.html';
   }else{
-    alert('Réponse incorrecte.');
+    alert('Wrong answer.');
   }
 }
 
-/* Setup button */
+/* Setup button + init */
 document.addEventListener('DOMContentLoaded',()=>{
   applyBranding();
   if(loadOps().length===0){ g('noOpsHint').classList.remove('hidden'); }
-
-  g('loginBtn').onclick = (e)=>{e.preventDefault();loginFlow();}
-  g('forgotLink').onclick = (e)=>{e.preventDefault();openRecovery();}
-  g('setupBtn').onclick = (e)=>{
+  g('loginBtn').onclick=e=>{e.preventDefault();loginFlow();}
+  g('forgotLink').onclick=e=>{e.preventDefault();openRecovery();}
+  g('setupBtn').onclick=e=>{
     e.preventDefault();
     localStorage.setItem('ab_setup','1');
     window.location.href='main.html';
-  }
+  };
 });
 </script>
 </body>
