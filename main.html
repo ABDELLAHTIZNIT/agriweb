@@ -1004,10 +1004,24 @@ function svGetCurrentKey(){
   if(!fId||!sId||!pId||!ptId) return null;
   return svKey(fId,sId,pId,ptId);
 }
+
+/* زر Irrigation: إظهار جدول هذا الـPoint */
 function svShowIrrigation(){
-  svClearSelection();
-  toast('Tableau irrigation actif');
+  const key=svGetCurrentKey();
+  if(!key){
+    toast('اختر Ferme / Secteur / Parcelle / Point أولا');
+    return;
+  }
+  svReloadTable(); // يقرأ البيانات من localStorage ويعرضها في الجدول
+  const store=svLoad();
+  const rows=store[key]||[];
+  if(!rows.length){
+    toast('لا توجد قياسات مسجلة لهذا الـ Point بعد');
+  }else{
+    toast('تم عرض جدول السقي لهذا الـ Point ✅');
+  }
 }
+
 function svShowAdd(){
   if(!svGetCurrentKey()) return toast('اختر Ferme / Secteur / Parcelle / Point أولا');
   $('sv_modal').classList.remove('hidden');
@@ -1028,7 +1042,6 @@ function svSaveNew(){
     vdr:$('sv_vdr').value.trim(),
     ecdr:$('sv_ecdr').value.trim(),
     phdr:$('sv_phdr').value.trim()
-    // pctdr يظل فارغ حالياً
   };
   const store=svLoad();
   store[key]=store[key]||[];
