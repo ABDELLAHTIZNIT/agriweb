@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>AB AGRIWEB - Dashboard</title>
-  <link rel="stylesheet" href="assets/css/base.css" />
+  <link rel="stylesheet" href="assets/css/base.css"/>
 </head>
 <body>
 
@@ -14,133 +14,148 @@
     <span class="sidebar-title" id="sb-app-name">AB AGRIWEB</span>
   </div>
   <nav class="sidebar-nav">
-    <button onclick="openPage('accueil')" class="nav-item" id="nav-accueil">🏠 Accueil</button>
-    <button onclick="openPage('param')" class="nav-item" id="nav-param">⚙️ Paramètres</button>
-    <button onclick="openPage('ref')" class="nav-item" id="nav-ref">📚 Référentiel</button>
-    <button onclick="openPage('irrigation')" class="nav-item" id="nav-irrig">💧 Suivi irrigation</button>
-    <button onclick="logout()" class="nav-item nav-danger">🚪 Déconnecter</button>
+    <button onclick="openPage('home')" class="nav-item" id="nav-home">🏠 Home</button>
+    <button onclick="openPage('settings')" class="nav-item" id="nav-settings">⚙️ Settings</button>
+    <button onclick="openPage('ref')" class="nav-item" id="nav-ref">📚 Referential</button>
+    <button onclick="openPage('irr')" class="nav-item" id="nav-irr">💧 Irrigation tracking</button>
+    <button onclick="logout()" class="nav-item nav-danger">🚪 Logout</button>
   </nav>
 </aside>
 
-<!-- Top bar -->
+<!-- Topbar -->
 <header class="topbar">
   <button id="menuBtn" class="icon-btn" onclick="toggleSidebar()">☰</button>
   <div class="top-title" id="top-app-name">AB AGRIWEB</div>
-  <img id="top-logo" class="top-logo" alt="Logo" />
+  <img id="top-logo" class="top-logo" alt="Logo"/>
 </header>
 
 <main class="page-wrap">
 
-  <!-- ACCUEIL -->
-  <section id="page-accueil" class="card">
-    <h2>Bienvenue 👋</h2>
-    <p>لوحة التحكم الخاصة بـ <span id="home-app-name">AB AGRIWEB</span>. استعمل القائمة لبدء العمل.</p>
+  <!-- HOME -->
+  <section id="page-home" class="card">
+    <h2>Welcome 👋</h2>
+    <p>Control panel for <span id="home-app-name">AB AGRIWEB</span>. Use the menu to navigate.</p>
   </section>
 
-  <!-- PARAMETRES -->
-  <section id="page-param" class="card hidden">
-    <h2>Paramètres de l'application</h2>
-    <p class="muted">كل إعدادات المظهر محفوظة محليًا في المتصفح.</p>
+  <!-- SETTINGS -->
+  <section id="page-settings" class="card hidden">
+    <h2>Application settings</h2>
+    <p class="muted">Branding and basic configuration are stored locally in this browser.</p>
 
+    <!-- Branding -->
     <h3>Branding & Logos</h3>
     <div class="stack">
       <div>
-        <label class="label">Nom de l'application</label>
-        <input id="cfg-app-name" class="input" placeholder="AB AGRIWEB" />
+        <label class="label">Application name</label>
+        <input id="cfg-app-name" class="input" placeholder="AB AGRIWEB"/>
       </div>
 
       <div>
-        <label class="label">Logo principal - URL (PNG/GIF/JPG)</label>
-        <input id="cfg-logo-url" class="input" placeholder="https://...png" />
+        <label class="label">Main logo URL (PNG/JPG/GIF)</label>
+        <input id="cfg-logo-url" class="input" placeholder="https://...png"/>
       </div>
       <div>
-        <label class="label">Logo principal - Fichier</label>
-        <input id="cfg-logo-file" class="input" type="file" accept="image/png,image/gif,image/jpeg" />
-      </div>
-
-      <div>
-        <label class="label">Login background - URL</label>
-        <input id="cfg-login-bg-url" class="input" placeholder="https://...jpg" />
-      </div>
-      <div>
-        <label class="label">Login background - Fichier</label>
-        <input id="cfg-login-bg-file" class="input" type="file" accept="image/png,image/gif,image/jpeg" />
+        <label class="label">Main logo file</label>
+        <input id="cfg-logo-file" class="input" type="file" accept="image/png,image/gif,image/jpeg"/>
       </div>
 
       <div>
-        <label class="label">Fond dashboard (URL intérieur)</label>
-        <input id="cfg-main-bg-url" class="input" placeholder="اختياري" />
+        <label class="label">Login background URL</label>
+        <input id="cfg-login-bg-url" class="input" placeholder="https://...jpg"/>
       </div>
       <div>
-        <label class="label">Couleur fond dashboard</label>
-        <input id="cfg-main-bg-color" class="input" type="color" value="#020817" />
+        <label class="label">Login background file</label>
+        <input id="cfg-login-bg-file" class="input" type="file" accept="image/png,image/gif,image/jpeg"/>
       </div>
 
       <div>
-        <label class="label">Zoom logo horizontal</label>
-        <input id="cfg-zoom-x" type="range" min="50" max="200" value="100" />
+        <label class="label">Dashboard background URL (inside)</label>
+        <input id="cfg-main-bg-url" class="input" placeholder="optional"/>
       </div>
       <div>
-        <label class="label">Zoom logo vertical</label>
-        <input id="cfg-zoom-y" type="range" min="50" max="200" value="100" />
+        <label class="label">Dashboard background color</label>
+        <input id="cfg-main-bg-color" class="input" type="color" value="#020817"/>
+      </div>
+
+      <div>
+        <label class="label">Logo zoom horizontal</label>
+        <input id="cfg-zoom-x" type="range" min="50" max="200" value="100"/>
+      </div>
+      <div>
+        <label class="label">Logo zoom vertical</label>
+        <input id="cfg-zoom-y" type="range" min="50" max="200" value="100"/>
       </div>
     </div>
 
     <div class="row right" style="margin-top:10px;gap:10px">
-      <button class="btn danger" onclick="cfgReset()">Reset (défaut)</button>
-      <button class="btn" onclick="cfgSave()">Enregistrer</button>
+      <button class="btn danger" onclick="cfgReset()">Reset default</button>
+      <button class="btn" onclick="cfgSave()">Save</button>
     </div>
 
-    <h3 style="margin-top:20px">Infos</h3>
-    <p class="small muted">
-      المستخدمون، كلمات السر، حقوق الولوج، إلخ:
-      يمكنك تدبيرهم في نسخة لاحقة (Operators / Droits d'accès).
-      حاليًا هذا القسم فقط للمظهر و référentiel و suivi irrigation.
-    </p>
+    <!-- Management shortcuts (restored icons) -->
+    <h3 style="margin-top:24px">Management</h3>
+    <div class="ref-grid">
+      <div class="ref-box">
+        <h3>Users</h3>
+        <p class="small muted">Create / edit operators who can access this dashboard. (UI placeholder)</p>
+      </div>
+      <div class="ref-box">
+        <h3>Profiles</h3>
+        <p class="small muted">Define roles / profiles for operators. (UI placeholder)</p>
+      </div>
+      <div class="ref-box">
+        <h3>Access rights</h3>
+        <p class="small muted">Assign what each profile can see or edit. (UI placeholder)</p>
+      </div>
+      <div class="ref-box">
+        <h3>Security / Password</h3>
+        <p class="small muted">Recovery email, phone, secret question, recovery code. (UI placeholder)</p>
+      </div>
+    </div>
   </section>
 
-  <!-- REFERENTIEL -->
+  <!-- REFERENTIAL -->
   <section id="page-ref" class="card hidden">
-    <h2>Référentiel</h2>
-    <p class="muted">Société &gt; Ferme &gt; Secteur &gt; Parcelle &gt; Point.</p>
+    <h2>Referential</h2>
+    <p class="muted">Structure: <b>Company → Farm → Sector → Plot (Parcelle) → Point</b>.</p>
 
     <div class="ref-grid">
 
       <div class="ref-box">
-        <h3>Sociétés</h3>
+        <h3>Companies</h3>
         <div class="row">
-          <input id="rf-societe-name" class="input" placeholder="Nom société" />
+          <input id="rf-societe-name" class="input" placeholder="Company name"/>
           <button class="btn" onclick="rfAddSociete()">+</button>
         </div>
         <ul id="rf-societe-list" class="ref-list"></ul>
       </div>
 
       <div class="ref-box">
-        <h3>Fermes</h3>
+        <h3>Farms</h3>
         <div class="row">
           <select id="rf-ferme-societe" class="input small"></select>
-          <input id="rf-ferme-name" class="input" placeholder="Nom ferme" />
+          <input id="rf-ferme-name" class="input" placeholder="Farm name"/>
           <button class="btn" onclick="rfAddFerme()">+</button>
         </div>
         <ul id="rf-ferme-list" class="ref-list"></ul>
       </div>
 
       <div class="ref-box">
-        <h3>Secteurs</h3>
+        <h3>Sectors</h3>
         <div class="row">
           <select id="rf-sect-ferme" class="input small"></select>
-          <input id="rf-sect-name" class="input" placeholder="Nom secteur" />
+          <input id="rf-sect-name" class="input" placeholder="Sector name"/>
           <button class="btn" onclick="rfAddSecteur()">+</button>
         </div>
         <ul id="rf-sect-list" class="ref-list"></ul>
       </div>
 
       <div class="ref-box">
-        <h3>Parcelles</h3>
+        <h3>Parcels</h3>
         <div class="row">
           <select id="rf-parc-ferme" class="input small"></select>
           <select id="rf-parc-secteur" class="input small"></select>
-          <input id="rf-parc-name" class="input" placeholder="Nom parcelle" />
+          <input id="rf-parc-name" class="input" placeholder="Parcel name"/>
           <button class="btn" onclick="rfAddParcelle()">+</button>
         </div>
         <ul id="rf-parc-list" class="ref-list"></ul>
@@ -152,7 +167,7 @@
           <select id="rf-pt-ferme" class="input small"></select>
           <select id="rf-pt-secteur" class="input small"></select>
           <select id="rf-pt-parcelle" class="input small"></select>
-          <input id="rf-pt-name" class="input" placeholder="Point ex: P1" />
+          <input id="rf-pt-name" class="input" placeholder="Point name (P1...)"/>
           <button class="btn" onclick="rfAddPoint()">+</button>
         </div>
         <ul id="rf-pt-list" class="ref-list"></ul>
@@ -161,76 +176,76 @@
     </div>
 
     <p class="small muted" style="margin-top:8px">
-      أنقر على أي عنصر لحذفه. كل شيء محفوظ محليًا في <code>localStorage</code>.
+      Click on any item to delete it. All data is stored only in this browser (localStorage).
     </p>
   </section>
 
-  <!-- SUIVI IRRIGATION -->
-  <section id="page-irrigation" class="card hidden">
+  <!-- IRRIGATION -->
+  <section id="page-irr" class="card hidden">
     <h2>Suivi irrigation</h2>
     <p class="muted">
-      اختر Ferme / Secteur / Parcelle / Point ثم:
-      <b>Ajouter</b> لإضافة قياس،
-      <b>Irrigation</b> لمشاهدة الجدول،
-      <b>Partager</b> للملخص،
-      <b>Exporter</b> للتنزيل.
+      Select <b>Farm / Sector / Parcel / Point</b>, then:
+      <b>Add</b> to record a measurement,
+      <b>Irrigation</b> to view the table,
+      <b>Share</b> to copy summary,
+      <b>Export</b> to download.
     </p>
 
     <div class="stack">
       <div>
-        <label class="label">Ferme</label>
+        <label class="label">Farm</label>
         <select id="sv-ferme" class="input" onchange="svOnFermeChange()">
-          <option value="">-- اختر Ferme --</option>
+          <option value="">-- Select Farm --</option>
         </select>
       </div>
       <div>
-        <label class="label">Secteur</label>
+        <label class="label">Sector</label>
         <select id="sv-secteur" class="input" onchange="svOnSecteurChange()">
-          <option value="">-- اختر Secteur --</option>
+          <option value="">-- Select Sector --</option>
         </select>
       </div>
       <div>
-        <label class="label">Parcelle</label>
+        <label class="label">Parcel</label>
         <select id="sv-parcelle" class="input" onchange="svOnParcelleChange()">
-          <option value="">-- اختر Parcelle --</option>
+          <option value="">-- Select Parcel --</option>
         </select>
       </div>
       <div>
         <label class="label">Point</label>
         <select id="sv-point" class="input">
-          <option value="">-- اختر Point --</option>
+          <option value="">-- Select Point --</option>
         </select>
       </div>
 
       <div class="row" style="flex-wrap:wrap;gap:8px;margin-top:8px">
         <button class="btn" onclick="svOpenTable()">Irrigation</button>
-        <button class="btn" onclick="svOpenAdd()">Ajouter</button>
-        <button class="btn" onclick="svShare()">Partager</button>
-        <button class="btn" onclick="svExportExcel()">Exporter Excel</button>
-        <button class="btn" onclick="svExportPDF()">Exporter PDF</button>
+        <button class="btn" onclick="svOpenAdd()">Add</button>
+        <button class="btn" onclick="svShare()">Share</button>
+        <button class="btn" onclick="svExportExcel()">Export Excel</button>
+        <button class="btn" onclick="svExportPDF()">Export PDF</button>
       </div>
     </div>
   </section>
 
 </main>
 
-<!-- Modal: Ajouter mesure -->
+<!-- Modal: Add measurement -->
 <div id="sv-add-modal" class="modal-wrap">
   <div class="modal-bg" onclick="svCloseAdd()"></div>
   <div class="modal">
-    <h3>Ajouter une mesure d'irrigation</h3>
-    <p class="small">سيتم ربط هذه القياسات بـ Ferme / Secteur / Parcelle / Point المحددة.</p>
+    <h3>Add irrigation measurement</h3>
+    <p class="small">Linked to current Farm / Sector / Parcel / Point.</p>
     <div class="grid">
       <div>
-        <label class="label">Tours / Heures</label>
+        <label class="label">Tours / Hours</label>
         <input id="sv-tours" class="input" type="text">
       </div>
       <div>
-        <label class="label">Durée (min)</label>
+        <label class="label">Duration (min)</label>
         <input id="sv-duree" class="input" type="number" min="0">
       </div>
       <div>
-        <label class="label">Temps repos</label>
+        <label class="label">Rest time</label>
         <input id="sv-repos" class="input" type="text">
       </div>
       <div>
@@ -262,47 +277,46 @@
         <input id="sv-pctdrain" class="input" type="text">
       </div>
     </div>
-
     <div class="right" style="margin-top:10px">
-      <button class="btn danger" onclick="svCloseAdd()">✕</button>
-      <button class="btn" onclick="svSaveAdd()">✓ Enregistrer</button>
+      <button class="btn danger" onclick="svCloseAdd()">✕ Cancel</button>
+      <button class="btn" onclick="svSaveAdd()">✓ Save</button>
     </div>
   </div>
 </div>
 
-<!-- Modal: Tableau -->
+<!-- Modal: Table -->
 <div id="sv-table-modal" class="modal-wrap">
   <div class="modal-bg" onclick="svCloseTable()"></div>
   <div class="modal" style="max-width:980px">
     <div class="row" style="justify-content:space-between;align-items:center;margin-bottom:6px">
       <div>
-        <h3 style="margin:0">Irrigation - Tableau</h3>
+        <h3 style="margin:0">Irrigation - Table</h3>
         <div id="sv-table-title" class="small muted"></div>
       </div>
       <div class="row" style="gap:6px">
         <button class="btn" onclick="svExportExcel()">Excel</button>
-        <button class="btn" onclick="svExportPDF()">PDF / Imprimer</button>
+        <button class="btn" onclick="svExportPDF()">PDF / Print</button>
         <button class="btn danger" onclick="svCloseTable()">✕</button>
       </div>
     </div>
-    <div class="muted small">اضغط على أي سطر للتعديل أو الحذف.</div>
+    <div class="small muted">Click a row to edit or delete.</div>
     <div style="overflow-x:auto;margin-top:6px">
       <table id="sv-table" class="tbl">
         <thead>
-          <tr>
-            <th>#</th>
-            <th>Point</th>
-            <th>Tours / Heures</th>
-            <th>Durée (min)</th>
-            <th>Temps repos</th>
-            <th>V apport</th>
-            <th>EC apport</th>
-            <th>pH apport</th>
-            <th>V drainage</th>
-            <th>EC drainage</th>
-            <th>pH drainage</th>
-            <th>% drainage</th>
-          </tr>
+        <tr>
+          <th>#</th>
+          <th>Point</th>
+          <th>Tours / Hours</th>
+          <th>Duration (min)</th>
+          <th>Rest time</th>
+          <th>V apport</th>
+          <th>EC apport</th>
+          <th>pH apport</th>
+          <th>V drainage</th>
+          <th>EC drainage</th>
+          <th>pH drainage</th>
+          <th>% drainage</th>
+        </tr>
         </thead>
         <tbody></tbody>
       </table>
@@ -318,16 +332,13 @@ function g(id){return document.getElementById(id);}
 function v(id){const el=g(id);return el?el.value.trim():'';}
 function escapeHtml(s){return (s||'').replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));}
 
-/* Layout */
-function toggleSidebar(){ g('sidebar').classList.toggle('open'); }
+function toggleSidebar(){g('sidebar').classList.toggle('open');}
 function openPage(key){
-  ['accueil','param','ref','irrigation'].forEach(k=>{
+  ['home','settings','ref','irr'].forEach(k=>{
     g('page-'+k).classList.toggle('hidden',k!==key);
   });
   g('sidebar').classList.remove('open');
 }
-
-/* Logout */
 function logout(){
   localStorage.removeItem('ab_setup');
   window.location.href='index.html';
@@ -335,7 +346,7 @@ function logout(){
 
 /* Branding */
 function cfgLoad(){try{return JSON.parse(localStorage.getItem(LS_APPCFG)||'{}')}catch{return{}}}
-function fileToDataUrl(input, cb){
+function fileToDataUrl(input,cb){
   const f=input.files[0]; if(!f){cb(null);return;}
   const r=new FileReader();
   r.onload=e=>cb(e.target.result);
@@ -384,20 +395,21 @@ function cfgSave(){
     zoomX:parseInt(g('cfg-zoom-x').value||'100',10),
     zoomY:parseInt(g('cfg-zoom-y').value||'100',10)
   };
-  fileToDataUrl(g('cfg-logo-file'), d=>{
+  fileToDataUrl(g('cfg-logo-file'),d=>{
     if(d) cfg.logo=d; else if(cfg.logoUrl) cfg.logo=cfg.logoUrl;
-    fileToDataUrl(g('cfg-login-bg-file'), d2=>{
+    fileToDataUrl(g('cfg-login-bg-file'),d2=>{
       if(d2) cfg.loginBg=d2; else if(cfg.loginBgUrl) cfg.loginBg=cfg.loginBgUrl;
       localStorage.setItem(LS_APPCFG,JSON.stringify(cfg));
       cfgApply();
-      alert('تم حفظ الإعدادات ✅');
+      alert('Branding saved.');
     });
   });
 }
 function cfgReset(){
-  if(!confirm('إرجاع الإعدادات الافتراضية؟'))return;
+  if(!confirm('Reset all branding to default?'))return;
   localStorage.removeItem(LS_APPCFG);
-  cfgApply(); cfgFillForm();
+  cfgApply();
+  cfgFillForm();
 }
 
 /* INIT */
@@ -406,7 +418,7 @@ function cfgReset(){
   cfgFillForm();
   rfInit();
   svFillFarm();
-  openPage('accueil');
+  openPage('home');
 })();
 </script>
 </body>
