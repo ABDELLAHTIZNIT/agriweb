@@ -92,32 +92,32 @@
       <button class="btn" onclick="cfgSave()">Save</button>
     </div>
 
-    <!-- Management shortcuts (restored icons) -->
+    <!-- Management -->
     <h3 style="margin-top:24px">Management</h3>
     <div class="ref-grid">
-      <div class="ref-box">
+      <button type="button" class="ref-box ref-button" onclick="mgOpenUsers()">
         <h3>Users</h3>
-        <p class="small muted">Create / edit operators who can access this dashboard. (UI placeholder)</p>
-      </div>
-      <div class="ref-box">
+        <p class="small muted">Create / edit operators who can access this dashboard.</p>
+      </button>
+      <button type="button" class="ref-box ref-button" onclick="mgOpenProfiles()">
         <h3>Profiles</h3>
-        <p class="small muted">Define roles / profiles for operators. (UI placeholder)</p>
-      </div>
-      <div class="ref-box">
+        <p class="small muted">Define roles / profiles for operators.</p>
+      </button>
+      <button type="button" class="ref-box ref-button" onclick="mgOpenRights()">
         <h3>Access rights</h3>
-        <p class="small muted">Assign what each profile can see or edit. (UI placeholder)</p>
-      </div>
-      <div class="ref-box">
+        <p class="small muted">Assign what each profile can see or edit.</p>
+      </button>
+      <button type="button" class="ref-box ref-button" onclick="mgOpenSecurity()">
         <h3>Security / Password</h3>
-        <p class="small muted">Recovery email, phone, secret question, recovery code. (UI placeholder)</p>
-      </div>
+        <p class="small muted">Recovery email, phone, secret question, recovery code.</p>
+      </button>
     </div>
   </section>
 
   <!-- REFERENTIAL -->
   <section id="page-ref" class="card hidden">
     <h2>Referential</h2>
-    <p class="muted">Structure: <b>Company → Farm → Sector → Plot (Parcelle) → Point</b>.</p>
+    <p class="muted">Structure: <b>Company → Farm → Sector → Parcel (Parcelle) → Point</b>.</p>
 
     <div class="ref-grid">
 
@@ -284,7 +284,7 @@
   </div>
 </div>
 
-<!-- Modal: Table -->
+<!-- Modal: Irrigation table -->
 <div id="sv-table-modal" class="modal-wrap">
   <div class="modal-bg" onclick="svCloseTable()"></div>
   <div class="modal" style="max-width:980px">
@@ -324,14 +324,170 @@
   </div>
 </div>
 
+<!-- Modal: Users -->
+<div id="mg-users-modal" class="modal-wrap">
+  <div class="modal-bg" onclick="mgCloseUsers()"></div>
+  <div class="modal" style="max-width:720px">
+    <h3>Users (operators)</h3>
+    <p class="small muted">
+      Users are stored locally in this browser and used on the login screen.
+    </p>
+
+    <div class="grid">
+      <div>
+        <label class="label">Username</label>
+        <input id="mg-user-name" class="input" placeholder="admin">
+      </div>
+      <div>
+        <label class="label">Password</label>
+        <input id="mg-user-pass" class="input" placeholder="******">
+      </div>
+      <div>
+        <label class="label">Profile</label>
+        <select id="mg-user-prof" class="input"></select>
+      </div>
+    </div>
+    <div class="right" style="margin-top:8px">
+      <button class="btn" onclick="mgSaveUser()">Save / Update</button>
+    </div>
+
+    <h4 style="margin-top:16px">Existing users</h4>
+    <table class="tbl small">
+      <thead>
+      <tr><th>#</th><th>Username</th><th>Profile</th><th>Actions</th></tr>
+      </thead>
+      <tbody id="mg-users-tbody"></tbody>
+    </table>
+
+    <div class="right" style="margin-top:10px">
+      <button class="btn danger" onclick="mgCloseUsers()">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Profiles -->
+<div id="mg-prof-modal" class="modal-wrap">
+  <div class="modal-bg" onclick="mgCloseProfiles()"></div>
+  <div class="modal" style="max-width:600px">
+    <h3>Profiles</h3>
+    <p class="small muted">Define roles like Admin, Supervisor, Viewer…</p>
+
+    <div class="grid">
+      <div>
+        <label class="label">Profile name</label>
+        <input id="mg-prof-name" class="input" placeholder="Admin">
+      </div>
+      <div>
+        <label class="label">Description</label>
+        <input id="mg-prof-desc" class="input" placeholder="Full access">
+      </div>
+    </div>
+    <div class="right" style="margin-top:8px">
+      <button class="btn" onclick="mgSaveProfile()">Save profile</button>
+    </div>
+
+    <h4 style="margin-top:16px">Existing profiles</h4>
+    <table class="tbl small">
+      <thead>
+      <tr><th>#</th><th>Name</th><th>Description</th><th>Delete</th></tr>
+      </thead>
+      <tbody id="mg-prof-tbody"></tbody>
+    </table>
+
+    <div class="right" style="margin-top:10px">
+      <button class="btn danger" onclick="mgCloseProfiles()">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Rights -->
+<div id="mg-rights-modal" class="modal-wrap">
+  <div class="modal-bg" onclick="mgCloseRights()"></div>
+  <div class="modal" style="max-width:620px">
+    <h3>Access rights</h3>
+    <p class="small muted">
+      Check what each profile can access. (Currently not enforced, stored for future use.)
+    </p>
+
+    <table class="tbl small">
+      <thead>
+      <tr>
+        <th>Profile</th>
+        <th>Settings</th>
+        <th>Referential</th>
+        <th>Irrigation</th>
+      </tr>
+      </thead>
+      <tbody id="mg-rights-tbody"></tbody>
+    </table>
+
+    <div class="right" style="margin-top:10px">
+      <button class="btn" onclick="mgSaveRights()">Save rights</button>
+      <button class="btn danger" onclick="mgCloseRights()">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Security -->
+<div id="mg-sec-modal" class="modal-wrap">
+  <div class="modal-bg" onclick="mgCloseSecurity()"></div>
+  <div class="modal" style="max-width:620px">
+    <h3>Security / Password recovery</h3>
+    <p class="small muted">
+      These settings are used on the login screen for account recovery.
+    </p>
+
+    <div class="stack">
+      <div>
+        <label class="label">Recovery email</label>
+        <input id="mg-sec-email" class="input" placeholder="admin@farm.com">
+      </div>
+      <div>
+        <label class="label">Recovery phone</label>
+        <input id="mg-sec-phone" class="input" placeholder="+2126....">
+      </div>
+      <div>
+        <label class="label">Secret question</label>
+        <input id="mg-sec-question" class="input" placeholder="Your favourite city?">
+      </div>
+      <div>
+        <label class="label">Secret answer</label>
+        <input id="mg-sec-answer" class="input" placeholder="Casablanca">
+      </div>
+      <div>
+        <label class="label">Recovery code (6 digits)</label>
+        <input id="mg-sec-code" class="input" placeholder="123456">
+      </div>
+    </div>
+
+    <div class="right" style="margin-top:10px">
+      <button class="btn" onclick="mgSaveSecurity()">Save security</button>
+      <button class="btn danger" onclick="mgCloseSecurity()">Close</button>
+    </div>
+  </div>
+</div>
+
 <script src="assets/js/core/ref.js"></script>
 <script src="assets/js/pages/irrigation.js"></script>
 <script>
-const LS_APPCFG='ab_appcfg';
+/* ---------- Helpers ---------- */
+const LS_APPCFG = 'ab_appcfg';
+const LS_OPERATORS = 'ab_operators';
+const LS_PROFILES = 'ab_profiles';
+const LS_SECURITY = 'ab_security';
+
 function g(id){return document.getElementById(id);}
 function v(id){const el=g(id);return el?el.value.trim():'';}
 function escapeHtml(s){return (s||'').replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));}
+function mLoad(key, defVal){
+  try{
+    const v = localStorage.getItem(key);
+    return v ? JSON.parse(v) : (defVal!==undefined?defVal:null);
+  }catch(e){ return defVal!==undefined?defVal:null; }
+}
+function mSave(key,val){ localStorage.setItem(key, JSON.stringify(val)); }
 
+/* ---------- Navigation ---------- */
 function toggleSidebar(){g('sidebar').classList.toggle('open');}
 function openPage(key){
   ['home','settings','ref','irr'].forEach(k=>{
@@ -344,8 +500,9 @@ function logout(){
   window.location.href='index.html';
 }
 
-/* Branding */
-function cfgLoad(){try{return JSON.parse(localStorage.getItem(LS_APPCFG)||'{}')}catch{return{}}}
+/* ---------- Branding ---------- */
+function cfgLoad(){return mLoad(LS_APPCFG,{}) || {};}
+
 function fileToDataUrl(input,cb){
   const f=input.files[0]; if(!f){cb(null);return;}
   const r=new FileReader();
@@ -387,19 +544,19 @@ function cfgSave(){
   const cur=cfgLoad();
   const cfg={
     ...cur,
-    appName:v('cfg-app-name')||'AB AGRIWEB',
-    logoUrl:v('cfg-logo-url')||'',
-    loginBgUrl:v('cfg-login-bg-url')||'',
-    mainBgUrl:v('cfg-main-bg-url')||'',
-    mainBgColor:g('cfg-main-bg-color').value||'#020817',
-    zoomX:parseInt(g('cfg-zoom-x').value||'100',10),
-    zoomY:parseInt(g('cfg-zoom-y').value||'100',10)
+    appName: v('cfg-app-name')||'AB AGRIWEB',
+    logoUrl: v('cfg-logo-url')||'',
+    loginBgUrl: v('cfg-login-bg-url')||'',
+    mainBgUrl: v('cfg-main-bg-url')||'',
+    mainBgColor: g('cfg-main-bg-color').value||'#020817',
+    zoomX: parseInt(g('cfg-zoom-x').value||'100',10),
+    zoomY: parseInt(g('cfg-zoom-y').value||'100',10)
   };
   fileToDataUrl(g('cfg-logo-file'),d=>{
     if(d) cfg.logo=d; else if(cfg.logoUrl) cfg.logo=cfg.logoUrl;
     fileToDataUrl(g('cfg-login-bg-file'),d2=>{
       if(d2) cfg.loginBg=d2; else if(cfg.loginBgUrl) cfg.loginBg=cfg.loginBgUrl;
-      localStorage.setItem(LS_APPCFG,JSON.stringify(cfg));
+      mSave(LS_APPCFG,cfg);
       cfgApply();
       alert('Branding saved.');
     });
@@ -412,7 +569,228 @@ function cfgReset(){
   cfgFillForm();
 }
 
-/* INIT */
+/* ---------- Management: Users ---------- */
+
+let mgEditingUser = null; // username being edited
+
+function mgOpenUsers(){
+  mgEditingUser = null;
+  mgFillUserProfiles();
+  mgRenderUsers();
+  g('mg-user-name').value='';
+  g('mg-user-pass').value='';
+  g('mg-user-prof').value='';
+
+  g('mg-users-modal').classList.add('show');
+}
+function mgCloseUsers(){
+  g('mg-users-modal').classList.remove('show');
+  mgEditingUser = null;
+}
+
+function mgFillUserProfiles(){
+  const sel=g('mg-user-prof');
+  const profs = mLoad(LS_PROFILES,[]) || [];
+  let html='<option value="">(no profile)</option>';
+  profs.forEach(p=>{ html+=`<option value="${escapeHtml(p.name)}">${escapeHtml(p.name)}</option>`; });
+  sel.innerHTML=html;
+}
+
+function mgRenderUsers(){
+  const tbody=g('mg-users-tbody');
+  const users=mLoad(LS_OPERATORS,[])||[];
+  if(!users.length){
+    tbody.innerHTML='<tr><td colspan="4" class="muted">No users yet.</td></tr>';
+    return;
+  }
+  tbody.innerHTML=users.map((u,i)=>`
+    <tr>
+      <td>${i+1}</td>
+      <td>${escapeHtml(u.username||'')}</td>
+      <td>${escapeHtml(u.profile||'')}</td>
+      <td>
+        <button class="btn small" onclick="mgEditUser('${escapeHtml(u.username)}')">Edit</button>
+        <button class="btn small danger" onclick="mgDeleteUser('${escapeHtml(u.username)}')">Delete</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function mgSaveUser(){
+  const name=v('mg-user-name');
+  const pass=v('mg-user-pass');
+  const prof=v('mg-user-prof');
+  if(!name || !pass){alert('Username and password are required.');return;}
+  let users=mLoad(LS_OPERATORS,[])||[];
+
+  if(mgEditingUser && mgEditingUser!==name){
+    users = users.filter(u=>u.username!==mgEditingUser);
+  }
+  const existing=users.find(u=>u.username===name);
+  if(existing){
+    existing.password=pass;
+    existing.profile=prof;
+  }else{
+    users.push({username:name,password:pass,profile:prof});
+  }
+  mSave(LS_OPERATORS,users);
+  mgEditingUser=null;
+  mgRenderUsers();
+  alert('User saved.');
+}
+function mgEditUser(username){
+  const users=mLoad(LS_OPERATORS,[])||[];
+  const u=users.find(x=>x.username===username);
+  if(!u)return;
+  mgEditingUser=username;
+  g('mg-user-name').value=u.username||'';
+  g('mg-user-pass').value=u.password||'';
+  mgFillUserProfiles();
+  g('mg-user-prof').value=u.profile||'';
+}
+function mgDeleteUser(username){
+  if(!confirm('Delete this user?'))return;
+  let users=mLoad(LS_OPERATORS,[])||[];
+  users=users.filter(u=>u.username!==username);
+  mSave(LS_OPERATORS,users);
+  mgRenderUsers();
+}
+
+/* ---------- Management: Profiles ---------- */
+
+function mgOpenProfiles(){
+  mgRenderProfiles();
+  g('mg-prof-name').value='';
+  g('mg-prof-desc').value='';
+  g('mg-prof-modal').classList.add('show');
+}
+function mgCloseProfiles(){
+  g('mg-prof-modal').classList.remove('show');
+}
+
+function mgRenderProfiles(){
+  const tbody=g('mg-prof-tbody');
+  const list=mLoad(LS_PROFILES,[])||[];
+  if(!list.length){
+    tbody.innerHTML='<tr><td colspan="4" class="muted">No profiles yet.</td></tr>';
+    return;
+  }
+  tbody.innerHTML=list.map((p,i)=>`
+    <tr>
+      <td>${i+1}</td>
+      <td>${escapeHtml(p.name)}</td>
+      <td>${escapeHtml(p.desc||'')}</td>
+      <td><button class="btn small danger" onclick="mgDeleteProfile('${escapeHtml(p.name)}')">Delete</button></td>
+    </tr>
+  `).join('');
+}
+
+function mgSaveProfile(){
+  const name=v('mg-prof-name');
+  const desc=v('mg-prof-desc');
+  if(!name){alert('Profile name is required.');return;}
+  let list=mLoad(LS_PROFILES,[])||[];
+  if(list.some(p=>p.name===name)){
+    alert('Profile already exists.');
+    return;
+  }
+  list.push({name,desc,rights:{settings:true,ref:true,irr:true}});
+  mSave(LS_PROFILES,list);
+  mgRenderProfiles();
+  alert('Profile saved.');
+}
+
+function mgDeleteProfile(name){
+  if(!confirm('Delete this profile?'))return;
+  let list=mLoad(LS_PROFILES,[])||[];
+  list=list.filter(p=>p.name!==name);
+  mSave(LS_PROFILES,list);
+  mgRenderProfiles();
+}
+
+/* used by Users modal */
+function mgRenderProfilesSelect(){
+  mgFillUserProfiles();
+}
+
+/* ---------- Management: Rights ---------- */
+
+function mgOpenRights(){
+  mgRenderRightsTable();
+  g('mg-rights-modal').classList.add('show');
+}
+function mgCloseRights(){
+  g('mg-rights-modal').classList.remove('show');
+}
+
+function mgRenderRightsTable(){
+  const tbody=g('mg-rights-tbody');
+  const list=mLoad(LS_PROFILES,[])||[];
+  if(!list.length){
+    tbody.innerHTML='<tr><td colspan="4" class="muted">No profiles defined.</td></tr>';
+    return;
+  }
+  tbody.innerHTML=list.map((p,i)=>{
+    const r=p.rights||{};
+    return `
+      <tr>
+        <td>${escapeHtml(p.name)}</td>
+        <td><input type="checkbox" id="rt-${i}-settings" ${r.settings!==false?'checked':''}></td>
+        <td><input type="checkbox" id="rt-${i}-ref" ${r.ref!==false?'checked':''}></td>
+        <td><input type="checkbox" id="rt-${i}-irr" ${r.irr!==false?'checked':''}></td>
+      </tr>
+    `;
+  }).join('');
+}
+
+function mgSaveRights(){
+  const list=mLoad(LS_PROFILES,[])||[];
+  list.forEach((p,i)=>{
+    const r=p.rights||{};
+    r.settings=!!document.getElementById(`rt-${i}-settings`)?.checked;
+    r.ref=!!document.getElementById(`rt-${i}-ref`)?.checked;
+    r.irr=!!document.getElementById(`rt-${i}-irr`)?.checked;
+    p.rights=r;
+  });
+  mSave(LS_PROFILES,list);
+  alert('Rights saved (not enforced yet).');
+}
+
+/* ---------- Management: Security ---------- */
+
+function mgOpenSecurity(){
+  const sec=mLoad(LS_SECURITY,{})||{};
+  g('mg-sec-email').value=sec.email||'';
+  g('mg-sec-phone').value=sec.phone||'';
+  g('mg-sec-question').value=sec.question||'';
+  g('mg-sec-answer').value='';
+  g('mg-sec-code').value=sec.recoveryCode||'';
+  g('mg-sec-modal').classList.add('show');
+}
+function mgCloseSecurity(){
+  g('mg-sec-modal').classList.remove('show');
+}
+
+function hashLite(s){let h=0;for(let i=0;i<s.length;i++){h=((h<<5)-h)+s.charCodeAt(i);h|=0}return String(h);}
+
+function mgSaveSecurity(){
+  const email=v('mg-sec-email');
+  const phone=v('mg-sec-phone');
+  const question=v('mg-sec-question');
+  const answer=v('mg-sec-answer');
+  const code=v('mg-sec-code');
+  const sec={
+    email,
+    phone,
+    question,
+    answerHash: answer ? hashLite(answer.toLowerCase()) : null,
+    recoveryCode: code || null
+  };
+  mSave(LS_SECURITY,sec);
+  alert('Security settings saved. Use them on the login recovery screen.');
+}
+
+/* ---------- INIT ---------- */
 (function init(){
   cfgApply();
   cfgFillForm();
