@@ -7,7 +7,6 @@
   <link rel="stylesheet" href="assets/css/base.css"/>
 </head>
 <body>
-
 <!-- Sidebar -->
 <aside id="sidebar" class="sidebar">
   <div class="sidebar-header">
@@ -887,9 +886,24 @@ function mgSaveSecurity(){
 
 /* ---------- Override export for better print / Excel ---------- */
 
-function svExportPDF(){
+function svEnsureTableRendered(){
+  // نحاول نحدّث الجدول من جديد قبل التصدير
+  if (typeof svRenderTable === 'function') {
+    try { svRenderTable(); } catch(e) {}
+  }
+}
+  svEnsureTableRendered();
   const table = document.getElementById('sv-table');
-  if(!table){alert('No irrigation table to export.');return;}
+  if(!table){
+    alert('No irrigation table to export.');
+    return;
+  }
+  const bodyRows = table.querySelectorAll('tbody tr');
+  if(!bodyRows.length){
+    alert('No data for this selection.');
+    return;
+  }
+
   const title = document.getElementById('sv-table-title')?.textContent || 'Irrigation';
 
   const html = `
@@ -897,7 +911,7 @@ function svExportPDF(){
 <html>
 <head>
 <meta charset="utf-8">
-<title>${escapeHtml(title)}</title>
+<title>${title}</title>
 <style>
 body{font-family:system-ui,Arial,sans-serif;margin:10px;}
 h1{font-size:18px;margin-bottom:8px;}
@@ -910,11 +924,12 @@ th{background:#eee;}
 </style>
 </head>
 <body>
-<h1>${escapeHtml(title)}</h1>
+<h1>${title}</h1>
 ${table.outerHTML}
 </body>
 </html>`;
   const w = window.open('','_blank','width=1200,height=800');
+  if(!w){ alert('Popup blocked. Allow popups for this site.'); return; }
   w.document.open();
   w.document.write(html);
   w.document.close();
@@ -923,14 +938,29 @@ ${table.outerHTML}
 }
 
 function svExportExcel(){
+  svEnsureTableRendered();
   const table = document.getElementById('sv-table');
-  if(!table){alert('No irrigation table to export.');return;}
+  if(!table){
+    alert('No irrigation table to export.');
+    return;
+  }
+  const bodyRows = table.querySelectorAll('tbody tr');
+  if(!bodyRows.length){
+    alert('No data for this selection.');
+    return;
+  }
+
+  const sep = ';'; // Excel FR/AR كيستعمل الفاصلة المنقوطة
   let csv = '';
   table.querySelectorAll('tr').forEach(tr=>{
-    const cells=[...tr.children].map(td=>'"'+(td.innerText||'').replace(/"/g,'""')+'"');
-    csv += cells.join(',') + "\r\n";
+    const cells = [...tr.children].map(td=>{
+      const text = (td.innerText||'').replace(/"/g,'""');
+      return `"${text}"`;
+    });
+    csv += cells.join(sep) + "\r\n";
   });
-  const blob = new Blob([csv],{type:'text/csv;charset=utf-8;'});
+
+  const blob = new Blob(["\uFEFF"+csv],{type:'text/csv;charset=utf-8;'});
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href=url;
@@ -939,6 +969,7 @@ function svExportExcel(){
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
+
 }
 
 /* ---------- INIT ---------- */
