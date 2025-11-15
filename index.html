@@ -2,198 +2,293 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>AB AGRIWEB - Login</title>
   <link rel="stylesheet" href="assets/css/base.css"/>
 </head>
 <body class="login-body">
-<div class="login-wrap">
-  <!-- Logo -->
-  <div id="loginLogoWrap" class="login-logo-wrap hidden">
-    <img id="loginLogoImg" alt="Logo" class="login-logo">
+
+<header class="top-login">
+  <div class="top-login-left">
+    <!-- logo سيضبط من الإعدادات -->
   </div>
-
-  <!-- App title -->
-  <h1 id="appTitle" class="login-title">AB AGRIWEB</h1>
-
-  <!-- Hint -->
-  <div id="noOpsHint" class="hint hidden">
-    No operator is registered. Use <b>Setup (no login)</b> to enter, then add a user from <b>Settings</b>.
-  </div>
-
-  <!-- Username -->
-  <div class="field">
-    <label class="label">Username</label>
-    <input id="u" class="input" placeholder="Enter your username"/>
-  </div>
-
-  <!-- Password -->
-  <div class="field" style="position:relative">
-    <label class="label">Password</label>
-    <input id="p" type="password" class="input" placeholder="Enter your password"/>
-    <span class="eye" onclick="togglePass()">👁️</span>
-  </div>
-
-  <button class="btn" id="loginBtn">Login</button>
-  <button class="btn ghost" id="setupBtn" title="Temporary access without password to finish setup">
-    Setup (no login)
-  </button>
-  <a href="#" id="forgotLink" class="link">Forgot password?</a>
-</div>
-
-<!-- Recovery Modal -->
-<div id="recoveryModal" class="modal-wrap">
-  <div class="modal-bg" onclick="closeRecovery()"></div>
-  <div class="modal">
-    <h3>Account recovery</h3>
-    <div class="small" id="recoveryHints"></div>
-
-    <div class="tabbar">
-      <button class="btn small" onclick="switchRecTab('code')">Code</button>
-      <button class="btn small" onclick="switchRecTab('qa')">Secret question</button>
-    </div>
-
-    <div id="recTabCode">
-      <label class="label">Recovery code (6 digits)</label>
-      <input id="rec_code" class="input" placeholder="Ex: 123456">
-      <button class="btn" onclick="tryCode()">Verify & open</button>
-    </div>
-
-    <div id="recTabQA" class="hidden">
-      <div id="qa_wrap">
-        <label class="label" id="qa_question">Question</label>
-        <input id="qa_answer" class="input" placeholder="Your answer">
-        <button class="btn" onclick="tryQA()">Verify & open</button>
+  <div class="top-login-right">
+    <div class="lang-switch">
+      <button id="lang-btn" class="btn small">🌐 EN</button>
+      <div id="lang-menu" class="lang-menu hidden">
+        <button onclick="setLang('en')">English</button>
+        <button onclick="setLang('fr')">Français</button>
+        <button onclick="setLang('ar')">العربية</button>
       </div>
-      <div id="qa_empty" class="small hidden">Secret question not enabled.</div>
+    </div>
+  </div>
+</header>
+
+<main class="login-wrap">
+  <section class="login-card">
+    <div class="login-logo-wrap">
+      <img id="loginLogoImg" class="login-logo" alt="Logo"/>
+      <h1 id="login-title">AB AGRIWEB</h1>
     </div>
 
-    <div class="small" id="recoveryContact" style="margin-top:8px"></div>
+    <div id="setup-msg" class="setup-msg hidden"></div>
 
-    <div class="right" style="margin-top:10px">
-      <button class="btn ghost" onclick="closeRecovery()">Close</button>
+    <div class="stack">
+      <label class="label" id="lbl-user">Username</label>
+      <input id="in-user" class="input" placeholder="admin"/>
+      <label class="label" id="lbl-pass">Password</label>
+      <input id="in-pass" class="input" type="password" placeholder="••••••"/>
+    </div>
+
+    <div class="stack" style="margin-top:16px;gap:8px">
+      <button class="btn wide" id="btn-login" onclick="doLogin()">Sign in</button>
+      <button class="btn wide ghost" id="btn-setup" onclick="openSetup()">Setup (no login)</button>
+      <button class="link-btn" id="btn-forgot" type="button" onclick="openRecovery()">Forgot password?</button>
+    </div>
+  </section>
+</main>
+
+<!-- Modal recovery (بسيط) -->
+<div id="rec-modal" class="modal-wrap">
+  <div class="modal-bg" onclick="closeRecovery()"></div>
+  <div class="modal" style="max-width:500px">
+    <h3 id="rec-title">Account recovery</h3>
+    <p id="rec-text" class="small muted">
+      Use the information you configured in "Security / Password" inside the application.
+    </p>
+    <div class="stack">
+      <div>
+        <label class="label" id="rec-email-label">Recovery email</label>
+        <input id="rec-email" class="input" placeholder="admin@farm.com"/>
+      </div>
+      <div>
+        <label class="label" id="rec-question-label">Secret question</label>
+        <input id="rec-question" class="input" readonly/>
+      </div>
+      <div>
+        <label class="label" id="rec-answer-label">Secret answer</label>
+        <input id="rec-answer" class="input" placeholder="Answer"/>
+      </div>
+      <div>
+        <label class="label" id="rec-code-label">Recovery code</label>
+        <input id="rec-code" class="input" placeholder="123456"/>
+      </div>
+    </div>
+    <div class="right" style="margin-top:10px;gap:8px">
+      <button class="btn" onclick="checkRecovery()" id="rec-check-btn">Check</button>
+      <button class="btn danger" onclick="closeRecovery()" id="rec-close-btn">Close</button>
     </div>
   </div>
 </div>
 
 <script>
-const LS_APPCFG='ab_appcfg';
-const LS_OPERATORS='ab_operators';
-const LS_SEC='ab_security';
+/* ----- helpers ----- */
+const LS_APPCFG = 'ab_appcfg';
+const LS_OPERATORS = 'ab_operators';
+const LS_SECURITY = 'ab_security';
+const LS_LANG = 'ab_lang';
+const LS_USER = 'ab_user';
 
 function g(id){return document.getElementById(id);}
-function loadCfg(){try{return JSON.parse(localStorage.getItem(LS_APPCFG)||'{}')}catch{return{}}}
-function loadOps(){try{return JSON.parse(localStorage.getItem(LS_OPERATORS)||'[]')}catch{return[]}}
+function v(id){const el=g(id);return el?el.value.trim():'';}
+function loadJson(key,def){try{const v=localStorage.getItem(key);return v?JSON.parse(v):def;}catch(e){return def;}}
 
-/* Apply branding on login */
+/* ----- language system ----- */
+const LANG = {
+  en: {
+    code:'EN',
+    loginTitle:'AB AGRIWEB',
+    username:'Username',
+    password:'Password',
+    signIn:'Sign in',
+    setup:'Setup (no login)',
+    forgot:'Forgot password?',
+    noUsers:'No operator configured. Use Setup mode or go to "Settings → Management → Users" to create one.',
+    recTitle:'Account recovery',
+    recText:'Use the information configured in "Security / Password" inside the application.',
+    recEmail:'Recovery email',
+    recQuestion:'Secret question',
+    recAnswer:'Secret answer',
+    recCode:'Recovery code',
+    recCheck:'Check',
+    recClose:'Close',
+    recOk:'Recovery data seems valid. You can reset your password inside the app.',
+    recFail:'Recovery data does not match.'
+  },
+  fr: {
+    code:'FR',
+    loginTitle:'AB AGRIWEB',
+    username:'Identifiant',
+    password:'Mot de passe',
+    signIn:'Se connecter',
+    setup:'Mode setup (sans login)',
+    forgot:'Mot de passe oublié ?',
+    noUsers:"Aucun opérateur configuré. Utilisez le mode Setup ou créez un utilisateur dans « Paramètres → Management → Users ».",
+    recTitle:'Récupération du compte',
+    recText:'Utilisez les informations configurées dans « Security / Password » dans l’application.',
+    recEmail:'Email de récupération',
+    recQuestion:'Question secrète',
+    recAnswer:'Réponse secrète',
+    recCode:'Code de récupération',
+    recCheck:'Vérifier',
+    recClose:'Fermer',
+    recOk:'Les données de récupération sont valides. Vous pouvez réinitialiser le mot de passe dans l’app.',
+    recFail:'Les données de récupération ne correspondent pas.'
+  },
+  ar: {
+    code:'AR',
+    loginTitle:'AB AGRIWEB',
+    username:'اسم المستخدم',
+    password:'كلمة المرور',
+    signIn:'تسجيل الدخول',
+    setup:'وضع الإعداد (بدون تسجيل)',
+    forgot:'نسيت كلمة المرور؟',
+    noUsers:'لا يوجد أي مستخدم. استعمل وضع الإعداد أو أضف مستخدم من: الإعدادات → Management → Users.',
+    recTitle:'استرجاع الحساب',
+    recText:'استعمل معلومات الاسترجاع التي قمت بحفظها في "Security / Password" داخل التطبيق.',
+    recEmail:'بريد الاسترجاع',
+    recQuestion:'السؤال السري',
+    recAnswer:'الجواب السري',
+    recCode:'رمز الاسترجاع',
+    recCheck:'تحقق',
+    recClose:'إغلاق',
+    recOk:'بيانات الاسترجاع صحيحة. يمكنك تغيير كلمة السر من داخل التطبيق.',
+    recFail:'بيانات الاسترجاع غير صحيحة.'
+  }
+};
+
+function currentLangCode(){
+  const c = localStorage.getItem(LS_LANG);
+  return (c && LANG[c]) ? c : 'en';
+}
+
+function applyLang(){
+  const L = LANG[currentLangCode()];
+  g('lang-btn').textContent = '🌐 ' + L.code;
+  g('login-title').textContent = L.loginTitle;
+  g('lbl-user').textContent = L.username;
+  g('lbl-pass').textContent = L.password;
+  g('btn-login').textContent = L.signIn;
+  g('btn-setup').textContent = L.setup;
+  g('btn-forgot').textContent = L.forgot;
+
+  const sec = LANG[currentLangCode()];
+  g('rec-title').textContent = sec.recTitle;
+  g('rec-text').textContent = sec.recText;
+  g('rec-email-label').textContent = sec.recEmail;
+  g('rec-question-label').textContent = sec.recQuestion;
+  g('rec-answer-label').textContent = sec.recAnswer;
+  g('rec-code-label').textContent = sec.recCode;
+  g('rec-check-btn').textContent = sec.recCheck;
+  g('rec-close-btn').textContent = sec.recClose;
+
+  // setup message
+  const users = loadJson(LS_OPERATORS,[]);
+  const msg = g('setup-msg');
+  if(!users || !users.length){
+    msg.textContent = L.noUsers;
+    msg.classList.remove('hidden');
+  }else{
+    msg.classList.add('hidden');
+  }
+}
+
+function setLang(code){
+  if(!LANG[code]) return;
+  localStorage.setItem(LS_LANG,code);
+  applyLang();
+  g('lang-menu').classList.add('hidden');
+}
+
+/* ----- Lang menu UI ----- */
+g('lang-btn').addEventListener('click',()=>{
+  g('lang-menu').classList.toggle('hidden');
+});
+document.addEventListener('click',e=>{
+  if(!g('lang-btn').contains(e.target) && !g('lang-menu').contains(e.target)){
+    g('lang-menu').classList.add('hidden');
+  }
+});
+
+/* ----- Branding / background ----- */
 function applyBranding(){
-  const c=loadCfg();
-  const name=c.appName||'AB AGRIWEB';
-  document.title=name+' - Login';
-  g('appTitle').textContent=name;
+  const cfg = loadJson(LS_APPCFG,{}) || {};
+  const labels = cfg.labels || {};
+  const appName = labels.chip || cfg.appName || 'AB AGRIWEB';
+  g('login-title').textContent = appName;
 
-  const logo=c.logo||c.logoUrl;
-  if(logo){
-    g('loginLogoImg').src=logo;
-    g('loginLogoWrap').classList.remove('hidden');
-  }else{
-    g('loginLogoWrap').classList.add('hidden');
-  }
+  const logo = cfg.logo || cfg.logoUrl;
+  const img = g('loginLogoImg');
+  if(logo){ img.src = logo; img.style.display='block'; }
+  else { img.style.display='none'; }
 
-  const bg=c.loginBg||c.loginBgUrl;
+  const bg = cfg.loginBg || cfg.loginBgUrl;
   if(bg){
-    document.body.style.backgroundImage=`url('${bg}')`;
+    document.body.style.backgroundImage = `url('${bg}')`;
     document.body.style.backgroundSize='cover';
-    document.body.style.backgroundPosition='center';
-  }else{
-    document.body.style.backgroundImage='linear-gradient(180deg,#020817,#111827)';
+    document.body.style.backgroundAttachment='fixed';
   }
+
+  // logo zoom
+  const zx = cfg.zoomX || 100;
+  const zy = cfg.zoomY || 100;
+  img.style.transform = `scale(${zx/100},${zy/100})`;
 }
 
-/* Login flow */
-function togglePass(){
-  const i=g('p');
-  i.type=i.type==='password'?'text':'password';
-}
-
-function loginFlow(){
-  const ops=loadOps();
-  const u=(g('u').value||'').trim();
-  const p=(g('p').value||'').trim();
-
-  if(ops.length===0 && localStorage.getItem('ab_setup')!=='1'){
-    alert('No users found. Use Setup (no login) or recovery.');
-    openRecovery();
+/* ----- Login logic ----- */
+function doLogin(){
+  const user=v('in-user');
+  const pass=v('in-pass');
+  const users=loadJson(LS_OPERATORS,[])||[];
+  const u = users.find(x=>x.username===user && x.password===pass);
+  if(!u){
+    alert('Invalid username or password.');
     return;
   }
-  if(!u || !p){ alert('Enter username and password.'); return; }
-
-  const ok=ops.find(x=>
-    (x.username||'').toLowerCase()===u.toLowerCase() &&
-    (x.password||'')===p
-  );
-  if(!ok){ alert('Invalid username or password.'); return; }
-
+  localStorage.setItem(LS_USER,JSON.stringify({username:u.username,profile:u.profile||''}));
   window.location.href='main.html';
 }
 
-/* Recovery */
+function openSetup(){
+  // وضع الإعداد بدون تسجيل
+  window.location.href='main.html?setup=1';
+}
+
+/* ----- Recovery ----- */
 function openRecovery(){
-  let sec={};try{sec=JSON.parse(localStorage.getItem(LS_SEC)||'{}')}catch{}
-  const email=sec.email||'', phone=sec.phone||'';
-  const emailHint=email?`Email: ${email.replace(/(.{2}).+(@.+)/,'$1***$2')}`:'Email not set';
-  const phoneHint=phone?`Phone: ****${phone.slice(-4)}`:'Phone not set';
-  g('recoveryHints').textContent='Use recovery code or secret question if configured.';
-  g('recoveryContact').textContent=`${emailHint} | ${phoneHint}`;
+  const sec = loadJson(LS_SECURITY,{})||{};
+  g('rec-email').value='';
+  g('rec-answer').value='';
+  g('rec-code').value='';
+  g('rec-question').value = sec.question || '';
+  g('rec-modal').classList.add('show');
+}
 
-  const hasQ=!!sec.question;
-  g('qa_wrap').classList.toggle('hidden',!hasQ);
-  g('qa_empty').classList.toggle('hidden',hasQ);
-  if(hasQ) g('qa_question').textContent=sec.question;
+function closeRecovery(){
+  g('rec-modal').classList.remove('show');
+}
 
-  switchRecTab('code');
-  g('recoveryModal').classList.add('show');
-}
-function closeRecovery(){g('recoveryModal').classList.remove('show');}
-function switchRecTab(tab){
-  g('recTabCode').classList.toggle('hidden',tab!=='code');
-  g('recTabQA').classList.toggle('hidden',tab!=='qa');
-}
-function tryCode(){
-  const code=(g('rec_code').value||'').trim();
-  let sec={};try{sec=JSON.parse(localStorage.getItem(LS_SEC)||'{}')}catch{}
-  if(code && sec.recoveryCode && code===String(sec.recoveryCode)){
-    localStorage.setItem('ab_setup','1');
-    window.location.href='main.html';
+function hashLite(s){let h=0;for(let i=0;i<s.length;i++){h=((h<<5)-h)+s.charCodeAt(i);h|=0;}return String(h);}
+
+function checkRecovery(){
+  const sec = loadJson(LS_SECURITY,{})||{};
+  const L = LANG[currentLangCode()];
+  const emailOk = !sec.email || v('rec-email')===sec.email;
+  const codeOk  = !sec.recoveryCode || v('rec-code')===sec.recoveryCode;
+  const ansOk   = !sec.answerHash || hashLite(v('rec-answer').toLowerCase())===sec.answerHash;
+
+  if(emailOk && codeOk && ansOk){
+    alert(L.recOk);
   }else{
-    alert('Invalid or missing recovery code.');
-  }
-}
-function hashLite(s){let h=0;for(let i=0;i<s.length;i++){h=((h<<5)-h)+s.charCodeAt(i);h|=0}return String(h)}
-function tryQA(){
-  const ans=(g('qa_answer').value||'').trim().toLowerCase();
-  let sec={};try{sec=JSON.parse(localStorage.getItem(LS_SEC)||'{}')}catch{}
-  if(!sec.answerHash){ alert('Secret question not configured.'); return; }
-  if(hashLite(ans)===sec.answerHash){
-    localStorage.setItem('ab_setup','1');
-    window.location.href='main.html';
-  }else{
-    alert('Wrong answer.');
+    alert(L.recFail);
   }
 }
 
-/* Setup button + init */
-document.addEventListener('DOMContentLoaded',()=>{
+/* ----- init ----- */
+(function init(){
   applyBranding();
-  if(loadOps().length===0){ g('noOpsHint').classList.remove('hidden'); }
-  g('loginBtn').onclick=e=>{e.preventDefault();loginFlow();}
-  g('forgotLink').onclick=e=>{e.preventDefault();openRecovery();}
-  g('setupBtn').onclick=e=>{
-    e.preventDefault();
-    localStorage.setItem('ab_setup','1');
-    window.location.href='main.html';
-  };
-});
+  applyLang();
+})();
 </script>
 </body>
 </html>
