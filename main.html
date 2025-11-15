@@ -77,105 +77,110 @@
     <h2>Application settings</h2>
     <p class="muted">Branding, labels and management. All settings are stored locally in this browser.</p>
 
-    <!-- Branding -->
-    <h3>Branding & Logos</h3>
-    <div class="stack">
-      <div>
-        <label class="label">Application name</label>
-        <input id="cfg-app-name" class="input" placeholder="AB AGRIWEB"/>
-      </div>
+    <!-- SETTINGS SECTIONS IN ACCORDION -->
+    <details open>
+      <summary><strong>Branding & logos</strong></summary>
+      <div class="stack" style="margin-top:10px">
+        <div>
+          <label class="label">Application name</label>
+          <input id="cfg-app-name" class="input" placeholder="AB AGRIWEB"/>
+        </div>
 
-      <div>
-        <label class="label">Main logo URL (PNG/JPG/GIF)</label>
-        <input id="cfg-logo-url" class="input" placeholder="https://...png"/>
-      </div>
-      <div>
-        <label class="label">Main logo file</label>
-        <input id="cfg-logo-file" class="input" type="file" accept="image/png,image/gif,image/jpeg"/>
-      </div>
+        <div>
+          <label class="label">Main logo URL (PNG/JPG/GIF)</label>
+          <input id="cfg-logo-url" class="input" placeholder="https://...png"/>
+        </div>
+        <div>
+          <label class="label">Main logo file</label>
+          <input id="cfg-logo-file" class="input" type="file" accept="image/png,image/gif,image/jpeg"/>
+        </div>
 
-      <div>
-        <label class="label">Login background URL</label>
-        <input id="cfg-login-bg-url" class="input" placeholder="https://...jpg"/>
-      </div>
-      <div>
-        <label class="label">Login background file</label>
-        <input id="cfg-login-bg-file" class="input" type="file" accept="image/png,image/gif,image/jpeg"/>
-      </div>
+        <div>
+          <label class="label">Login background URL</label>
+          <input id="cfg-login-bg-url" class="input" placeholder="https://...jpg"/>
+        </div>
+        <div>
+          <label class="label">Login background file</label>
+          <input id="cfg-login-bg-file" class="input" type="file" accept="image/png,image/gif,image/jpeg"/>
+        </div>
 
-      <div>
-        <label class="label">Dashboard background URL (inside)</label>
-        <input id="cfg-main-bg-url" class="input" placeholder="optional"/>
-      </div>
-      <div>
-        <label class="label">Dashboard background color</label>
-        <input id="cfg-main-bg-color" class="input" type="color" value="#020817"/>
-      </div>
+        <div>
+          <label class="label">Dashboard background URL (inside)</label>
+          <input id="cfg-main-bg-url" class="input" placeholder="optional"/>
+        </div>
+        <div>
+          <label class="label">Dashboard background color</label>
+          <input id="cfg-main-bg-color" class="input" type="color" value="#020817"/>
+        </div>
 
-      <div>
-        <label class="label">Logo zoom horizontal</label>
-        <input id="cfg-zoom-x" type="range" min="50" max="200" value="100"/>
+        <div>
+          <label class="label">Logo zoom horizontal</label>
+          <input id="cfg-zoom-x" type="range" min="50" max="200" value="100"/>
+        </div>
+        <div>
+          <label class="label">Logo zoom vertical</label>
+          <input id="cfg-zoom-y" type="range" min="50" max="200" value="100"/>
+        </div>
       </div>
-      <div>
-        <label class="label">Logo zoom vertical</label>
-        <input id="cfg-zoom-y" type="range" min="50" max="200" value="100"/>
-      </div>
-    </div>
+    </details>
 
-    <!-- UI Labels -->
-    <h3 style="margin-top:24px">UI labels</h3>
-    <div class="grid">
-      <div>
-        <label class="label">Chip label (top & home)</label>
-        <input id="cfg-lab-chip" class="input" placeholder="AB AGRIWEB"/>
+    <details>
+      <summary><strong>UI labels</strong></summary>
+      <div class="grid" style="margin-top:10px">
+        <div>
+          <label class="label">Chip label (top & home)</label>
+          <input id="cfg-lab-chip" class="input" placeholder="AB AGRIWEB"/>
+        </div>
+        <div>
+          <label class="label">Home menu label</label>
+          <input id="cfg-lab-home" class="input" placeholder="Home"/>
+        </div>
+        <div>
+          <label class="label">Settings menu label</label>
+          <input id="cfg-lab-settings" class="input" placeholder="Settings"/>
+        </div>
+        <div>
+          <label class="label">Referential menu label</label>
+          <input id="cfg-lab-ref" class="input" placeholder="Referential"/>
+        </div>
+        <div>
+          <label class="label">Irrigation menu label</label>
+          <input id="cfg-lab-irr" class="input" placeholder="Irrigation"/>
+        </div>
+        <div>
+          <label class="label">Logout menu label</label>
+          <input id="cfg-lab-logout" class="input" placeholder="Logout"/>
+        </div>
       </div>
-      <div>
-        <label class="label">Home menu label</label>
-        <input id="cfg-lab-home" class="input" placeholder="Home"/>
+    </details>
+
+    <details>
+      <summary><strong>Management</strong></summary>
+      <div class="ref-grid" style="margin-top:10px">
+        <button type="button" class="ref-box ref-button" onclick="mgOpenUsers()">
+          <h3>Users</h3>
+          <p class="small muted">Create / edit operators who can access this dashboard.</p>
+        </button>
+        <button type="button" class="ref-box ref-button" onclick="mgOpenProfiles()">
+          <h3>Profiles</h3>
+          <p class="small muted">Define roles / profiles for operators.</p>
+        </button>
+        <button type="button" class="ref-box ref-button" onclick="mgOpenRights()">
+          <h3>Access rights</h3>
+          <p class="small muted">Assign what each profile can see or edit.</p>
+        </button>
+        <button type="button" class="ref-box ref-button" onclick="mgOpenSecurity()">
+          <h3>Security / Password</h3>
+          <p class="small muted">Recovery email, phone, secret question, recovery code.</p>
+        </button>
       </div>
-      <div>
-        <label class="label">Settings menu label</label>
-        <input id="cfg-lab-settings" class="input" placeholder="Settings"/>
-      </div>
-      <div>
-        <label class="label">Referential menu label</label>
-        <input id="cfg-lab-ref" class="input" placeholder="Referential"/>
-      </div>
-      <div>
-        <label class="label">Irrigation menu label</label>
-        <input id="cfg-lab-irr" class="input" placeholder="Irrigation"/>
-      </div>
-      <div>
-        <label class="label">Logout menu label</label>
-        <input id="cfg-lab-logout" class="input" placeholder="Logout"/>
-      </div>
-    </div>
+    </details>
 
     <div class="row right" style="margin-top:10px;gap:10px">
       <button class="btn danger" onclick="cfgReset()">Reset default</button>
       <button class="btn" onclick="cfgSave()">Save</button>
     </div>
 
-    <!-- Management -->
-    <h3 style="margin-top:24px">Management</h3>
-    <div class="ref-grid">
-      <button type="button" class="ref-box ref-button" onclick="mgOpenUsers()">
-        <h3>Users</h3>
-        <p class="small muted">Create / edit operators who can access this dashboard.</p>
-      </button>
-      <button type="button" class="ref-box ref-button" onclick="mgOpenProfiles()">
-        <h3>Profiles</h3>
-        <p class="small muted">Define roles / profiles for operators.</p>
-      </button>
-      <button type="button" class="ref-box ref-button" onclick="mgOpenRights()">
-        <h3>Access rights</h3>
-        <p class="small muted">Assign what each profile can see or edit.</p>
-      </button>
-      <button type="button" class="ref-box ref-button" onclick="mgOpenSecurity()">
-        <h3>Security / Password</h3>
-        <p class="small muted">Recovery email, phone, secret question, recovery code.</p>
-      </button>
-    </div>
   </section>
 
   <!-- REFERENTIAL -->
