@@ -14,11 +14,26 @@
     <span class="sidebar-title" id="sb-app-name">AB AGRIWEB</span>
   </div>
   <nav class="sidebar-nav">
-    <button onclick="openPage('home')" class="nav-item" id="nav-home">🏠 Home</button>
-    <button onclick="openPage('settings')" class="nav-item" id="nav-settings">⚙️ Settings</button>
-    <button onclick="openPage('ref')" class="nav-item" id="nav-ref">📚 Referential</button>
-    <button onclick="openPage('irr')" class="nav-item" id="nav-irr">💧 Irrigation tracking</button>
-    <button onclick="logout()" class="nav-item nav-danger">🚪 Logout</button>
+    <button onclick="openPage('home')" class="nav-item" id="nav-home">
+      <span class="ni-icon">🏠</span>
+      <span id="lbl-nav-home">Home</span>
+    </button>
+    <button onclick="openPage('settings')" class="nav-item" id="nav-settings">
+      <span class="ni-icon">⚙️</span>
+      <span id="lbl-nav-settings">Settings</span>
+    </button>
+    <button onclick="openPage('ref')" class="nav-item" id="nav-ref">
+      <span class="ni-icon">📚</span>
+      <span id="lbl-nav-ref">Referential</span>
+    </button>
+    <button onclick="openPage('irr')" class="nav-item" id="nav-irr">
+      <span class="ni-icon">💧</span>
+      <span id="lbl-nav-irr">Irrigation</span>
+    </button>
+    <button onclick="logout()" class="nav-item nav-danger" id="nav-logout">
+      <span class="ni-icon">🚪</span>
+      <span id="lbl-nav-logout">Logout</span>
+    </button>
   </nav>
 </aside>
 
@@ -34,13 +49,33 @@
   <!-- HOME -->
   <section id="page-home" class="card">
     <h2>Welcome 👋</h2>
-    <p>Control panel for <span id="home-app-name">AB AGRIWEB</span>. Use the menu to navigate.</p>
+    <p>Control panel for <span id="home-app-name">AB AGRIWEB</span>. Use the menu or shortcuts below.</p>
+
+    <!-- Quick irrigation shortcuts -->
+    <div class="ref-grid" style="margin-top:16px">
+      <button type="button" class="ref-box ref-button" onclick="openPage('irr')">
+        <div class="big-icon">💧</div>
+        <h3>Irrigation</h3>
+      </button>
+      <button type="button" class="ref-box ref-button">
+        <div class="big-icon">🧪</div>
+        <h3>Fertigation</h3>
+      </button>
+      <button type="button" class="ref-box ref-button">
+        <div class="big-icon">🚰</div>
+        <h3>Water tank</h3>
+      </button>
+      <button type="button" class="ref-box ref-button">
+        <div class="big-icon">📈</div>
+        <h3>Sensors</h3>
+      </button>
+    </div>
   </section>
 
   <!-- SETTINGS -->
   <section id="page-settings" class="card hidden">
     <h2>Application settings</h2>
-    <p class="muted">Branding and basic configuration are stored locally in this browser.</p>
+    <p class="muted">Branding, labels and management. All settings are stored locally in this browser.</p>
 
     <!-- Branding -->
     <h3>Branding & Logos</h3>
@@ -87,6 +122,35 @@
       </div>
     </div>
 
+    <!-- UI Labels -->
+    <h3 style="margin-top:24px">UI labels</h3>
+    <div class="grid">
+      <div>
+        <label class="label">Chip label (top & home)</label>
+        <input id="cfg-lab-chip" class="input" placeholder="AB AGRIWEB"/>
+      </div>
+      <div>
+        <label class="label">Home menu label</label>
+        <input id="cfg-lab-home" class="input" placeholder="Home"/>
+      </div>
+      <div>
+        <label class="label">Settings menu label</label>
+        <input id="cfg-lab-settings" class="input" placeholder="Settings"/>
+      </div>
+      <div>
+        <label class="label">Referential menu label</label>
+        <input id="cfg-lab-ref" class="input" placeholder="Referential"/>
+      </div>
+      <div>
+        <label class="label">Irrigation menu label</label>
+        <input id="cfg-lab-irr" class="input" placeholder="Irrigation"/>
+      </div>
+      <div>
+        <label class="label">Logout menu label</label>
+        <input id="cfg-lab-logout" class="input" placeholder="Logout"/>
+      </div>
+    </div>
+
     <div class="row right" style="margin-top:10px;gap:10px">
       <button class="btn danger" onclick="cfgReset()">Reset default</button>
       <button class="btn" onclick="cfgSave()">Save</button>
@@ -117,7 +181,7 @@
   <!-- REFERENTIAL -->
   <section id="page-ref" class="card hidden">
     <h2>Referential</h2>
-    <p class="muted">Structure: <b>Company → Farm → Sector → Parcel (Parcelle) → Point</b>.</p>
+    <p class="muted">Structure: <b>Company → Farm → Sector → Parcel → Point</b>.</p>
 
     <div class="ref-grid">
 
@@ -235,7 +299,7 @@
   <div class="modal">
     <h3>Add irrigation measurement</h3>
     <p class="small">Linked to current Farm / Sector / Parcel / Point.</p>
-    <div class="grid">
+    <div class="grid" style="max-height:55vh;overflow-y:auto;padding-right:4px">
       <div>
         <label class="label">Tours / Hours</label>
         <input id="sv-tours" class="input" type="text">
@@ -277,9 +341,9 @@
         <input id="sv-pctdrain" class="input" type="text">
       </div>
     </div>
-    <div class="right" style="margin-top:10px">
-      <button class="btn danger" onclick="svCloseAdd()">✕ Cancel</button>
-      <button class="btn" onclick="svSaveAdd()">✓ Save</button>
+    <div class="right" style="margin-top:10px;gap:6px">
+      <button class="btn danger" onclick="svCloseAdd()">✕</button>
+      <button class="btn" onclick="svSaveAdd()">✓</button>
     </div>
   </div>
 </div>
@@ -500,7 +564,7 @@ function logout(){
   window.location.href='index.html';
 }
 
-/* ---------- Branding ---------- */
+/* ---------- Branding & Labels ---------- */
 function cfgLoad(){return mLoad(LS_APPCFG,{}) || {};}
 
 function fileToDataUrl(input,cb){
@@ -509,12 +573,21 @@ function fileToDataUrl(input,cb){
   r.onload=e=>cb(e.target.result);
   r.readAsDataURL(f);
 }
+
 function cfgApply(){
-  const c=cfgLoad();
-  const name=c.appName||'AB AGRIWEB';
-  g('top-app-name').textContent=name;
-  g('home-app-name').textContent=name;
-  g('sb-app-name').textContent=name;
+  const c = cfgLoad();
+  const labels = c.labels || {};
+
+  const chip = labels.chip || c.appName || 'AB AGRIWEB';
+  g('top-app-name').textContent = chip;
+  g('home-app-name').textContent = chip;
+  g('sb-app-name').textContent = chip;
+
+  g('lbl-nav-home').textContent     = labels.home     || 'Home';
+  g('lbl-nav-settings').textContent = labels.settings || 'Settings';
+  g('lbl-nav-ref').textContent      = labels.ref      || 'Referential';
+  g('lbl-nav-irr').textContent      = labels.irr      || 'Irrigation';
+  g('lbl-nav-logout').textContent   = labels.logout   || 'Logout';
 
   const logo=c.logo||c.logoUrl;
   const img=g('top-logo');
@@ -530,18 +603,37 @@ function cfgApply(){
     document.body.style.backgroundColor=c.mainBgColor||'#020817';
   }
 }
+
 function cfgFillForm(){
   const c=cfgLoad();
-  g('cfg-app-name').value=c.appName||'';
-  g('cfg-logo-url').value=c.logoUrl||'';
-  g('cfg-login-bg-url').value=c.loginBgUrl||'';
-  g('cfg-main-bg-url').value=c.mainBgUrl||'';
-  g('cfg-main-bg-color').value=c.mainBgColor||'#020817';
-  g('cfg-zoom-x').value=c.zoomX||100;
-  g('cfg-zoom-y').value=c.zoomY||100;
+  const labels=c.labels||{};
+  g('cfg-app-name').value   = c.appName   || '';
+  g('cfg-logo-url').value   = c.logoUrl   || '';
+  g('cfg-login-bg-url').value = c.loginBgUrl || '';
+  g('cfg-main-bg-url').value  = c.mainBgUrl  || '';
+  g('cfg-main-bg-color').value= c.mainBgColor||'#020817';
+  g('cfg-zoom-x').value     = c.zoomX || 100;
+  g('cfg-zoom-y').value     = c.zoomY || 100;
+
+  g('cfg-lab-chip').value    = labels.chip    || (c.appName||'AB AGRIWEB');
+  g('cfg-lab-home').value    = labels.home    || 'Home';
+  g('cfg-lab-settings').value= labels.settings|| 'Settings';
+  g('cfg-lab-ref').value     = labels.ref     || 'Referential';
+  g('cfg-lab-irr').value     = labels.irr     || 'Irrigation';
+  g('cfg-lab-logout').value  = labels.logout  || 'Logout';
 }
+
 function cfgSave(){
   const cur=cfgLoad();
+  const labels = {
+    chip:    v('cfg-lab-chip')    || v('cfg-app-name') || 'AB AGRIWEB',
+    home:    v('cfg-lab-home')    || 'Home',
+    settings:v('cfg-lab-settings')|| 'Settings',
+    ref:     v('cfg-lab-ref')     || 'Referential',
+    irr:     v('cfg-lab-irr')     || 'Irrigation',
+    logout:  v('cfg-lab-logout')  || 'Logout'
+  };
+
   const cfg={
     ...cur,
     appName: v('cfg-app-name')||'AB AGRIWEB',
@@ -550,20 +642,23 @@ function cfgSave(){
     mainBgUrl: v('cfg-main-bg-url')||'',
     mainBgColor: g('cfg-main-bg-color').value||'#020817',
     zoomX: parseInt(g('cfg-zoom-x').value||'100',10),
-    zoomY: parseInt(g('cfg-zoom-y').value||'100',10)
+    zoomY: parseInt(g('cfg-zoom-y').value||'100',10),
+    labels
   };
+
   fileToDataUrl(g('cfg-logo-file'),d=>{
     if(d) cfg.logo=d; else if(cfg.logoUrl) cfg.logo=cfg.logoUrl;
     fileToDataUrl(g('cfg-login-bg-file'),d2=>{
       if(d2) cfg.loginBg=d2; else if(cfg.loginBgUrl) cfg.loginBg=cfg.loginBgUrl;
       mSave(LS_APPCFG,cfg);
       cfgApply();
-      alert('Branding saved.');
+      alert('Branding & labels saved.');
     });
   });
 }
+
 function cfgReset(){
-  if(!confirm('Reset all branding to default?'))return;
+  if(!confirm('Reset all branding & labels to default?'))return;
   localStorage.removeItem(LS_APPCFG);
   cfgApply();
   cfgFillForm();
@@ -708,11 +803,6 @@ function mgDeleteProfile(name){
   mgRenderProfiles();
 }
 
-/* used by Users modal */
-function mgRenderProfilesSelect(){
-  mgFillUserProfiles();
-}
-
 /* ---------- Management: Rights ---------- */
 
 function mgOpenRights(){
@@ -788,6 +878,62 @@ function mgSaveSecurity(){
   };
   mSave(LS_SECURITY,sec);
   alert('Security settings saved. Use them on the login recovery screen.');
+}
+
+/* ---------- Override export for better print / Excel ---------- */
+
+function svExportPDF(){
+  const table = document.getElementById('sv-table');
+  if(!table){alert('No irrigation table to export.');return;}
+  const title = document.getElementById('sv-table-title')?.textContent || 'Irrigation';
+
+  const html = `
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>${escapeHtml(title)}</title>
+<style>
+body{font-family:system-ui,Arial,sans-serif;margin:10px;}
+h1{font-size:18px;margin-bottom:8px;}
+table{width:100%;border-collapse:collapse;font-size:11px;}
+th,td{border:1px solid #444;padding:3px 4px;}
+th{background:#eee;}
+@media print{
+  @page { size: A4 landscape; margin:10mm; }
+}
+</style>
+</head>
+<body>
+<h1>${escapeHtml(title)}</h1>
+${table.outerHTML}
+</body>
+</html>`;
+  const w = window.open('','_blank','width=1200,height=800');
+  w.document.open();
+  w.document.write(html);
+  w.document.close();
+  w.focus();
+  w.print();
+}
+
+function svExportExcel(){
+  const table = document.getElementById('sv-table');
+  if(!table){alert('No irrigation table to export.');return;}
+  let csv = '';
+  table.querySelectorAll('tr').forEach(tr=>{
+    const cells=[...tr.children].map(td=>'"'+(td.innerText||'').replace(/"/g,'""')+'"');
+    csv += cells.join(',') + "\r\n";
+  });
+  const blob = new Blob([csv],{type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href=url;
+  a.download='irrigation.csv';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 }
 
 /* ---------- INIT ---------- */
